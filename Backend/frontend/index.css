@@ -1,0 +1,257 @@
+/* Basic styling for login form */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12%;
+}
+
+/* Basic card styling */
+.user-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    padding: 10%;
+    display: none; /* Initially hidden */
+}
+
+/* Profile image styling */
+.user-card img:not(#qrCode) {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+#qrCode {
+    margin-left: 35%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+/* Profile data styling */
+.user-card h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.user-card p {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Button styles */
+.button-wrapper 
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.column1
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.column1 button
+{
+    margin: 1%;
+}
+
+
+.btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.btn.outline {
+    border: 2px solid #007BFF;
+    color: #007BFF;
+    background-color: transparent;
+}
+
+.btn.fill {
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    background-color: transparent;
+}
+
+.user-card, .login-form , #reset-container{
+    display: none;  /* Hide both initially */
+}
+
+/* Hidden class to hide elements */
+.hidden {
+    display: none;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 40px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="password"] {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button[type="submit"], #login42Btn, #twoFABtn, #NotwoFABtn {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button[type="submit"]:hover, #login42Btn:hover, #twoFABtn:hover, #NotwoFABtn:hover {
+    background-color: #0056b3;
+}
+
+#fetchProfileBtn:hover, #submit2FATokenSetup:hover, #update-btn:hover, #saveChangesBtn:hover, #passwordReset:hover, #enable2FA:hover, #submit2FAToken:hover,
+#searchBtnInProfile:hover, #searchBtn:hover , #viewProfileBtn:hover, #friendsListBtn:hover, #incomingFriendRequestsBtn:hover, #outgoingFriendRequestsBtn:hover,
+#blockedList:hover, #notifsList:hover{
+    cursor: pointer;
+    background-color: #0056b3;
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+#logoutBtn:hover, #deleteAccountBtn:hover {
+    background-color: #ff0000;
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input[type="email"], input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+input[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+}
+
+#passwordReset {
+    border: none;
+    cursor: pointer;
+}
+
+#searchBar {
+    align-items: center;
+}
+
+.user-item {
+    align-items: center;
+    margin: 20px 10px;
+    background-color: #e29696;
+}
+
+.user-item div {
+    margin-left: 10px;
+}
+
+#userProfile .profile-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+#userProfile .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.profile-picture-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* Circular profile picture */
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Edit icon (pen) */
+.edit-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-icon svg {
+    fill: rgb(51, 51, 51);
+    width: 24px;
+    height: 24px;
+}
+
+/* Hover effect for edit icon */
+.edit-icon:hover {
+    background-color: #f0f0f0;
+}
+
