@@ -25,6 +25,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from datetime import datetime, timedelta
 import qrcode
 from io import BytesIO
+from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
 
@@ -261,7 +262,7 @@ class RegisterView(APIView):
             try:
                 serializer.save()
                 messages.success(request, "Registration successful. You can now sign in.")
-                return redirect('https://localhost:8443/')
+                return redirect('https://localhost:443/')
             except IntegrityError:
                 # This should rarely happen due to serializer validation, but handle just in case
                 messages.error(request, "A user with this username or email already exists.")

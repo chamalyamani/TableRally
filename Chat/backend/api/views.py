@@ -12,7 +12,6 @@ from rest_framework import status
 
 class   ChatOverview(APIView):
     # permission_classes = [IsAuthenticated]
-    print('lksdjljflkjsdlfjlajsdlf')
     # permission_classes = [JWTAuthentication]
     def get(self, request):
         conversations = Conversations.objects.filter(
