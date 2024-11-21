@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.shortcuts import redirect
 import requests
@@ -183,7 +184,7 @@ class UserAuthenticationView(APIView):
             }
             
             # Redirect back to the frontend index page
-            return HttpResponseRedirect('https://localhost:8443/')
+            return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
 
         else:
             refresh = RefreshToken.for_user(user)
@@ -262,7 +263,7 @@ class RegisterView(APIView):
             try:
                 serializer.save()
                 messages.success(request, "Registration successful. You can now sign in.")
-                return redirect('https://localhost:443/')
+                return redirect(os.getenv('DOMAIN_NAME'))
             except IntegrityError:
                 # This should rarely happen due to serializer validation, but handle just in case
                 messages.error(request, "A user with this username or email already exists.")

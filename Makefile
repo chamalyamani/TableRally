@@ -10,7 +10,7 @@ nocache:
 
 down: stop
 	@docker compose $(COMPOSE_FILE) rm -f -v
-	@docker compose $(COMPOSE_FILE) down --rmi all -v || true
+	@docker compose $(COMPOSE_FILE) down --rmi local -v || true
 	@docker ps -aq | xargs -r docker rm -f 
 	@docker images -q | xargs -r docker rmi -f
 	@docker volume ls -q | xargs -r docker volume rm

@@ -60,8 +60,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-      chat:
-        condition: service_healthy
+      # chat:
+      #   condition: service_healthy
     networks:
       - backend_default
     restart: on-failure
@@ -73,34 +73,34 @@ services:
       start_period: 30s 
     init: true
 
-  chat:
-    container_name: chat
-    image: chat
-    build:
-      context: ./Chat/
-      dockerfile: ./backend/Dockerfile
-    ports:
-      - "9000:8000"
-    networks:
-      - backend_default
-    restart: on-failure
-    env_file: 
-      - .env
-    depends_on:
-      backend:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ./Chat:/Chat
-      - ./Backend:/Backend
-    healthcheck:
-      test: ["CMD-SHELL", "echo", "CHAT OUI"]
-      interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-    init: true
+  # chat:
+  #   container_name: chat
+  #   image: chat
+  #   build:
+  #     context: ./Chat/
+  #     dockerfile: ./backend/Dockerfile
+  #   ports:
+  #     - "9000:8000"
+  #   networks:
+  #     - backend_default
+  #   restart: on-failure
+  #   env_file: 
+  #     - .env
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./Chat:/Chat
+  #     - ./Backend:/Backend
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "echo", "CHAT OUI"]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
+  #   init: true
         
 
   # redis:
