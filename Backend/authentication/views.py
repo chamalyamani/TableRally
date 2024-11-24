@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.shortcuts import redirect
 import requests
@@ -25,6 +26,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from datetime import datetime, timedelta
 import qrcode
 from io import BytesIO
+from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
 
@@ -182,7 +184,7 @@ class UserAuthenticationView(APIView):
             }
             
             # Redirect back to the frontend index page
-            return HttpResponseRedirect('https://localhost:8443/')
+            return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
 
         else:
             refresh = RefreshToken.for_user(user)
@@ -261,7 +263,7 @@ class RegisterView(APIView):
             try:
                 serializer.save()
                 messages.success(request, "Registration successful. You can now sign in.")
-                return redirect('https://localhost:8443/')
+                return redirect(os.getenv('DOMAIN_NAME'))
             except IntegrityError:
                 # This should rarely happen due to serializer validation, but handle just in case
                 messages.error(request, "A user with this username or email already exists.")
@@ -410,7 +412,7 @@ class EnableTwoFactorView(APIView):
         return JsonResponse({
             'username': user.username,
             'email': user.email,
-            'image': user.image.url,
+            'image': user.image.url if user.image else None,
             "temporary_token": temporary_token,
             "qr_code": f"data:image/png;base64,{qr_code_data}",
             "message": "Scan the QR code with your authenticator app.",
@@ -467,7 +469,7 @@ class TwoFactorVerifyViewNewUser(APIView):
                 response = JsonResponse({
                     'username': user.username,
                     'email': user.email,
-                    'image': user.image.url
+                    'image': user.image.url if user.image else None
                 }, status=status.HTTP_200_OK)
 
                 # Set the JWT tokens in cookies (secure and HTTP-only)
@@ -517,7 +519,7 @@ class TwoFactorVerifyViewForOldUser(APIView):
                 response = JsonResponse({
                     'username': user.username,
                     'email': user.email,
-                    'image': user.image.url
+                    'image': user.image.url if user.image else None
                 }, status=status.HTTP_200_OK)
 
                 # Set the JWT tokens in cookies (secure and HTTP-only)

@@ -104,7 +104,8 @@
                 <button class="btn outline" id="incomingFriendRequestsBtn">Incoming Friends Requests</button>
                 <button class="btn outline" id="outgoingFriendRequestsBtn">Outgoing Friends Requests</button>
                 <button class="btn outline" id="blockedList">Blocked Users List</button>
-                <button class="btn outline" id="notifsList" onclick="fetchNotifications()">Check Notifications</button>
+                <!-- <button class="btn outline" id="notifsList" onclick="fetchNotifications()">Check Notifications</button> -->
+                <ul id="notifications-list"></ul>
             </div>
             
         </div>
@@ -1356,59 +1357,59 @@
 
         /*   NOTIFICATIONS */
 
-        function fetchNotifications() {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/friends/notifications/', {
-                    method: 'GET',
-                    credentials: 'include', // Ensure cookies are sent
-                    headers: { 'Authorization': `Bearer ${accessToken}` },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    displayNotifications(data);
-                })
-                .catch(error => console.error('Error fetching notifications:', error));
-            })
-        }
+        // function fetchNotifications() {
+        //     getAccessToken()
+        //     .then(accessToken => {
+        //         return fetch('/friends/notifications/', {
+        //             method: 'GET',
+        //             credentials: 'include', // Ensure cookies are sent
+        //             headers: { 'Authorization': `Bearer ${accessToken}` },
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             displayNotifications(data);
+        //         })
+        //         .catch(error => console.error('Error fetching notifications:', error));
+        //     })
+        // }
 
-        function displayNotifications(notifications) {
-            const notificationsContainer = document.getElementById('notificationsContainer');
-            notificationsContainer.innerHTML = ''; // Clear previous notifications
+        // function displayNotifications(notifications) {
+        //     const notificationsContainer = document.getElementById('notificationsContainer');
+        //     notificationsContainer.innerHTML = ''; // Clear previous notifications
 
-            if (notifications.length === 0) {
-                notificationsContainer.innerHTML = '<p>No new notifications.</p>';
-                return;
-            }
+        //     if (notifications.length === 0) {
+        //         notificationsContainer.innerHTML = '<p>No new notifications.</p>';
+        //         return;
+        //     }
 
-            notifications.forEach(notification => {
-                const notificationItem = `
-                    <div class="notification">
-                        <p>${notification.sender} ${notification.action}</p>
-                        <button onclick="markNotificationAsRead(${notification.id})">Mark as Read</button>
-                    </div>
-                `;
-                notificationsContainer.innerHTML += notificationItem;
-            });
-        }
+        //     notifications.forEach(notification => {
+        //         const notificationItem = `
+        //             <div class="notification">
+        //                 <p>${notification.sender} ${notification.action}</p>
+        //                 <button onclick="markNotificationAsRead(${notification.id})">Mark as Read</button>
+        //             </div>
+        //         `;
+        //         notificationsContainer.innerHTML += notificationItem;
+        //     });
+        // }
 
-        function markNotificationAsRead(notificationId) {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch(`/friends/notifications/read/${notificationId}/`, {
-                    method: 'POST',
-                    credentials: 'include', // Ensure cookies are sent
-                    headers: { 'Authorization': `Bearer ${accessToken}` },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Notification marked as read.');
-                        fetchNotifications(); // Refresh notifications
-                    }
-                })
-                .catch(error => console.error('Error marking notification as read:', error));
-            })
-        }
+        // function markNotificationAsRead(notificationId) {
+        //     getAccessToken()
+        //     .then(accessToken => {
+        //         return fetch(`/friends/notifications/read/${notificationId}/`, {
+        //             method: 'POST',
+        //             credentials: 'include', // Ensure cookies are sent
+        //             headers: { 'Authorization': `Bearer ${accessToken}` },
+        //         })
+        //         .then(response => {
+        //             if (response.ok) {
+        //                 alert('Notification marked as read.');
+        //                 fetchNotifications(); // Refresh notifications
+        //             }
+        //         })
+        //         .catch(error => console.error('Error marking notification as read:', error));
+        //     })
+        // }
 
 
     </script>
