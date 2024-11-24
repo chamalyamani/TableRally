@@ -17,6 +17,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    init: true
   
   backend:
     image: backend
@@ -43,64 +44,80 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+    init: true
 
   nginx:
     image: nginx
     container_name: nginx
     build: ./nginx/
     ports:
-      - "443:443"  # Public HTTPS port
+      - "443:443"
     volumes:
-      - ./Backend/frontend:/usr/share/nginx/html/backend
+      - ./frontend:/usr/share/nginx/html/backend
       - ./Backend/staticfiles:/staticfiles/
       - ./Backend/media:/media/
       - ./Chat/frontend:/usr/share/nginx/html/chat
     depends_on:
       backend:
         condition: service_healthy
+      # chat:
+      #   condition: service_healthy
     networks:
       - backend_default
     restart: on-failure
     healthcheck:
-      test: ["CMD-SHELL", "curl -f https://nginx:443"]  # Updated to match exposed port
+      test: ["CMD-SHELL", "curl -f https://nginx:443"]
       interval: 1m30s
       timeout: 30s
       retries: 5
-      start_period: 30s
+      start_period: 30s 
+    init: true
 
-  chat:
-    container_name: chat
-    image: chat
-    build:
-      context: ./Chat/
-      dockerfile: ./backend/Dockerfile
-    ports:
-      - "9000:8000"
-    networks:
-      - backend_default
-    restart: on-failure
-    env_file: 
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy  # Wait for postgres to be healthy
-      backend:
-        condition: service_healthy
-    volumes:
-      - ./Chat:/Chat
-      - ./Backend:/Backend
+  # chat:
+  #   container_name: chat
+  #   image: chat
+  #   build:
+  #     context: ./Chat/
+  #     dockerfile: ./backend/Dockerfile
+  #   ports:
+  #     - "9000:8000"
+  #   networks:
+  #     - backend_default
+  #   restart: on-failure
+  #   env_file: 
+  #     - .env
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./Chat:/Chat
+  #     - ./Backend:/Backend
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "echo", "CHAT OUI"]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
+  #   init: true
         
 
-  redis:
-    container_name: redis
-    image: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - backend_default
+  # redis:
+  #   container_name: redis
+  #   image: redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - backend_default
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #   init: true
 
 networks:
   backend_default:
     driver: bridge
 
-#wooo3

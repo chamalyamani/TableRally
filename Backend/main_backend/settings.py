@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_otp',
     'django_otp.plugins.otp_totp',  # For TOTP (Authenticator Apps)
     'django_otp.plugins.otp_static',
@@ -78,6 +79,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://localhost',
     'http://chat:9000',
 ]
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -198,11 +201,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-] 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main_backend', 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

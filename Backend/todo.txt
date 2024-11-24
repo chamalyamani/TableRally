@@ -1,5 +1,7 @@
 ✅ password updating should have three inputs : old, new and confirmed new
-    use ratelimit to prevent spamming requests login/friend_requests/ 
+
+use ratelimit to prevent spamming requests login/friend_requests/ 
+
 ✅ block user
 ✅ ssl
 ✅ check login with intra profile image
