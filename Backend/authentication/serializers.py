@@ -64,4 +64,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if obj.image:
             return request.build_absolute_uri(settings.MEDIA_URL + obj.image.name)
-        return request.build_absolute_uri(settings.MEDIA_URL + 'Default-welcomer.png')
+        return request.build_absolute_uri(settings.STATIC_ROOT + 'Default-welcomer.png')

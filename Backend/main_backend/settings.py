@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',  # For TOTP (Authenticator Apps)
     'django_otp.plugins.otp_static',
     'two_factor',
+    'channels',
 
     'corsheaders',
     'authentication',
@@ -81,6 +82,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SITE_ID = 1
+
+ASGI_APPLICATION = 'main_backend.asgi.application'
 
 TEMPLATES = [
     {
@@ -157,6 +160,15 @@ DATABASES = {
         'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': os.getenv('POSTGRES_PORT'),
     }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
 }
 
 

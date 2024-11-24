@@ -412,7 +412,7 @@ class EnableTwoFactorView(APIView):
         return JsonResponse({
             'username': user.username,
             'email': user.email,
-            'image': user.image.url,
+            'image': user.image.url if user.image else None,
             "temporary_token": temporary_token,
             "qr_code": f"data:image/png;base64,{qr_code_data}",
             "message": "Scan the QR code with your authenticator app.",
@@ -469,7 +469,7 @@ class TwoFactorVerifyViewNewUser(APIView):
                 response = JsonResponse({
                     'username': user.username,
                     'email': user.email,
-                    'image': user.image.url
+                    'image': user.image.url if user.image else None
                 }, status=status.HTTP_200_OK)
 
                 # Set the JWT tokens in cookies (secure and HTTP-only)
@@ -519,7 +519,7 @@ class TwoFactorVerifyViewForOldUser(APIView):
                 response = JsonResponse({
                     'username': user.username,
                     'email': user.email,
-                    'image': user.image.url
+                    'image': user.image.url if user.image else None
                 }, status=status.HTTP_200_OK)
 
                 # Set the JWT tokens in cookies (secure and HTTP-only)

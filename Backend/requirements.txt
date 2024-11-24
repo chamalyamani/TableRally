@@ -27,3 +27,6 @@ sqlparse==0.5.1
 typing_extensions==4.12.2
 urllib3==2.2.2
 sites
+channels>=4.0.0
+channels-redis>=4.0.0
+daphne>=4.0.0

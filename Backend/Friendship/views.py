@@ -17,6 +17,8 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from .serializers import BlockedUserSerializer
 from rest_framework import status
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 User = get_user_model()
 
@@ -42,10 +44,24 @@ class SendFriendRequestView(APIView):
 
         friendship = Friendship.objects.create(from_user=request.user, to_user=to_user, status='P')
 
-        Notification.objects.create(
+        notification = Notification.objects.create(
             recipient=to_user,
             sender=request.user,
             action='FRIEND_REQUEST_SENT',
+        )
+        
+        # Send WebSocket notification
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{to_user.id}",
+            {
+                "type": "send_notification",
+                "notification": {
+                    "type": "Friend Request",
+                    "message": f"{request.user.username} sent you a friend request.",
+                    "timestamp": notification.timestamp.isoformat(),
+                }
+            }
         )
         
         return Response({'message': 'Friend request sent successfully', 'friendship_id': friendship.id}, status=status.HTTP_200_OK)
