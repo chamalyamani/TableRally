@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from chat.models import Messages, Conversations
-from .serializers import ChatOverviewSerializer, ConversationDetailSerializer, CreateConversationSerializer
+from .serializers import ChatOverviewSerializer, ConversationDetailSerializer, CreateConversationSerializer, ListUsersSerializer
 # from django.contrib.auth.models import User
 from authentication.models import CustomUser as User
 from rest_framework.response import Response
@@ -22,6 +22,13 @@ class   ChatOverview(APIView):
             'conversations': serializeChat.data
             # Add conversations images
         }
+        # print(data['conversations'])
+        if not data['conversations']:
+            print('--------------8---------------')
+            data['conversations'].append({'currentUser': request.user.id})
+            # print(data['conversations'][0]['currentUser'])
+            # data['conversations'][0]['currentUser'] = request.user.id
+            print(data['conversations'][0]['currentUser'])
         return Response(data)
 
 
@@ -53,6 +60,9 @@ class   CreateConversation(APIView):
     def post(self, request):
         user1_id = request.data.get('user1_id')
         user2_id = request.data.get('user2_id')
+        print('*********WSAL************')
+        print(user1_id)
+        print(user2_id)
 
         if request.user.id != user1_id \
             and request.user.id != user2_id:
@@ -71,3 +81,8 @@ class   CreateConversation(APIView):
             return Response(SerializedUsers.data, status=status.HTTP_201_CREATED)
         return Response(SerializedUsers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class   ListUsers(APIView):
+    def get(self, request):
+        users = User.objects.exclude(id=request.user.id)
+        SerializedUsers = ListUsersSerializer(users, many=True)
+        return Response(SerializedUsers.data)

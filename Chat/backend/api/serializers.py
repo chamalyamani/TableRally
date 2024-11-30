@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from chat.models import Messages, Conversations
+from authentication.models import CustomUser as User
 
 class   ChatOverviewSerializer(serializers.ModelSerializer):
     conversation = serializers.SerializerMethodField()
+    currentUser = serializers.SerializerMethodField()
 
     class   Meta:
         model = Conversations
-        fields = ['id', 'conversation']
+        fields = ['id', 'conversation', 'currentUser']
     
     def get_conversation(self, conversation):
         selfuser = self.context['request'].user
@@ -14,7 +16,11 @@ class   ChatOverviewSerializer(serializers.ModelSerializer):
             print (conversation.user2_id)
             return conversation.user2_id.username
         else:
-            return conversation.user1_id.username    
+            return conversation.user1_id.username
+
+    def get_currentUser(self, conversation):
+        selfuser = self.context['request'].user
+        return selfuser.id
 
 class   ConversationDetailSerializer(serializers.ModelSerializer):
     sender = serializers.SerializerMethodField()
@@ -30,4 +36,10 @@ class   CreateConversationSerializer(serializers.ModelSerializer):
 
     class   Meta:
         model = Conversations   
-        fields = ['user1_id', 'user2_id']
+        fields = ['user1_id', 'user2_id', 'id']
+
+class   ListUsersSerializer(serializers.ModelSerializer):
+
+    class   Meta:
+        model = User
+        fields = ['username', 'id']

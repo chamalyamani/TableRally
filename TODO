@@ -1,3 +1,9 @@
 check for MAX BODYSIZE
 
 check for MAX REQUESTS
+
+LOGIN AS ADMIN DID NOT WORK (backend)
+
+django CSS does not load (backend)
+
+when registring a user it gives confirm password (backend)
