@@ -7,5 +7,5 @@ python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 python manage.py update_site
-# python manage.py runserver 0.0.0.0:8000
-daphne -b 0.0.0.0 -p 8000 main_backend.asgi:application
+python manage.py runserver 0.0.0.0:8000
+# daphne -b 0.0.0.0 -p 8000 main_backend.asgi:application

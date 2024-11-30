@@ -22,7 +22,7 @@ stop:
 	@docker compose $(COMPOSE_FILE) stop
 
 start: 
-	@docker compose $(COMPOSE_FILE) start
+	@docker compose $(COMPOSE_FILE) up
 
 status: 
 	@docker ps

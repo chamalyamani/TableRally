@@ -327,8 +327,8 @@ class LoginView(APIView):
         #     })
 
         # Use image_url to dynamically choose between local and external images
+        print("----------------> ", user.image_url) 
         image_url = request.build_absolute_uri(user.image_url)
-
         response = Response({
             'username': user.username,
             'email': user.email,

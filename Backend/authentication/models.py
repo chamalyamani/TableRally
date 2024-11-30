@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from main_backend import settings
 
 # Create your models here.
 
@@ -11,20 +12,20 @@ class CustomUser(AbstractUser):
     password = models.CharField(default='', max_length=255)
 
     def save(self, *args, **kwargs):
-        # Set default image if none provided
+        # Leave the image field blank unless explicitly set
         if not self.image and not self.external_image_url:
-            self.image = 'Default-welcomer.png'
+            self.image = 'profile_images/Default-welcomer.png'
         super().save(*args, **kwargs)
 
     @property
     def image_url(self):
-        """Returns the image URL, preferring the local image if available."""
-        if self.image:
-            return self.image.url  # Uses the local image if available
-        elif self.external_image_url:
-            return self.external_image_url  # Fallback to external URL
-        else: 
-            return 'Default-welcomer.png'  # Default image path
-    
+        """Return the image URL, prefer local image if available."""
+        if self.image:  # Check if an image is set (user-uploaded or default)
+            return f"{settings.STATIC_URL}{self.image.name}"
+        elif self.external_image_url:  # If there's an external URL
+            return self.external_image_url
+        else:  # Use default static path
+            return f"{settings.STATIC_URL}authentication/img/Default-welcomer.png"
+
     def __str__(self):
         return self.username
