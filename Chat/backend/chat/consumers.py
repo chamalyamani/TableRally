@@ -107,6 +107,7 @@ class   ChatConsumer(AsyncWebsocketConsumer):
                 'user': event['user'],
             }
         ))
+        await self.close()
 
     async def   block_user(self, event):
         await self.send(text_data=json.dumps(
