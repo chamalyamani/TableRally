@@ -6,6 +6,8 @@ from main_backend import settings
 
 class CustomUser(AbstractUser):
     username = models.CharField(unique=True, default='', max_length=50)
+    first_name = models.CharField(default='', max_length=50)
+    last_name = models.CharField(default='', max_length=50)
     email = models.EmailField(unique=True, default='', max_length=254)
     image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     external_image_url = models.CharField(blank=True, null=True)
@@ -21,7 +23,7 @@ class CustomUser(AbstractUser):
     def image_url(self):
         """Return the image URL, prefer local image if available."""
         if self.image:  # Check if an image is set (user-uploaded or default)
-            return f"{settings.STATIC_URL}{self.image.name}"
+            return f"{settings.MEDIA_URL}{self.image.name}"
         elif self.external_image_url:  # If there's an external URL
             return self.external_image_url
         else:  # Use default static path

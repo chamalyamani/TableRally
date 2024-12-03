@@ -15,14 +15,29 @@
     <form id="loginForm">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
-        
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        
-        <!-- 2FA token input (initially hidden) -->
-        
         <button type="submit">Login with Credentials</button>
         <button id="login42Btn" type="button">Login with 42 API</button>
+        <p>Don't have an account? <a href="#" id="toggleToRegister">Register</a></p>
+    </form>
+
+    <form id="registerForm" style="display: none;">
+        <label for="registerUsername">Username:</label>
+        <input type="text" id="registerUsername" name="registerUsername" required>
+        <label for="firstname">First name:</label>
+        <input type="text" id="firstname" name="firstname" required>
+        <label for="lastname">Last name:</label>
+        <input type="text" id="lastname" name="lastname" required>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label for="registerPassword">password:</label>
+        <input type="password" id="registerPassword" name="registerPassword" required>
+        <label for="registerConfirm_password">Confirm password:</label>
+        <input type="password" id="registerConfirm_password" name="registerConfirm_password" required>
+        
+        <p>Already have an account? <a href="#" id="toggleToLogin">Login</a></p>
+        <button type="submit">Register</button>
     </form>
 
     <div id="2faUse" style="display: none;">
@@ -131,6 +146,25 @@
 
     <script>
         // Handling credentials-based login
+        const toggleToLogin = document.getElementById('toggleToLogin');
+        const toggleToRegister = document.getElementById('toggleToRegister');
+
+        // Toggle to Login Form
+        toggleToLogin.addEventListener('click', (event) => {
+            event.preventDefault();
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            document.getElementById('password-forgotten').style.display = 'block';
+        });
+
+        // Toggle to Register Form
+        toggleToRegister.addEventListener('click', (event) => {
+            event.preventDefault();
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            document.getElementById('password-forgotten').style.display = 'none';
+        });
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -152,7 +186,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                handleLoginResponse(data);
+                if (data.redirect_to) {
+                    window.location.href = data.redirect_to;
+                } else {
+                    handleLoginResponse(data);
+                }
             })
             .catch(error => {
                 const errorDiv = document.getElementById('error-message');
@@ -162,24 +200,85 @@
             });
         });
 
+        async function submitRegistration(formData) {
+            try {
+                const response = await fetch('/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                    credentials: "include"
+                });
+
+                if (!response.ok) {
+                    const errors = await response.json();
+
+                    // Clear previous error messages
+                    const errorDiv = document.getElementById('error-message');
+                    errorDiv.textContent = ''; // Clear content
+
+                    // Display only the first error for each field
+                    for (const [field, messages] of Object.entries(errors)) {
+                        if (field === 'non_field_errors') {
+                            errorDiv.textContent = messages[0]; // Show only the first general error
+                            errorDiv.style.display = 'block';
+                        } else {
+                            const fieldElement = document.getElementById(field);
+                            if (fieldElement) {
+                                errorDiv.textContent = messages[0]; // Show only the first general error
+                                errorDiv.style.display = 'block';
+                            }
+                        }
+                    }
+                } else {
+                    const data = await response.json();
+                    console.log('Registration successful:', data.message);
+                }
+            } catch (err) {
+                console.error('An error occurred:', err);
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = {
+                username: document.getElementById('registerUsername').value,
+                first_name: document.getElementById('firstname').value,
+                last_name: document.getElementById('lastname').value,
+                username: document.getElementById('registerUsername').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('registerPassword').value,
+                confirm_password: document.getElementById('registerConfirm_password').value,
+            };
+
+            submitRegistration(formData);
+        })
+
         // Fetching profile details when clicking the "Fetch Profile" button
-        function getAccessToken() {
-            return fetch('/auth/get-access-token/', {
-                method: 'GET',
-                credentials: 'include'  // Include cookies in the request
-            })
-            .then(response => response.json())
-            .then(data => {
+        async function getAccessToken() {
+            try {
+                const response = await fetch('/auth/get-access-token/', {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies in the request
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
                 if (data.access_token) {
                     return data.access_token;
                 } else {
-                    throw new Error('Access token not found');
+                    throw new Error('Access token not found in response');
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching access token:', error);
-                throw error;
-            });
+                throw error; // Rethrow the error to allow handling at the call site
+            }
         }
 
         function enable2FA() {
@@ -237,96 +336,93 @@
             .catch(error => console.error('Error disabling 2FA:', error));
         }
 
-        function fetchAndDisplayUserProfile() {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/auth/check-2fa-status/', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            })})
-            .then(response => response.json())
-            .then(data => {
-                const enable2FABtn = document.getElementById('enable2FA');
+        async function fetchAndDisplayUserProfile() {
+            try {
+                // Fetch the access token once
+                const accessToken = await getAccessToken();
 
-                if (data.two_fa_enabled) {
-                    // If 2FA is enabled, set the button to "Disable 2FA"
-                    enable2FABtn.textContent = 'Disable 2FA';
-                } else {
-                    // If 2FA is not enabled, set the button to "Enable 2FA"
-                    enable2FABtn.textContent = 'Enable 2FA';
-                }
-
-                // Handle 2FA button click (toggle between enable/disable 2FA)
-                enable2FABtn.addEventListener('click', function() {
-                    if (data.two_fa_enabled) {
-                        // Handle disabling 2FA
-                        disable2FA();
-                        // data.two_fa_enabled = false;
-                    } else {
-                        // Handle enabling 2FA
-                        enable2FA();
-                    }
-                });
-            })
-            .catch(error => console.error('Error fetching 2FA status:', error));
-
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/user/profile/', {
+                // Fetch 2FA status
+                const twoFAResponse = await fetch('/auth/check-2fa-status/', {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`  // Set Authorization header
+                        'Authorization': `Bearer ${accessToken}`
                     }
                 });
-            })
-            .then(response => {
-                // Check if the response is 401 (Unauthorized) or some other error status
-                if (response.status === 401) {
+
+                if (!twoFAResponse.ok) {
+                    throw new Error('Failed to fetch 2FA status');
+                }
+
+                const twoFAData = await twoFAResponse.json();
+
+                // Update 2FA button based on the fetched status
+                const enable2FABtn = document.getElementById('enable2FA');
+                enable2FABtn.textContent = twoFAData.two_fa_enabled ? 'Disable 2FA' : 'Enable 2FA';
+
+                enable2FABtn.addEventListener('click', function () {
+                    if (twoFAData.two_fa_enabled) {
+                        disable2FA();
+                    } else {
+                        enable2FA();
+                    }
+                });
+
+                // Fetch user profile
+                const profileResponse = await fetch('/user/profile/', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (profileResponse.status === 401) {
                     throw new Error('Unauthorized');
                 }
-                // If the response is okay, return the JSON data
-                if (response.ok) {
-                    return response.json();
-                } else {
+
+                if (!profileResponse.ok) {
                     throw new Error('Failed to fetch profile');
                 }
-            })
-            .then(data => {
+
+                const profileData = await profileResponse.json();
+
+                // Update profile details on the page
                 localStorage.removeItem('alertShown');
 
-                // Populate the profile card with fetched data
-                document.getElementById('userName').textContent = data.username;
-                document.getElementById('userEmail').textContent = data.email;
-                document.getElementById('userImage').src = data.image;
-                document.getElementById('userImageUpdate').src = data.image;
+                document.getElementById('userName').textContent = profileData.username;
+                document.getElementById('userEmail').textContent = profileData.email;
+                document.getElementById('userImage').src = profileData.image;
+                document.getElementById('userImageUpdate').src = profileData.image;
 
-                // Set the input fields with the current data (for update)
-                document.getElementById('editUsername').value = data.username;
-                document.getElementById('editEmail').value = data.email;
+                document.getElementById('editUsername').value = profileData.username;
+                document.getElementById('editEmail').value = profileData.email;
 
-                // Show the user card and hide the login form
+                // Show user card and hide login form
                 document.getElementById('userCard').style.display = 'block';
                 document.getElementById('loginForm').style.display = 'none';
 
-            })
-            .catch(error => {
-                document.getElementById('loginForm').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+
+                // Handle unauthorized error
                 if (error.message === 'Unauthorized') {
                     if (!localStorage.getItem('alertShown')) {
                         alert('Your session has expired. Please log in again.');
-                        localStorage.setItem('alertShown', 'true');  // Mark that the alert has been shown
+                        localStorage.setItem('alertShown', 'true');  // Mark alert as shown
                     }
+
                     document.getElementById('userCard').style.display = 'none';
                     document.getElementById('loginForm').style.display = 'block';
                     document.getElementById('password-forgotten').style.display = 'block';
+                } else {
+                    // For other errors, show the login form
+                    document.getElementById('userCard').style.display = 'none';
+                    document.getElementById('loginForm').style.display = 'block';
                 }
-            });
-        } 
-        
+            }
+        }
+ 
         document.getElementById('fetchProfileBtn').addEventListener('click', function() {
             fetchAndDisplayUserProfile();
         });
@@ -338,10 +434,11 @@
 
         function handleLoginResponse(data) 
         {
+            console.log(data);
             if (data.error) {
-                    const errorDiv = document.getElementById('error-message');
-                    errorDiv.textContent = data.error;
-                    errorDiv.style.display = 'block';
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = data.error;
+                errorDiv.style.display = 'block';
             }
             else if (data.temporary_token) {
                 document.getElementById('loginForm').style.display = 'none';
@@ -498,27 +595,40 @@
         });
         
         document.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('authFetchRequired') === 'true')
-            {
-                fetch('/auth/holder/', {
-                    method: 'GET',
-                    credentials: 'include',
-                })
-                .then(response => response.json())
-                .then(data => {
-                    handleLoginResponse(data);
-                    localStorage.setItem('authFetchRequired', 'false');
-                    fetchAndDisplayUserProfile();  // Fetch the profile data after redirect
-                })
-                .catch(error => {
-                    const errorDiv = document.getElementById('error-message');
-                    errorDiv.textContent = error.message;
-                    errorDiv.style.display = 'block';
-                    console.error('Error in 42 API login flow:', error);
-                });
-            }
-            else
-                fetchAndDisplayUserProfile();
+            // async function handleAuthFetch() {
+            //     if (localStorage.getItem('authFetchRequired') === 'true') 
+            //     {
+            //         try
+            //         {
+            //             // Fetch user data from the server
+            //             const response = await fetch('/auth/callback/', {
+            //                 method: 'GET',
+            //                 credentials: 'include', // Include cookies for authentication
+            //             });
+            //             if (!response.ok) {
+            //                 throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+            //             }
+            //             const data = await response.json();
+            //             console.log(data);
+            //             // Handle login response
+            //             handleLoginResponse(data);
+            //             // Update localStorage to indicate fetch is no longer required
+            //             localStorage.setItem('authFetchRequired', 'false');
+            //             // Fetch and display user profile
+                        // await fetchAndDisplayUserProfile();
+            //         } 
+            //         catch (error) {
+            //             // Display error message in the UI
+            //             const errorDiv = document.getElementById('error-message');
+            //             errorDiv.textContent = `Error: ${error.message}`;
+            //             errorDiv.style.display = 'block';
+            //             console.error('Error in auth fetch:', error);
+            //         }
+            //     }
+            // }
+
+            // else
+            fetchAndDisplayUserProfile();
         });
 
         // Function to get CSRF token from cookies

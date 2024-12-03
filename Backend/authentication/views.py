@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .serializers import CustomUserSerializer
+from .serializers import RegistrationSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
@@ -103,7 +103,7 @@ class UserAuthenticationView(APIView):
         try:
             access_token = exchange_authorization_code(authorization_code)
         except Exception as e:
-            return Response({"error": "Failed to exchange authorization code for token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Failed to exchange authorization code for tokennnn"}, status=status.HTTP_400_BAD_REQUEST)
     
         if not access_token:
             return Response({"error": "Failed to exchange authorization code for token"}, status=status.HTTP_400_BAD_REQUEST)
@@ -190,7 +190,6 @@ class UserAuthenticationView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             image_url = request.build_absolute_uri(user.image_url)
-
             response = JsonResponse({
                 'username': user.username,
                 'email': user.email,
@@ -210,7 +209,6 @@ class HolderView(APIView):
     """
     def get(self, request):
         auth_data = request.session.get('auth_data')
-
         if not auth_data:
             return JsonResponse({"error": "No authentication data found"}, status=400)
 
@@ -254,92 +252,101 @@ def get_access_token(request):
 
 # Authenticaion using JWT concept with credentials
 class RegisterView(APIView):
-    def get(self, request):
-        return render(request, 'authentication/register.html')
-
     def post(self, request):
-        serializer = CustomUserSerializer(data=request.data)
+        print(request.data)
+        serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            try:
+            try: 
                 serializer.save()
-                messages.success(request, "Registration successful. You can now sign in.")
-                return redirect(os.getenv('DOMAIN_NAME'))
+                return Response({"message": "Registration successful. You can now sign in."}, status=status.HTTP_201_CREATED)
             except IntegrityError:
-                # This should rarely happen due to serializer validation, but handle just in case
-                messages.error(request, "A user with this username or email already exists.")
-                return render(request, 'authentication/register.html', {'serializer': serializer})
-        else:
-            # Collect all error messages
-            for field, errors in serializer.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-            return render(request, 'authentication/register.html', {'serializer': serializer})
+                return Response({"error": "A user with this username or email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def get(self, request):
+    #     return render(request, 'authentication/register.html')
+
+    # def post(self, request):
+    #     serializer = RegistrationSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         try:
+    #             serializer.save()
+    #             messages.success(request, "Registration successful. You can now sign in.")
+    #             return redirect(os.getenv('DOMAIN_NAME'))
+    #         except IntegrityError:
+    #             # This should rarely happen due to serializer validation, but handle just in case
+    #             messages.error(request, "A user with this username or email already exists.")
+    #             return render(request, 'authentication/register.html', {'serializer': serializer})
+    #     else:
+    #         # Collect all error messages
+    #         for field, errors in serializer.errors.items():
+    #             for error in errors:
+    #                 messages.error(request, f"{field.capitalize()}: {error}")
+    #         return render(request, 'authentication/register.html', {'serializer': serializer})
 
 class LoginView(APIView):
-    def get(self, request):
-        return render(request, 'authentication/login.html')
-
     def post(self, request):
+        """Handle user login."""
         username = request.data.get('username')
         password = request.data.get('password')
 
-        if not username or not password: 
+        # Validate input
+        if not username or not password:
             return Response(
                 {"error": "Username and password are required."},
-                status=status.HTTP_401_UNAUTHORIZED
+                status=status.HTTP_400_BAD_REQUEST  # Changed to 400 as it's a bad request
             )
 
+        # Authenticate user
         user = authenticate(username=username, password=password)
         if user is None:
             return Response(
                 {"error": "Invalid credentials."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
-        
+
+        # Redirect staff or superuser to the admin panel
         if user.is_staff or user.is_superuser:
             login(request, user)
-            return redirect('/admin/')
+            return Response(
+                {"redirect_to": "/admin/"},
+                status=status.HTTP_200_OK
+            )
 
-        # Check if user has a confirmed 2FA device
+        # Handle 2FA
         if TOTPDevice.objects.filter(user=user, confirmed=True).exists():
-            # Create a temporary JWT for 2FA verification
             temp_payload = {
                 'user_id': user.id,
                 'requires_2fa': True,
-                'exp': datetime.utcnow() + timedelta(minutes=10) # Temporary expiration time
+                'exp': datetime.utcnow() + timedelta(minutes=10)  # Temporary expiration time
             }
             temporary_token = jwt.encode(temp_payload, settings.SECRET_KEY, algorithm='HS256')
 
             return Response({
-                "message": "2FA is required",
+                "message": "2FA is required.",
                 "temporary_token": temporary_token,
             }, status=status.HTTP_200_OK)
 
+        # Issue tokens
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-    
-        # image_url = request.build_absolute_uri(user.image) if user.image else request.build_absolute_uri(settings.MEDIA_URL + 'Default-welcomer.png')
 
-        # response = JsonResponse({
-        #     'username': user.username,
-        #     'email': user.email,
-        #     'image_url': image_url, 
-        #     })
-
-        # Use image_url to dynamically choose between local and external images
-        print("----------------> ", user.image_url) 
-        image_url = request.build_absolute_uri(user.image_url)
+        # Create response with user details
         response = Response({
             'username': user.username,
-            'email': user.email,
-            'image': image_url,
             'first_name': user.first_name,
-            'last_name': user.last_name
+            'last_name': user.last_name,
+            'email': user.email,
+            'image': user.image.url if user.image else None,  # Handle users without images
         }, status=status.HTTP_200_OK)
-        
-        # # secure Should be True in production (use HTTPS)
-        response.set_cookie(key='access_token', value=access_token, httponly=True, secure=False , samesite='Lax')
-        response.set_cookie(key='refresh_token', value=refresh, httponly=True, secure=False, samesite='Lax')
+
+        # Set cookies for access and refresh tokens
+        cookie_settings = {
+            'httponly': True,
+            'secure': settings.DEBUG is False,  # Secure cookies only in production
+            'samesite': 'Lax'
+        }
+        response.set_cookie(key='access_token', value=access_token, **cookie_settings)
+        response.set_cookie(key='refresh_token', value=str(refresh), **cookie_settings)
 
         return response
 

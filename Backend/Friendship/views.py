@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Friendship
 from django.contrib.auth import get_user_model
 from .serializers import FriendshipSerializer
-from authentication.serializers import CustomUserSerializer
+from authentication.serializers import RegistrationSerializer
 from django.db import models
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated

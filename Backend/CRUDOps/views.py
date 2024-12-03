@@ -38,7 +38,7 @@ User = get_user_model()
 @permission_classes([IsAuthenticated])
 def get_profile(request):
     user = request.user
-    image_url = user.image.url if user.image else None
+    image_url = user.image_url
 
     if user.is_authenticated:
         return Response({
