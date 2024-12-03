@@ -1,6 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Conversations, Messages
+from .models import Conversations, Messages, BlockList
 # from django.contrib.auth.models import User
 from authentication.models import CustomUser as User
 from channels.db import database_sync_to_async
@@ -18,13 +18,13 @@ class   ChatConsumer(AsyncWebsocketConsumer):
             return
         
         self.user = self.scope['user']
-        user1_id = await sync_to_async(lambda: self.conversation.user1_id)()
-        user2_id = await sync_to_async(lambda: self.conversation.user2_id)()
+        self.user1_id = await sync_to_async(lambda: self.conversation.user1_id)()
+        self.user2_id = await sync_to_async(lambda: self.conversation.user2_id)()
 
         # I think i should check if user is blocked
         print ("selfUser = ", self.user)
 
-        if self.user.is_authenticated and self.user in [user1_id, user2_id]:
+        if self.user.is_authenticated and self.user in [self.user1_id, self.user2_id]:
             print ("USER is authenticated")
             await self.channel_layer.group_add(self.conversation_id, self.channel_name)
         
@@ -59,6 +59,19 @@ class   ChatConsumer(AsyncWebsocketConsumer):
         )
         ### Blocking a user action ###
         elif 'action' in text_data_dic and text_data_dic['action'] == 'block':
+            TheBlocker = await database_sync_to_async(User.objects.get)(id=self.scope['user'].id)
+            TheBlocked = None
+            if TheBlocker == self.user1_id.id:
+                TheBlocked = await database_sync_to_async(User.objects.get)(id=self.user2_id.id)
+            else:
+                TheBlocked = await database_sync_to_async(User.objects.get)(id=self.user1_id.id)
+
+            block_action = BlockList(
+                blocker = TheBlocker,
+                blocked = TheBlocked
+            )
+            await database_sync_to_async(block_action.save)()
+            
             await self.channel_layer.group_send(
                 self.conversation_id,
                 {

@@ -358,7 +358,7 @@ async function realTime(conv, singleConv) {
             }
             scrollBottom();
         }
-        if (receivedMessage.type == 'delete_message') {
+        else if (receivedMessage.type == 'delete_message') {
             let messages;
             if (conv.conversation == receivedMessage.user)
                 messages = mainChat.querySelectorAll('.left-message');
@@ -418,6 +418,7 @@ async function realTime(conv, singleConv) {
         blockChat.addEventListener('click', () => {
             let action = { 'action': 'block' };
             socket.send(JSON.stringify(action));
+            console.log(conv);
         })
         // let data = { 'message': 'hello', 'user': 'kouferka' };
         // socket.send(JSON.stringify(data));
