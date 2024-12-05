@@ -5,6 +5,7 @@ from .models import Conversations, Messages, BlockList
 from authentication.models import CustomUser as User
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
+from django.db.models import Q
 
 class   ChatConsumer(AsyncWebsocketConsumer):
     async def   connect(self):
@@ -21,7 +22,6 @@ class   ChatConsumer(AsyncWebsocketConsumer):
         self.user1_id = await sync_to_async(lambda: self.conversation.user1_id)()
         self.user2_id = await sync_to_async(lambda: self.conversation.user2_id)()
 
-        # I think i should check if user is blocked
         print ("selfUser = ", self.user)
 
         if self.user.is_authenticated and self.user in [self.user1_id, self.user2_id]:
@@ -70,7 +70,12 @@ class   ChatConsumer(AsyncWebsocketConsumer):
                 blocker = TheBlocker,
                 blocked = TheBlocked
             )
-            await database_sync_to_async(block_action.save)()
+            existingBlock = await database_sync_to_async(BlockList.objects.filter(
+                (Q(blocker=TheBlocker, blocked=TheBlocked)) | (Q(blocker=TheBlocked, blocked=TheBlocker))
+                ).first)()
+            if not existingBlock:
+                print('NOOT EXISTING')
+                await database_sync_to_async(block_action.save)()
             
             await self.channel_layer.group_send(
                 self.conversation_id,
@@ -86,22 +91,26 @@ class   ChatConsumer(AsyncWebsocketConsumer):
             user = self.scope['user'].username
             print ("UUSER = ", user)
 
-            # DB saving///////////////////////////
-            received_message = Messages(
-                content = message,
-                sender_id = await database_sync_to_async(User.objects.get)(username=user),
-                conversation_id = await database_sync_to_async(Conversations.objects.get)(id=self.conversation_id),
-            )
-            await database_sync_to_async(received_message.save)()
+            existingBlock = await database_sync_to_async(BlockList.objects.filter(
+                (Q(blocker=self.user1_id.id, blocked=self.user2_id.id)) | (Q(blocker=self.user2_id.id, blocked=self.user1_id.id))
+                ).first)()
+            if not existingBlock:
+                # DB saving ************
+                received_message = Messages(
+                    content = message,
+                    sender_id = await database_sync_to_async(User.objects.get)(username=user),
+                    conversation_id = await database_sync_to_async(Conversations.objects.get)(id=self.conversation_id),
+                )
+                await database_sync_to_async(received_message.save)()
 
-            await self.channel_layer.group_send(
-                self.conversation_id,
-                {
-                    'type': 'send_message',
-                    'message': message,
-                    'user': user,
-                }
-            )
+                await self.channel_layer.group_send(
+                    self.conversation_id,
+                    {
+                        'type': 'send_message',
+                        'message': message,
+                        'user': user,
+                    }
+                )
     
     async def   send_message(self, event):
         await self.send(text_data=json.dumps(
