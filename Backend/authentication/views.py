@@ -151,22 +151,6 @@ class UserAuthenticationView(APIView):
             if not user.image:
                 user.external_image_url = specific_user_infos['external_image_url']
                 user.save()
-        
-
-        # existing_user = CustomUser.objects.filter(email=specific_user_infos['email']).first()
-     
-        # if existing_user:
-        #     user = existing_user
-        # else:
-        #     user, created = CustomUser.objects.get_or_create(
-        #         email=specific_user_infos['email'],
-        #         defaults={ 
-        #             'username': specific_user_infos['username'],
-        #             'external_image_url': specific_user_infos['external_image_url'],
-        #         }
-        #     )
-        #     if created: 
-        #         save_user_info_to_database(specific_user_infos)
 
         has_2fa = TOTPDevice.objects.filter(user=user, confirmed=True).exists()
         if has_2fa:
@@ -183,27 +167,25 @@ class UserAuthenticationView(APIView):
                 'message': "2FA is required",
             }
             
-            # Redirect back to the frontend index page
             return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
+            
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        image_url = request.build_absolute_uri(user.image_url)
+        response = JsonResponse({
+            'username': user.username,
+            'email': user.email,
+            'image': image_url,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        })
 
-        else:
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            image_url = request.build_absolute_uri(user.image_url)
-            response = JsonResponse({
-                'username': user.username,
-                'email': user.email,
-                'image': image_url,
-                'first_name': user.first_name,
-                'last_name': user.last_name
-            })
+        response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='Lax' )# Set to True in production
+        response.set_cookie( key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax') # Set to True in production
 
-            response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='Lax' )# Set to True in production
-            response.set_cookie( key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax') # Set to True in production
+        return response
 
-            return response
-
-class HolderView(APIView):
+class tokenHolderFor2faWith_42API(APIView):
     """
     Retrieves authentication data stored in the session and returns it as JSON.
     """
@@ -253,7 +235,6 @@ def get_access_token(request):
 # Authenticaion using JWT concept with credentials
 class RegisterView(APIView):
     def post(self, request):
-        print(request.data)
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             try: 

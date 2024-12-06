@@ -10,7 +10,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('logout/', logout_and_blacklist, name='logout'),
     path('callback/', UserAuthenticationView.as_view(), name='callback'),  # Where 42 will redirect back
-    path('holder/', HolderView.as_view(), name='holder_view'),
+    path('holder/', tokenHolderFor2faWith_42API.as_view(), name='holder_view'),
     path('get-access-token/', get_access_token),
     path('users/', UsersInDB.as_view(), name='users'),
     path('health_checker/', health_checker, name='health_checker'),

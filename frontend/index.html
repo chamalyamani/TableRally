@@ -211,29 +211,36 @@
                     credentials: "include"
                 });
 
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = ''; // Clear content
+
                 if (!response.ok) {
                     const errors = await response.json();
-
-                    // Clear previous error messages
-                    const errorDiv = document.getElementById('error-message');
-                    errorDiv.textContent = ''; // Clear content
-
-                    // Display only the first error for each field
                     for (const [field, messages] of Object.entries(errors)) {
-                        if (field === 'non_field_errors') {
-                            errorDiv.textContent = messages[0]; // Show only the first general error
-                            errorDiv.style.display = 'block';
-                        } else {
-                            const fieldElement = document.getElementById(field);
-                            if (fieldElement) {
-                                errorDiv.textContent = messages[0]; // Show only the first general error
-                                errorDiv.style.display = 'block';
-                            }
-                        }
+                        errorDiv.textContent = messages[0]; // Show only the first general error
+                        errorDiv.style.display = 'block';
                     }
-                } else {
+                } 
+                else {
                     const data = await response.json();
-                    console.log('Registration successful:', data.message);
+                    let countdown = 3;
+                    errorDiv.textContent = `${data.message} in ${countdown}...`;
+                    errorDiv.style.color = 'green';
+                    errorDiv.style.display = 'block';
+
+                    const interval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            errorDiv.textContent = `${data.message} in ${countdown}...`;
+                        } else {
+                            clearInterval(interval); // Stop the interval when countdown reaches 0
+                            errorDiv.style.color = 'red';
+                            errorDiv.style.display = 'none';
+                            registerForm.style.display = 'none';
+                            loginForm.style.display = 'block';
+                            document.getElementById('password-forgotten').style.display = 'block';
+                        }
+                    }, 1000); // Update every 1000 milliseconds (1 second)
                 }
             } catch (err) {
                 console.error('An error occurred:', err);
@@ -434,7 +441,6 @@
 
         function handleLoginResponse(data) 
         {
-            console.log(data);
             if (data.error) {
                 const errorDiv = document.getElementById('error-message');
                 errorDiv.textContent = data.error;
@@ -594,42 +600,49 @@
             }
         });
         
-        document.addEventListener('DOMContentLoaded', function() {
-            // async function handleAuthFetch() {
-            //     if (localStorage.getItem('authFetchRequired') === 'true') 
-            //     {
-            //         try
-            //         {
-            //             // Fetch user data from the server
-            //             const response = await fetch('/auth/callback/', {
-            //                 method: 'GET',
-            //                 credentials: 'include', // Include cookies for authentication
-            //             });
-            //             if (!response.ok) {
-            //                 throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
-            //             }
-            //             const data = await response.json();
-            //             console.log(data);
-            //             // Handle login response
-            //             handleLoginResponse(data);
-            //             // Update localStorage to indicate fetch is no longer required
-            //             localStorage.setItem('authFetchRequired', 'false');
-            //             // Fetch and display user profile
-                        // await fetchAndDisplayUserProfile();
-            //         } 
-            //         catch (error) {
-            //             // Display error message in the UI
-            //             const errorDiv = document.getElementById('error-message');
-            //             errorDiv.textContent = `Error: ${error.message}`;
-            //             errorDiv.style.display = 'block';
-            //             console.error('Error in auth fetch:', error);
-            //         }
-            //     }
-            // }
+        async function handle2fa_42API() {
+            try {
+                // Call the backend to fetch the session data (auth_data)
+                const response = await fetch('/auth/holder/', {
+                    method: 'GET',
+                    credentials: 'include',  // Ensure cookies are sent with the request
+                });
 
-            // else
-            fetchAndDisplayUserProfile();
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Check if the response contains a message indicating 2FA is required
+                if (data.message === "2FA is required") {
+                    // Handle 2FA logic, this could be showing a form, etc.
+                    handleLoginResponse(data);
+                    localStorage.setItem('is2faCompleted', 'true');
+                }
+
+            } catch (error) {
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = `Error: ${error.message}`;
+                errorDiv.style.display = 'block';
+                console.error('Error in auth fetch:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            localStorage.clear();
+
+            const is2faCompleted = localStorage.getItem('is2faCompleted');
+            
+            if (is2faCompleted === 'true') {
+                fetchAndDisplayUserProfile();  // Proceed with normal flow
+                return;
+            }
+            handle2fa_42API();
+            
         });
+
+        
 
         // Function to get CSRF token from cookies
         // function getCookie(name) {
@@ -1034,7 +1047,8 @@
             });
         }
 
-        /* Friends List */
+        /* Friendship */
+
         document.getElementById('friendsListBtn').addEventListener('click', function(){
             getAccessToken()
                 .then(accessToken => {
@@ -1065,8 +1079,6 @@
                 });    
         })
 
-        /* Incoming Friend Requests */
-
         document.getElementById('incomingFriendRequestsBtn').addEventListener('click', function() {
             getAccessToken()
                 .then(accessToken => {
@@ -1096,8 +1108,6 @@
                     alert(`Error: ${error.message}`);
                 });
         });
-
-        /* Outgoing Friend Requests */
 
         document.getElementById('outgoingFriendRequestsBtn').addEventListener('click', function() {
             getAccessToken()
