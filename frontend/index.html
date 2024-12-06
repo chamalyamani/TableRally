@@ -264,12 +264,40 @@
         })
 
         // Fetching profile details when clicking the "Fetch Profile" button
+        // async function getAccessToken() {
+        //     try {
+        //         const response = await fetch('/auth/get-access-token/', {
+        //             method: 'GET',
+        //             credentials: 'include', // Include cookies in the request
+        //         });
+
+        //         if (!response.ok) {
+        //             throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText}`);
+        //         }
+
+        //         const data = await response.json();
+
+        //         if (data.access_token) {
+        //             return data.access_token;
+        //         } 
+        //         else {
+        //             throw new Error('Access token not found in response');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching access token:', error);
+        //         throw error; // Rethrow the error to allow handling at the call site
+        //     }
+        // }
+        
         async function getAccessToken() {
             try {
                 const response = await fetch('/auth/get-access-token/', {
                     method: 'GET',
-                    credentials: 'include', // Include cookies in the request
+                    credentials: 'include',
                 });
+
+                if (response.status === 204)
+                    return null; // Return null when no token is found
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText}`);
@@ -280,11 +308,12 @@
                 if (data.access_token) {
                     return data.access_token;
                 } else {
-                    throw new Error('Access token not found in response');
+                    console.warn('Access token is not in the response payload.');
+                    return null; // Return null instead of throwing
                 }
             } catch (error) {
                 console.error('Error fetching access token:', error);
-                throw error; // Rethrow the error to allow handling at the call site
+                return null; // Return null to avoid breaking the flow
             }
         }
 
@@ -358,11 +387,11 @@
                 });
 
                 if (!twoFAResponse.ok) {
-                    throw new Error('Failed to fetch 2FA status');
+                    return null;
                 }
 
                 const twoFAData = await twoFAResponse.json();
-
+                
                 // Update 2FA button based on the fetched status
                 const enable2FABtn = document.getElementById('enable2FA');
                 enable2FABtn.textContent = twoFAData.two_fa_enabled ? 'Disable 2FA' : 'Enable 2FA';
@@ -602,7 +631,6 @@
         
         async function handle2fa_42API() {
             try {
-                // Call the backend to fetch the session data (auth_data)
                 const response = await fetch('/auth/holder/', {
                     method: 'GET',
                     credentials: 'include',  // Ensure cookies are sent with the request
@@ -613,15 +641,19 @@
                 }
 
                 const data = await response.json();
-
-                // Check if the response contains a message indicating 2FA is required
-                if (data.message === "2FA is required") {
-                    // Handle 2FA logic, this could be showing a form, etc.
-                    handleLoginResponse(data);
-                    localStorage.setItem('is2faCompleted', 'true');
+                
+                if (data.is_42_logged_in) {
+                    if (data.message === "2FA is required") {
+                        handleLoginResponse(data);
+                    } else {
+                        fetchAndDisplayUserProfile();
+                    }
                 }
-
-            } catch (error) {
+                else {
+                    fetchAndDisplayUserProfile();
+                }
+            } 
+            catch (error) {
                 const errorDiv = document.getElementById('error-message');
                 errorDiv.textContent = `Error: ${error.message}`;
                 errorDiv.style.display = 'block';
@@ -630,16 +662,16 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            localStorage.clear();
+            // localStorage.clear();
 
             const is2faCompleted = localStorage.getItem('is2faCompleted');
             
             if (is2faCompleted === 'true') {
                 fetchAndDisplayUserProfile();  // Proceed with normal flow
+                localStorage.setItem('is2faCompleted', 'false');
                 return;
             }
             handle2fa_42API();
-            
         });
 
         

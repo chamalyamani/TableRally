@@ -166,9 +166,10 @@ class UserAuthenticationView(APIView):
                 'temporary_token': temporary_token,
                 'message': "2FA is required",
             }
-            
+            request.session['is_42_logged_in'] = True
+
             return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
-            
+        request.session['is_42_logged_in'] = True
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         image_url = request.build_absolute_uri(user.image_url)
@@ -191,12 +192,27 @@ class tokenHolderFor2faWith_42API(APIView):
     """
     def get(self, request):
         auth_data = request.session.get('auth_data')
-        if not auth_data:
-            return JsonResponse({"error": "No authentication data found"}, status=400)
+        is_42_logged_in = request.session.get('is_42_logged_in', False)
 
-        del request.session['auth_data']
+        if auth_data:
+            del request.session['auth_data']
+        if is_42_logged_in:
+            del request.session['is_42_logged_in']
 
-        return JsonResponse(auth_data, status=200)
+        if auth_data and is_42_logged_in:
+            return JsonResponse({
+                'temporary_token': auth_data.get('temporary_token'),
+                'message': auth_data.get('message', ''),
+                'is_42_logged_in': True,
+            })
+
+        return JsonResponse({'is_42_logged_in': False, 'message': 'No 2FA required'}, status=200)
+        # if not auth_data:
+        #     return JsonResponse({"error": "No authentication data found"}, status=400)
+
+        # del request.session['auth_data']
+
+        # return JsonResponse(auth_data, status=200)
 
 
 @csrf_exempt #no need to csrf because already the JWT are secured and stored in http-only cookies
@@ -221,13 +237,11 @@ def refresh_access_token(request):
         return JsonResponse({"error": "Invalid refresh token or token expired"}, status=400)
 
 def get_access_token(request):
-
     access_token = request.COOKIES.get('access_token')
 
     if access_token:
-        return JsonResponse({"access_token": access_token})
-    else:
-        return JsonResponse({"error": "Access token not found"}, status=401)
+        return JsonResponse({"access_token": access_token}, status=200)
+    return JsonResponse({"access_token": None}, status=204)
 
 
 
