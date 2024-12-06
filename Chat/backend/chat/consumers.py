@@ -29,6 +29,16 @@ class   ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_add(self.conversation_id, self.channel_name)
         
             await self.accept()
+            existingBlock = await database_sync_to_async(BlockList.objects.filter(
+                conversation_id=self.conversation.id
+                ).first)()
+            if existingBlock:
+                await self.channel_layer.group_send(
+                    self.conversation_id,
+                    {
+                        'type': 'block_user',
+                    }
+                )
         else:
             print ("USER is NOT authenticated")
             await self.close()
@@ -68,10 +78,13 @@ class   ChatConsumer(AsyncWebsocketConsumer):
 
             block_action = BlockList(
                 blocker = TheBlocker,
-                blocked = TheBlocked
+                blocked = TheBlocked,
+                conversation_id = self.conversation
             )
+            print('blllloooooooooockkkkkk')
+            print(self.conversation.id)
             existingBlock = await database_sync_to_async(BlockList.objects.filter(
-                (Q(blocker=TheBlocker, blocked=TheBlocked)) | (Q(blocker=TheBlocked, blocked=TheBlocker))
+                conversation_id=self.conversation.id
                 ).first)()
             if not existingBlock:
                 print('NOOT EXISTING')
