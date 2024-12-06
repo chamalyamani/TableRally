@@ -36,6 +36,7 @@ let singleConversationList = [];
 let socket;
 let deleteChat = document.querySelector('.modal-delete-button');
 let blockChat = document.querySelector('.modal-block-button');
+let unblockChat = document.querySelector('.modal-unblock-button');
 let currentSender;
 let urls = [];
 let path;
@@ -273,10 +274,10 @@ function convClickAction(conv, singleConv) {
     conversationTopBar.style.display = 'flex';
     mainChat.style.display = 'flex';
     sending.style.display = 'flex';
-    if (blockList.includes(conv.id))
-        disableMessageBar();
-    else
-        enableMessageBar();
+    // if (blockList.includes(conv.id))
+    //     disableMessageBar();
+    // else
+    //     enableMessageBar();
     listMessages(conv);
     realTime(conv, singleConv);
 }
@@ -375,14 +376,37 @@ async function realTime(conv, singleConv) {
             removeBlur();
         }
         else if (receivedMessage.type == 'block_user') {
-            // console.log(singleConv)
+            console.log('222222222222222222');
+            console.log(receivedMessage);
+            console.log(currentUser);
             blockList.push(conv.id);
             disableMessageBar();
             removeBlur();
+            if (currentUser == receivedMessage.blocked)
+                blockButton.disabled = true;
+            else {
+                blockChat.style.display = 'none';
+                unblockChat.style.display = 'block';
+                div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'UNBLOCK THIS USER?'
+            }
+        }
+        else if (receivedMessage.type == 'unblock_user') {
+            console.log('333333333333333333');
+            enableMessageBar();
+            removeBlur();
+            blockButton.disabled = false;
+            blockChat.style.display = 'block';
+            unblockChat.style.display = 'none';
+            div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'BLOCK THIS USER?'
         }
         console.log('Message from server: ', receivedMessage.message);
     }
     socket.onopen = () => {
+        enableMessageBar();
+        blockButton.disabled = false;
+        blockChat.style.display = 'block';
+        unblockChat.style.display = 'none';
+        div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'BLOCK THIS USER?'
         sendButton.addEventListener('click', () => {
             if (messageInput.value)
             {
@@ -420,8 +444,12 @@ async function realTime(conv, singleConv) {
             socket.send(JSON.stringify(action));
             console.log(conv);
         })
-        // let data = { 'message': 'hello', 'user': 'kouferka' };
-        // socket.send(JSON.stringify(data));
+
+        unblockChat.addEventListener('click', () => {
+            console.log('UNBLOCKK');
+            let action = { 'action': 'unblock' };
+            socket.send(JSON.stringify(action));
+        })
     }
 }
 
