@@ -7,3 +7,5 @@ LOGIN AS ADMIN DID NOT WORK (backend)
 django CSS does not load (backend)
 
 when registring a user it gives confirm password (backend)
+
+check DELETE if nothing to delete (chat)
