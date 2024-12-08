@@ -317,6 +317,29 @@
             }
         }
 
+        // async function refreshAccessToken() {
+        //     try {
+        //         const response = await fetch('/auth/refresh/', {
+        //             method: 'POST',
+        //             credentials: 'include', // Include cookies in the request
+        //         });
+
+        //         if (response.ok) {
+        //             console.log("Access token refreshed successfully.");
+        //         } else {
+        //             const errorData = await response.json();
+        //             console.error("Failed to refresh token:", errorData.error);
+        //         }
+        //     } catch (error) {
+        //         console.error("Error while refreshing access token:", error);
+        //     }
+        // }
+
+        // setInterval(() => {
+        //     refreshAccessToken();
+        // }, 60 * 1000);
+
+
         function enable2FA() {
             // Fetch and display the QR code (you'll need to implement the API for this)
             getAccessToken()
@@ -447,11 +470,11 @@
                         alert('Your session has expired. Please log in again.');
                         localStorage.setItem('alertShown', 'true');  // Mark alert as shown
                     }
-
                     document.getElementById('userCard').style.display = 'none';
                     document.getElementById('loginForm').style.display = 'block';
                     document.getElementById('password-forgotten').style.display = 'block';
                 } else {
+                    console.log("5reeeeeeeeeeej fhalk");
                     // For other errors, show the login form
                     document.getElementById('userCard').style.display = 'none';
                     document.getElementById('loginForm').style.display = 'block';
@@ -637,7 +660,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+                    // throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+                    return;
                 }
 
                 const data = await response.json();
@@ -662,13 +686,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // localStorage.clear();
-
+            
             const is2faCompleted = localStorage.getItem('is2faCompleted');
             
             if (is2faCompleted === 'true') {
                 fetchAndDisplayUserProfile();  // Proceed with normal flow
-                localStorage.setItem('is2faCompleted', 'false');
+                localStorage.clear();
                 return;
             }
             handle2fa_42API();

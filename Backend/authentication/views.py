@@ -220,6 +220,7 @@ def refresh_access_token(request):
 
     # Get the refresh token from the cookie
     refresh_token = request.COOKIES.get('refresh_token')
+    
     if not refresh_token:
         return JsonResponse({"error": "Refresh token not provided"}, status=400)
 
@@ -235,6 +236,7 @@ def refresh_access_token(request):
 
     except Exception as e:
         return JsonResponse({"error": "Invalid refresh token or token expired"}, status=400)
+
 
 def get_access_token(request):
     access_token = request.COOKIES.get('access_token')
