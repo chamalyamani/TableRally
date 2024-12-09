@@ -81,6 +81,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://chat:9000',
 ]
 
+# CSRF_COOKIE_SECURE = True
+
 SITE_ID = 1
 
 ASGI_APPLICATION = 'main_backend.asgi.application'
@@ -225,6 +227,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 LOGIN_URL = '/auth/login/credentials'
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+
 
 # For development, print emails to the console
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

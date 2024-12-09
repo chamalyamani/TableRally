@@ -6,7 +6,7 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="index.css">
     
-</head>
+    </head>
 <body>
     <div id="error-message" style="display: none; color: red;"></div>
     
@@ -45,15 +45,16 @@
         <input type="text" id="2faTokenAfterLogin" name="2fa_token">
         <button type="submit" id="submit2FATokenAfterLogin">Submit 2FA Token</button>
     </div>
-   
-    <p id="password-forgotten">
-        Forgot your password?
-        <button id="passwordReset" >Reset your password</button>
-        <form id="passwordResetForm" style="display: none;">
-            <input type="email" id="email" placeholder="Enter your email" required>
-            <button type="submit">Send Reset Link</button>
-        </form>
-    </p>
+    <div id="app-container">
+        <p id="password-forgotten">
+            Forgot your password?
+            <button id="passwordReset" >Reset your password</button>
+            <form id="passwordResetForm">
+            </form>
+            <form id="passwordResetConfirmForm">
+            </form>
+        </p>
+    </div>
 
     <!-- Enable 2fa -->
     <div id="qrCodeContainer" style="display:none;">
@@ -164,7 +165,7 @@
             registerForm.style.display = 'block';
             document.getElementById('password-forgotten').style.display = 'none';
         });
-
+        
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -263,32 +264,6 @@
             submitRegistration(formData);
         })
 
-        // Fetching profile details when clicking the "Fetch Profile" button
-        // async function getAccessToken() {
-        //     try {
-        //         const response = await fetch('/auth/get-access-token/', {
-        //             method: 'GET',
-        //             credentials: 'include', // Include cookies in the request
-        //         });
-
-        //         if (!response.ok) {
-        //             throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText}`);
-        //         }
-
-        //         const data = await response.json();
-
-        //         if (data.access_token) {
-        //             return data.access_token;
-        //         } 
-        //         else {
-        //             throw new Error('Access token not found in response');
-        //         }
-        //     } catch (error) {
-        //         console.error('Error fetching access token:', error);
-        //         throw error; // Rethrow the error to allow handling at the call site
-        //     }
-        // }
-        
         async function getAccessToken() {
             try {
                 const response = await fetch('/auth/get-access-token/', {
@@ -318,29 +293,6 @@
                 return null; // Return null to avoid breaking the flow
             }
         }
-
-        // async function refreshAccessToken() {
-        //     try {
-        //         const response = await fetch('/auth/refresh/', {
-        //             method: 'POST',
-        //             credentials: 'include', // Include cookies in the request
-        //         });
-
-        //         if (response.ok) {
-        //             console.log("Access token refreshed successfully.");
-        //         } else {
-        //             const errorData = await response.json();
-        //             console.error("Failed to refresh token:", errorData.error);
-        //         }
-        //     } catch (error) {
-        //         console.error("Error while refreshing access token:", error);
-        //     }
-        // }
-
-        // setInterval(() => {
-        //     refreshAccessToken();
-        // }, 60 * 1000);
-
 
         function enable2FA() {
             // Fetch and display the QR code (you'll need to implement the API for this)
@@ -397,93 +349,217 @@
             .catch(error => console.error('Error disabling 2FA:', error));
         }
 
+        // async function fetchAndDisplayUserProfile() {
+        //     try {
+        //         // Fetch the access token once
+        //         const accessToken = await getAccessToken();
+
+        //         // Fetch 2FA status
+        //         const twoFAResponse = await fetch('/auth/check-2fa-status/', {
+        //             method: 'GET',
+        //             credentials: 'include',
+        //             headers: {
+        //                 'Authorization': `Bearer ${accessToken}`
+        //             }
+        //         });
+
+        //         if (!twoFAResponse.ok) {
+        //             return null;
+        //         }
+
+        //         const twoFAData = await twoFAResponse.json();
+                
+        //         // Update 2FA button based on the fetched status
+        //         const enable2FABtn = document.getElementById('enable2FA');
+        //         enable2FABtn.textContent = twoFAData.two_fa_enabled ? 'Disable 2FA' : 'Enable 2FA';
+
+        //         enable2FABtn.addEventListener('click', function () {
+        //             if (twoFAData.two_fa_enabled) {
+        //                 disable2FA();
+        //             } else {
+        //                 enable2FA();
+        //             }
+        //         });
+
+        //         // Fetch user profile
+        //         const profileResponse = await fetch('/user/profile/', {
+        //             method: 'GET',
+        //             credentials: 'include',
+        //             headers: {
+        //                 'Authorization': `Bearer ${accessToken}`
+        //             }
+        //         });
+
+        //         if (profileResponse.status === 401) {
+        //             throw new Error('Unauthorized');
+        //         }
+
+        //         if (!profileResponse.ok) {
+        //             throw new Error('Failed to fetch profile');
+        //         }
+
+        //         const profileData = await profileResponse.json();
+
+        //         // Update profile details on the page
+        //         localStorage.removeItem('alertShown');
+
+        //         document.getElementById('userName').textContent = profileData.username;
+        //         document.getElementById('userEmail').textContent = profileData.email;
+        //         document.getElementById('userImage').src = profileData.image;
+        //         document.getElementById('userImageUpdate').src = profileData.image;
+
+        //         document.getElementById('editUsername').value = profileData.username;
+        //         document.getElementById('editEmail').value = profileData.email;
+
+        //         // Show user card and hide login form
+        //         document.getElementById('userCard').style.display = 'block';
+        //         document.getElementById('loginForm').style.display = 'none';
+
+        //     } catch (error) {
+        //         console.error('Error:', error);
+
+        //         // Handle unauthorized error
+        //         if (error.message === 'Unauthorized') {
+        //             if (!localStorage.getItem('alertShown')) {
+        //                 alert('Your session has expired. Please log in again.');
+        //                 localStorage.setItem('alertShown', 'true');  // Mark alert as shown
+        //             }
+        //             document.getElementById('userCard').style.display = 'none';
+        //             document.getElementById('loginForm').style.display = 'block';
+        //             document.getElementById('password-forgotten').style.display = 'block';
+        //         } else {
+        //             // For other errors, show the login form
+        //             document.getElementById('userCard').style.display = 'none';
+        //             document.getElementById('loginForm').style.display = 'block';
+        //         }
+        //     }
+        // }
+ 
         async function fetchAndDisplayUserProfile() {
             try {
-                // Fetch the access token once
                 const accessToken = await getAccessToken();
 
-                // Fetch 2FA status
-                const twoFAResponse = await fetch('/auth/check-2fa-status/', {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (!twoFAResponse.ok) {
+                // Fetch 2FA status and update button
+                const twoFAStatus = await fetchTwoFAStatus(accessToken);
+                if(!twoFAStatus)
                     return null;
-                }
+                updateTwoFAButton(twoFAStatus);
 
-                const twoFAData = await twoFAResponse.json();
-                
-                // Update 2FA button based on the fetched status
-                const enable2FABtn = document.getElementById('enable2FA');
-                enable2FABtn.textContent = twoFAData.two_fa_enabled ? 'Disable 2FA' : 'Enable 2FA';
-
-                enable2FABtn.addEventListener('click', function () {
-                    if (twoFAData.two_fa_enabled) {
-                        disable2FA();
-                    } else {
-                        enable2FA();
-                    }
-                });
-
-                // Fetch user profile
-                const profileResponse = await fetch('/user/profile/', {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (profileResponse.status === 401) {
-                    throw new Error('Unauthorized');
-                }
-
-                if (!profileResponse.ok) {
-                    throw new Error('Failed to fetch profile');
-                }
-
-                const profileData = await profileResponse.json();
-
-                // Update profile details on the page
-                localStorage.removeItem('alertShown');
-
-                document.getElementById('userName').textContent = profileData.username;
-                document.getElementById('userEmail').textContent = profileData.email;
-                document.getElementById('userImage').src = profileData.image;
-                document.getElementById('userImageUpdate').src = profileData.image;
-
-                document.getElementById('editUsername').value = profileData.username;
-                document.getElementById('editEmail').value = profileData.email;
-
-                // Show user card and hide login form
-                document.getElementById('userCard').style.display = 'block';
-                document.getElementById('loginForm').style.display = 'none';
+                // Fetch user profile data
+                const profileData = await fetchUserProfile(accessToken);
+                updateUserProfileUI(profileData);
 
             } catch (error) {
                 console.error('Error:', error);
-
-                // Handle unauthorized error
-                if (error.message === 'Unauthorized') {
-                    if (!localStorage.getItem('alertShown')) {
-                        alert('Your session has expired. Please log in again.');
-                        localStorage.setItem('alertShown', 'true');  // Mark alert as shown
-                    }
-                    document.getElementById('userCard').style.display = 'none';
-                    document.getElementById('loginForm').style.display = 'block';
-                    document.getElementById('password-forgotten').style.display = 'block';
-                } else {
-                    console.log("5reeeeeeeeeeej fhalk");
-                    // For other errors, show the login form
-                    document.getElementById('userCard').style.display = 'none';
-                    document.getElementById('loginForm').style.display = 'block';
-                }
+                handleAuthError(error);
             }
         }
- 
+
+        // Fetch 2FA status
+        async function fetchTwoFAStatus(accessToken) {
+            const response = await fetch('/auth/check-2fa-status/', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                // throw new Error('Failed to fetch 2FA status');
+                return null;
+            }
+
+            return response.json();
+        }
+
+        // Update the 2FA button UI and functionality
+        function updateTwoFAButton(twoFAData) {
+            const enable2FABtn = document.getElementById('enable2FA');
+            let isTwoFAEnabled = twoFAData.two_fa_enabled;
+
+            // Set the initial button state
+            enable2FABtn.textContent = isTwoFAEnabled ? 'Disable 2FA' : 'Enable 2FA';
+
+            // Update button click handler dynamically
+            enable2FABtn.onclick = async () => {
+                try 
+                {
+                    if (isTwoFAEnabled) {
+                        await disable2FA();
+                        isTwoFAEnabled = false;
+                    } else {
+                        await enable2FA();
+                        isTwoFAEnabled = true;
+                    }
+                    enable2FABtn.textContent = isTwoFAEnabled ? 'Disable 2FA' : 'Enable 2FA';
+                } 
+                catch (error) {
+                    console.error('Failed to toggle 2FA:', error);
+                    alert('An error occurred while toggling 2FA. Please try again.');
+                }
+            };
+        }
+
+        // Fetch user profile
+        async function fetchUserProfile(accessToken) {
+            const response = await fetch('/user/profile/', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (response.status === 401) {
+                throw new Error('Unauthorized');
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile');
+            }
+
+            return response.json();
+        }
+
+        // Update the UI with user profile data
+        function updateUserProfileUI(profileData) {
+            localStorage.removeItem('alertShown');
+
+            document.getElementById('userName').textContent = profileData.username;
+            document.getElementById('userEmail').textContent = profileData.email;
+            document.getElementById('userImage').src = profileData.image;
+            document.getElementById('userImageUpdate').src = profileData.image;
+
+            document.getElementById('editUsername').value = profileData.username;
+            document.getElementById('editEmail').value = profileData.email;
+
+            // Show user card and hide login form
+            document.getElementById('userCard').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+        }
+
+        // Handle authentication or fetch errors
+        function handleAuthError(error) {
+            const userCard = document.getElementById('userCard');
+            const loginForm = document.getElementById('loginForm');
+            const forgotPassword = document.getElementById('password-forgotten');
+
+            userCard.style.display = 'none';
+            loginForm.style.display = 'block';
+
+            if (error.message === 'Unauthorized') {
+                if (!localStorage.getItem('alertShown')) {
+                    alert('Your session has expired. Please log in again.');
+                    localStorage.setItem('alertShown', 'true');
+                }
+                forgotPassword.style.display = 'block';
+            } else {
+                console.error('Unexpected error:', error);
+            }
+        }
+
+
         document.getElementById('fetchProfileBtn').addEventListener('click', function() {
             fetchAndDisplayUserProfile();
         });
@@ -698,37 +774,6 @@
             handle2fa_42API();
         });
 
-        
-
-        // Function to get CSRF token from cookies
-        // function getCookie(name) {
-        //     // Fetch CSRF token on page load
-        //     fetch('/user/get-csrf-token/', {  // Replace with your backend URL
-        //         method: 'GET',
-        //         credentials: 'include',  // Important to include cookies
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log('CSRF token fetched:', data.detail);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching CSRF token:', error);
-        //     });
-
-        //     let cookieValue = null;
-        //     if (document.cookie && document.cookie !== '') {
-        //         const cookies = document.cookie.split(';');
-        //         for (let i = 0; i < cookies.length; i++) {
-        //             const cookie = cookies[i].trim();
-        //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return cookieValue;
-        // }
-
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -744,42 +789,114 @@
             return cookieValue;
         }
 
+        function loadTemplate(url, callback) {
+            const appContainer = document.getElementById('app-container'); // Main SPA container
+
+            fetch(url, 
+            { 
+                method: 'GET', 
+                credentials: 'include' 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load template');
+                }
+                return response.text(); // Get the HTML content
+            })
+            .then(html => {
+                appContainer.innerHTML = html;
+                document.getElementById("loginForm").style.display = 'none';
+                if (callback) 
+                    callback();
+            })
+            .catch(error => console.error('Error loading template:', error));
+        }
+
         // Handle form submission for password reset
         document.getElementById('passwordReset').addEventListener('click', function(e) {
-            document.getElementById('passwordResetForm').style.display = 'block';
-          })
+            loadTemplate('/user/password_reset/', () => {
+                const form = document.getElementById('passwordResetForm');
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const email = document.getElementById('passwordResetEmail').value;
+                        if (!email) {
+                            alert("Please enter a valid email address.");
+                            return;
+                        }
+                        const csrfToken = getCookie('csrftoken');
 
-        document.getElementById('passwordResetForm').addEventListener('submit', function(e) {
-          e.preventDefault();
-          const email = document.getElementById('email').value;
-          const csrfToken = getCookie('csrftoken')
-          const formData = new URLSearchParams();
-          formData.append('email', email);
-          formData.append('csrfmiddlewaretoken', csrfToken);
+                        const formData = new URLSearchParams();
+                        formData.append('email', email);
+                        formData.append('csrfmiddlewaretoken', csrfToken);
 
-          fetch('/user/password_reset/', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                  'X-CSRFToken': csrfToken,
-              },
-              body: formData.toString(),
-              credentials: 'include'
-          })
-          .then(response => {
-              if (response.ok) {
-                  alert('Password reset link sent! Check your email.');
-                  document.getElementById('passwordResetForm').style.display = 'none';
-              } else {
-                  return response.json().then(data => {
-                      alert('Error: ' + data.error);
-                  });
-              }
-          })
-          .catch(error => console.error('Error:', error));
-            
+                        fetch('/user/password_reset/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: formData.toString(),
+                            credentials: 'include',
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                loadTemplate('/user/password_reset/done/');
+                            } else {
+                                alert('Failed to send reset link.');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                }
+            });
         });
-    
+
+        // Load password reset confirmation form
+        function loadPasswordResetConfirm(uidb64, token) {
+            loadTemplate(`/user/reset/${uidb64}/${token}/`, () => {
+                const form = document.getElementById('passwordResetConfirmForm');
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const newPassword = document.getElementById('newPassword').value;
+                        const csrfToken = getCookie('csrftoken');
+
+                        const formData = new URLSearchParams();
+                        formData.append('new_password1', newPassword);
+                        formData.append('new_password2', newPassword);
+                        formData.append('csrfmiddlewaretoken', csrfToken);
+
+                        fetch(`/user/reset/${uidb64}/${token}/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: formData.toString(),
+                            credentials: 'include',
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                loadTemplate('/user/reset/done/');
+                            } else {
+                                alert('Failed to reset password.');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                }
+            });
+        }
+
+        // function navigateToPasswordReset(uidb64 = null, token = null) {
+        //     if (!uidb64 || !token) {
+        //         loadTemplate('/password_reset/');
+        //     } else {
+        //         loadPasswordResetConfirm(uidb64, token);
+        //     }
+        // }
+
         // handle the setup of the 2FA
         document.getElementById('submit2FATokenSetup').addEventListener('click', function() {
             const twoFaToken = document.getElementById('2faTokenInputSetup').value;

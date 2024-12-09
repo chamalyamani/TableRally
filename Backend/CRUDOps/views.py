@@ -211,3 +211,5 @@ def user_profile_view(request, username):
 
     return JsonResponse(user_data)
 
+def password_reset_template(request):
+    return render(request, 'password_reset/password_reset_form.html')
