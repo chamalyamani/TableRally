@@ -44,26 +44,6 @@ class SendFriendRequestView(APIView):
 
         friendship = Friendship.objects.create(from_user=request.user, to_user=to_user, status='P')
 
-        notification = Notification.objects.create(
-            recipient=to_user,
-            sender=request.user,
-            action='FRIEND_REQUEST_SENT',
-        )
-        
-        # Send WebSocket notification
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"user_{to_user.id}",
-            {
-                "type": "send_notification",
-                "notification": {
-                    "type": "Friend Request",
-                    "message": f"{request.user.username} sent you a friend request.",
-                    "timestamp": notification.timestamp.isoformat(),
-                }
-            }
-        )
-        
         return Response({'message': 'Friend request sent successfully', 'friendship_id': friendship.id}, status=status.HTTP_200_OK)
 
 class AcceptFriendRequestView(APIView):
@@ -129,11 +109,7 @@ class CancelFriendRequestView(APIView):
     def delete(self, request, friendship_id):
         friendship = get_object_or_404(Friendship, id=friendship_id, from_user=request.user, status='P')
         friendship.delete()
-        # Notification.objects.create(
-        #     recipient=friendship.to_user,
-        #     sender=request.user,
-        #     action='FRIEND_REQUEST_CANCELED',
-        # )
+
         return Response({'message': 'Friend request canceled'}, status=status.HTTP_200_OK)
 
 class RemoveFriendView(APIView):
@@ -150,12 +126,6 @@ class RemoveFriendView(APIView):
         other_user = friendship.to_user if friendship.from_user == request.user else friendship.from_user
         friendship.delete()
 
-        # Create notification
-        # Notification.objects.create(
-        #     recipient=other_user,
-        #     sender=request.user,
-        #     action='FRIEND_REMOVED',
-        # )
         return Response({'message': 'Friend removed successfully'}, status=status.HTTP_200_OK)
 
 class BlockUserView(APIView):

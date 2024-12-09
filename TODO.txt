@@ -11,7 +11,8 @@ check for MAX REQUESTS
 
 
 // BACKEND TODO 
-check 2fa with intra
+check password reset
+✅ check 2fa with intra
 user refrech token
 add the remove button to remove the pdp
-add rae limit to limit login retries or password reset retries ...
+add rate limit to limit login retries or password reset retries ...

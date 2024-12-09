@@ -195,10 +195,12 @@ def user_profile_view(request, username):
 
 
     # Return the profile data along with relationship status
+    image_url = searched_user.image_url
+
     user_data = {
         'username': searched_user.username,
         'email': searched_user.email,
-        'image': searched_user.image.url,
+        'image': image_url,
         'is_friend': is_friend,
         'has_sent_request': has_sent_request,
         'has_received_request': has_received_request,
