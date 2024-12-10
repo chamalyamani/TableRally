@@ -34,102 +34,104 @@ from django.contrib.sites.shortcuts import get_current_site
 
 User = get_user_model()
     
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_profile(request):
-    user = request.user
-    image_url = user.image_url
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    if user.is_authenticated:
-        return Response({
-            "username": user.username, 
-            "email": user.email,
-            "image": image_url, 
-        })
-    return Response({"error": "User is not authenticated"}, status=401)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_account_view(request):
-    try:
+    def get(self, request):
         user = request.user
-        user.delete()  # Delete the user from the database
-        return Response({"message": "Your account has been deleted successfully."}, status=200)
-    except Exception as e:
-        return Response({"error": str(e)}, status=400)
+        return Response({
+            "username": user.username,
+            "email": user.email,
+            "image": user.image_url,
+        })
 
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def update_profile(request):
+class DeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    try:
+    def delete(self, request):
+        try:
+            user = request.user
+            user.delete()  # Delete the user from the database
+            return Response({"message": "Your account has been deleted successfully."}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
+
+class UpdateProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
         user = request.user
         data = request.data
+        try:
+            # Update user profile fields
+            anythingModified = False
+
+            anythingModified |= self.update_username(user, data)
+            anythingModified |= self.update_email(user, data)
+            anythingModified |= self.update_password(user, data)
+            anythingModified |= self.update_image(user, request)
+
+            if anythingModified:
+                # image_url = request.build_absolute_uri(user.image.url) if user.image else None
+                user.save()
+                return Response({"message": "Profile updated successfully!"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "No changes detected."}, status=status.HTTP_200_OK)
+
+        except ValidationError as e:
+            return Response({'error': e.messages}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': 'An unexpected error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update_username(self, user, data):
         new_username = data.get('username', user.username)
-        new_email = data.get('email', user.email)
-        old_password = data.get('OldPassword', None)
-        new_password = data.get('password', None)
-        confirm_password = data.get('confirm_password', None)
-        new_image = request.FILES.get('image')
-
-        if new_username:
+        if new_username != user.username:
             user.username = new_username
+            return True 
+        return False 
 
-        if old_password:
-            if not user.check_password(old_password):
-                return Response({'error': 'Old password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            if new_password:
-                return Response({'error': 'Old password is required to set a new password.'},
-                                status=status.HTTP_400_BAD_REQUEST)
+    def update_email(self, user, data):
+        new_email = data.get('email', user.email)
+        if new_email != user.email:
+            user.email = new_email
+            return True
+        return False
+    
+    def update_password(self, user, data):
+        old_password = data.get('OldPassword')
+        new_password = data.get('password')
+        confirm_password = data.get('confirm_password')
 
         if new_password:
+            if not old_password or not user.check_password(old_password):
+                raise ValidationError("Old password is incorrect or missing.")
             if new_password != confirm_password:
-                return Response({'error': 'Passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
-            try:
-                validate_password(new_password, user=user)
-                user.set_password(new_password)
-            except ValidationError as e:
-                return Response({'error': e.messages}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not new_password and confirm_password:
-            return Response({'error': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+                raise ValidationError("Passwords do not match.")
+            validate_password(new_password, user=user)
+            user.set_password(new_password)
+            return True
+        return False
 
-        if new_email:
-            user.email = new_email
-
+    def update_image(self, user, request):
+        new_image = request.FILES.get('image')
         max_file_size = 2 * 1024 * 1024  # 2 MB
 
         if new_image:
             if new_image.size > max_file_size:
-                return Response({'error': 'Image size should not exceed 2 MB.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            # Generate a unique filename
+                raise ValidationError("Image size should not exceed 2 MB.")
             new_filename = f'{uuid.uuid4()}_{new_image.name}'
-            # Save the image using default storage
             image_path = default_storage.save(f'profile_images/{new_filename}', new_image)
-            user.image = image_path
-        user.save()
+            if not user.image or user.image.url != image_path:
+                user.image = image_path
+                return True
+        return False
 
-        # Assuming you have MEDIA_URL configured to serve media files
-        image_url = request.build_absolute_uri(user.image.url) if user.image else None
-
-        return Response({
-            'username': user.username,
-            'email': user.email,
-            'image': image_url,
-        }, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({'error': 'An unexpected error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def get_csrf_token(request):
-    # This will return the CSRF token to the frontend
-    csrf_token = get_token(request)
-    return JsonResponse({'csrfToken': csrf_token})
+# def get_csrf_token(request):
+#     # This will return the CSRF token to the frontend
+#     csrf_token = get_token(request)
+#     return JsonResponse({'csrfToken': csrf_token})
 
 class UserSearchView(APIView):
     """
@@ -150,66 +152,66 @@ class UserSearchView(APIView):
         serializer = UserSearchSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class SearchedProfileView(APIView):
+    authentication_classes = [JWTAuthentication]  # Use JWT authentication
+    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access this view
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])  # Use JWT authentication
-@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
-def user_profile_view(request, username):
-    # Get the user being searched
-    searched_user = get_object_or_404(User, username=username)
+    def get(self, request, username):
+        # Get the user being searched
+        searched_user = get_object_or_404(User, username=username)
 
-    # The current user making the request
-    current_user = request.user
+        # The current user making the request
+        current_user = request.user
 
-    if current_user == searched_user:
-        return JsonResponse({'error': 'Cannot perform actions on your own profile.'}, status=400)
-    
-    # Check if the users are already friends
-    friendship = Friendship.objects.filter(
-        (Q(from_user=current_user, to_user=searched_user) | 
-        Q(from_user=searched_user, to_user=current_user)),
-        status__in=['A', 'P']  # Check for active or pending friendships only
-    ).first()
+        if current_user == searched_user:
+            return Response({'error': 'Cannot perform actions on your own profile.'}, status=HTTP_400_BAD_REQUEST)
 
-    is_friend = False
-    has_sent_request = False
-    has_received_request = False
-    friendship_id = None
+        # Check friendship status
+        friendship = Friendship.objects.filter(
+            (Q(from_user=current_user, to_user=searched_user) | 
+             Q(from_user=searched_user, to_user=current_user)),
+            status__in=['A', 'P']  # Check for active or pending friendships only
+        ).first()
 
-    if friendship:
-        friendship_id = friendship.id
-        if friendship.status == 'A':
-            is_friend = True
-        elif friendship.status == 'P':
-            if friendship.from_user == current_user:
-                has_sent_request = True
-            else:
-                has_received_request = True
+        is_friend = False
+        has_sent_request = False
+        has_received_request = False
+        friendship_id = None
 
-    is_blocked_by_user = Block.objects.filter(blocker=current_user, blocked=searched_user).exists()
-    is_blocked_by_other = Block.objects.filter(blocker=searched_user, blocked=current_user).exists() 
+        if friendship:
+            friendship_id = friendship.id
+            if friendship.status == 'A':
+                is_friend = True
+            elif friendship.status == 'P':
+                if friendship.from_user == current_user:
+                    has_sent_request = True
+                else:
+                    has_received_request = True
 
-    # If blocked by the user or the other user, limit access
-    # if is_blocked_by_user or is_blocked_by_other:
-    #     return JsonResponse({"error": "User is blocked"}, status=403)
+        # Check block status
+        is_blocked_by_user = Block.objects.filter(blocker=current_user, blocked=searched_user).exists()
+        is_blocked_by_other = Block.objects.filter(blocker=searched_user, blocked=current_user).exists()
 
+        # If blocked, limit access
+        if is_blocked_by_user or is_blocked_by_other:
+            return Response({"error": "User is blocked"}, status=status.HTTP_403_FORBIDDEN)
 
-    # Return the profile data along with relationship status
-    image_url = searched_user.image_url
+        # Return the profile data along with relationship status
+        image_url = searched_user.image_url
 
-    user_data = {
-        'username': searched_user.username,
-        'email': searched_user.email,
-        'image': image_url,
-        'is_friend': is_friend,
-        'has_sent_request': has_sent_request,
-        'has_received_request': has_received_request,
-        'friendship_id': friendship_id,
-        'is_blocked_by_user': is_blocked_by_user,
-        'is_blocked_by_other': is_blocked_by_other,
-    }
+        user_data = {
+            'username': searched_user.username,
+            'email': searched_user.email,
+            'image': image_url,
+            'is_friend': is_friend,
+            'has_sent_request': has_sent_request,
+            'has_received_request': has_received_request,
+            'friendship_id': friendship_id,
+            'is_blocked_by_user': is_blocked_by_user,
+            'is_blocked_by_other': is_blocked_by_other,
+        }
 
-    return JsonResponse(user_data)
+        return Response(user_data)
 
 def password_reset_template(request):
     return render(request, 'password_reset/password_reset_form.html')

@@ -19,7 +19,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.views.decorators.csrf import csrf_exempt
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -29,6 +29,7 @@ from io import BytesIO
 from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
+from django.views.generic.base import RedirectView
 
 
 class UsersInDB(ListView):
@@ -36,59 +37,61 @@ class UsersInDB(ListView):
     template_name = 'authentication/users_display.html'
     context_object_name = 'users_list'
 
+class Initiate42LoginView(RedirectView):
+    permanent = False  # Indicates this is a temporary redirect
 
-def initiate_42_login(request):
-    authorization_url = (
-        f"https://api.intra.42.fr/oauth/authorize?client_id={settings.CLIENT_ID}"
-        f"&redirect_uri={settings.REDIRECT_URI}&response_type=code&scope=public"
-    )
-    return redirect(authorization_url)
+    def get_redirect_url(self, *args, **kwargs):
+        return (
+            f"https://api.intra.42.fr/oauth/authorize?client_id={settings.CLIENT_ID}"
+            f"&redirect_uri={settings.REDIRECT_URI}&response_type=code&scope=public"
+        )
 
-def save_user_info_to_database(infos):
-    if not CustomUser.objects.filter(email=infos["email"]).exists():
-        user_info = CustomUser(username=infos["username"], email=infos["email"],  external_image_url=infos["external_image_url"])
-        user_info.save()
+class FortyTwoOAuthService:
+    """
+    A service class to handle 42 API authentication and user data retrieval.
+    """
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    
-    access_token = refresh.access_token
- 
-    return {
-        'refresh': str(refresh),  # Convert the token to a string
-        'access': str(access_token),  # Convert the access token to a string
-    }
- 
-def exchange_authorization_code(authorization_code):
-    token_url = "https://api.intra.42.fr/oauth/token"
-    token_data = {
-        "grant_type": "authorization_code",
-        "client_id": settings.CLIENT_ID,
-        "client_secret": settings.CLIENT_SECRET,
-        "code": authorization_code,
-        "redirect_uri": settings.REDIRECT_URI
-    }
-    try:
-        response = requests.post(token_url, data=token_data)
-        if response.status_code == 200:
-            access_token = response.json().get("access_token")
-            return access_token
-        else:
-            print(f"Token exchange failed: {response.text}")
+    @staticmethod
+    def exchange_authorization_code(authorization_code):
+        """
+        Exchange an authorization code for an access token using 42 API.
+        """
+        token_url = "https://api.intra.42.fr/oauth/token"
+        token_data = {
+            "grant_type": "authorization_code",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "code": authorization_code,
+            "redirect_uri": settings.REDIRECT_URI,
+        }
+        try:
+            response = requests.post(token_url, data=token_data)
+            if response.status_code == 200:
+                return response.json().get("access_token")
+            else:
+                print(f"Token exchange failed: {response.text}")
+                return None
+        except requests.RequestException as e:
+            print(f"Exception during token exchange: {e}")
             return None
-    except requests.RequestException as e:
-        print(f"Exception during token exchange: {e}")
-        return None
 
-def get_user_info(access_token):
-    user_info_url = "https://api.intra.42.fr/v2/me"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(user_info_url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Failed to fetch user information: {response.text}")
-        return None
+    @staticmethod
+    def get_user_info(access_token):
+        """
+        Fetch user information from the 42 API using an access token.
+        """
+        user_info_url = "https://api.intra.42.fr/v2/me"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        try:
+            response = requests.get(user_info_url, headers=headers)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                print(f"Failed to fetch user information: {response.text}")
+                return None
+        except requests.RequestException as e:
+            print(f"Exception during user info retrieval: {e}")
+            return None
 
 class UserAuthenticationView(APIView):
     """ 
@@ -101,7 +104,7 @@ class UserAuthenticationView(APIView):
             return Response({"error": "Authorization code not provided"}, status=status.HTTP_400_BAD_REQUEST)
     
         try:
-            access_token = exchange_authorization_code(authorization_code)
+            access_token = FortyTwoOAuthService.exchange_authorization_code(authorization_code)
         except Exception as e:
             return Response({"error": "Failed to exchange authorization code for tokennnn"}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -109,7 +112,7 @@ class UserAuthenticationView(APIView):
             return Response({"error": "Failed to exchange authorization code for token"}, status=status.HTTP_400_BAD_REQUEST)
     
         try:
-            user_info = get_user_info(access_token)
+            user_info = FortyTwoOAuthService.get_user_info(access_token)
         except Exception as e:
             return Response({"error": "Failed to fetch user information"}, status=status.HTTP_400_BAD_REQUEST)
      
@@ -166,6 +169,7 @@ class UserAuthenticationView(APIView):
                 'temporary_token': temporary_token,
                 'message': "2FA is required",
             }
+
             request.session['is_42_logged_in'] = True
 
             return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
@@ -214,38 +218,45 @@ class tokenHolderFor2faWith_42API(APIView):
 
         # return JsonResponse(auth_data, status=200)
 
+class RefreshAccessTokenView(APIView):
+    permission_classes = [AllowAny]  # No authentication needed since JWT handles security
 
-@csrf_exempt #no need to csrf because already the JWT are secured and stored in http-only cookies
-def refresh_access_token(request):
+    def post(self, request, *args, **kwargs):
+        # Get the refresh token from the cookie
+        refresh_token = request.COOKIES.get('refresh_token')
 
-    # Get the refresh token from the cookie
-    refresh_token = request.COOKIES.get('refresh_token')
-    
-    if not refresh_token:
-        return JsonResponse({"error": "Refresh token not provided"}, status=400)
+        if not refresh_token:
+            return Response({"error": "Refresh token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        # Create a new access token using the refresh token
-        token = RefreshToken(refresh_token)
-        new_access_token = str(token.access_token)
+        try:
+            # Create a new access token using the refresh token
+            token = RefreshToken(refresh_token)
+            new_access_token = str(token.access_token)
 
-        # Respond with the new access token
-        response = JsonResponse({"message": "Token refreshed successfully"})
-        response.set_cookie(key='access_token', value=new_access_token, httponly=True, secure=True, samesite='Lax')
-        return response
+            # Respond with the new access token
+            response = Response({"message": "Token refreshed successfully"}, status=status.HTTP_200_OK)
+            response.set_cookie(
+                key='access_token',
+                value=new_access_token,
+                httponly=True,
+                secure=True,
+                samesite='Lax'
+            )
+            return response
 
-    except Exception as e:
-        return JsonResponse({"error": "Invalid refresh token or token expired"}, status=400)
+        except Exception as e:
+            return Response({"error": "Invalid refresh token or token expired"}, status=status.HTTP_400_BAD_REQUEST)
 
+class GetAccessTokenView(APIView):
+    permission_classes = [AllowAny]  # No authentication needed since JWT handles security
 
-def get_access_token(request):
-    access_token = request.COOKIES.get('access_token')
+    def get(self, request, *args, **kwargs):
+        # Get the access token from the cookie
+        access_token = request.COOKIES.get('access_token')
 
-    if access_token:
-        return JsonResponse({"access_token": access_token}, status=200)
-    return JsonResponse({"access_token": None}, status=204)
-
-
+        if access_token:
+            return Response({"access_token": access_token}, status=status.HTTP_200_OK)
+        return Response({"access_token": None}, status=status.HTTP_204_NO_CONTENT)
 
 
 # Authenticaion using JWT concept with credentials
@@ -259,26 +270,6 @@ class RegisterView(APIView):
             except IntegrityError:
                 return Response({"error": "A user with this username or email already exists."}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # def get(self, request):
-    #     return render(request, 'authentication/register.html')
-
-    # def post(self, request):
-    #     serializer = RegistrationSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         try:
-    #             serializer.save()
-    #             messages.success(request, "Registration successful. You can now sign in.")
-    #             return redirect(os.getenv('DOMAIN_NAME'))
-    #         except IntegrityError:
-    #             # This should rarely happen due to serializer validation, but handle just in case
-    #             messages.error(request, "A user with this username or email already exists.")
-    #             return render(request, 'authentication/register.html', {'serializer': serializer})
-    #     else:
-    #         # Collect all error messages
-    #         for field, errors in serializer.errors.items():
-    #             for error in errors:
-    #                 messages.error(request, f"{field.capitalize()}: {error}")
-    #         return render(request, 'authentication/register.html', {'serializer': serializer})
 
 class LoginView(APIView):
     def post(self, request):
@@ -347,24 +338,28 @@ class LoginView(APIView):
 
         return response
 
+class LogoutAndBlacklistView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
-@api_view(['POST'])
-def logout_and_blacklist(request):
-    try:
+    def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')
-        if refresh_token:
-            try:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-                response = JsonResponse({"message": "Logged out successfully"})
-                response.delete_cookie('access_token')
-                response.delete_cookie('refresh_token')
-                return response
-            except Exception as e:
-                return JsonResponse({"error": "Failed to blacklist token"}, status=400)
-    except Exception as e:
-        return Response({"error": str(e)}, status=400)
+        if not refresh_token:
+            return Response({"error": "Refresh token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            # Blacklist the refresh token
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            # Clear access and refresh tokens from cookies
+            response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+
+            return response
+
+        except Exception as e:
+            return Response({"error": "Failed to blacklist token"}, status=status.HTTP_400_BAD_REQUEST)
 
 class CheckTwoFactorStatusView(APIView):
     """

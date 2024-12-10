@@ -8,11 +8,11 @@ import requests
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('<str:username>/profile/', user_profile_view, name='user_profile'),
-    path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),
-    path('profile/', get_profile, name='user_profile'),
-    path('delete-account/', delete_account_view, name='delete-account'),
-    path('update-profile/', update_profile, name='update-account'),
+    path('<str:username>/profile/', SearchedProfileView.as_view(), name='user_profile'),
+    # path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),
+    path('profile/', UserProfileView.as_view(), name='user_profile'),
+    path('delete-account/', DeleteAccountView.as_view(), name='delete-account'),
+    path('update-profile/', UpdateProfileView.as_view(), name='update-account'),
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name='password_reset/password_reset_form.html',  # Your frontend form template
         email_template_name='password_reset/password_reset_email.txt',  # Plain text email template

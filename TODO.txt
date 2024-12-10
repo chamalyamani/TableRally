@@ -14,5 +14,8 @@ check for MAX REQUESTS
 check password reset after doing SPA
 ✅ check 2fa with intra
 ✅ user refrech token
-add the remove button to remove the pdp
+add dynamic search
+change buttons state/TextContent after clicking (such as send friend req to cancel)
+handle size for big files upload
+rewrite crud views into class based views and use built-in views
 add rate limit to limit login retries or password reset retries ...
