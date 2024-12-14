@@ -31,12 +31,6 @@ import base64
 from datetime import datetime, timedelta
 from django.views.generic.base import RedirectView
 
-
-class UsersInDB(ListView):
-    model = CustomUser
-    template_name = 'authentication/users_display.html'
-    context_object_name = 'users_list'
-
 class Initiate42LoginView(RedirectView):
     permanent = False  # Indicates this is a temporary redirect
 

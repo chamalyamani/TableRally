@@ -11,11 +11,12 @@ check for MAX REQUESTS
 
 
 // BACKEND TODO 
+
 check password reset after doing SPA
 ✅ check 2fa with intra
 ✅ user refrech token
 add dynamic search
+check friendship notifications
 change buttons state/TextContent after clicking (such as send friend req to cancel)
 handle size for big files upload
-rewrite crud views into class based views and use built-in views
 add rate limit to limit login retries or password reset retries ...

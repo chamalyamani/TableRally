@@ -2,7 +2,6 @@ from django.urls import path
 from authentication.views import *
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import UsersInDB
 
 urlpatterns = [
     path('login/42-intra/', Initiate42LoginView.as_view(), name='start_42_oauth'),
@@ -12,7 +11,6 @@ urlpatterns = [
     path('callback/', UserAuthenticationView.as_view(), name='callback'),  # Where 42 will redirect back
     path('holder/', tokenHolderFor2faWith_42API.as_view(), name='holder_view'),
     path('get-access-token/', GetAccessTokenView.as_view()),
-    path('users/', UsersInDB.as_view(), name='users'),
     path('health_checker/', health_checker, name='health_checker'),
     path('refresh/', RefreshAccessTokenView.as_view(), name='refresh_access_token'),
     path('check-2fa-status/', CheckTwoFactorStatusView.as_view(), name='check_2fa_status'),
