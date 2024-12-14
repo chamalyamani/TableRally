@@ -969,289 +969,289 @@
         });
     
         // handle search bar
-        // document.getElementById('searchBtnInProfile').addEventListener('click', function(){
-
-        //     document.getElementById('searchBar').style.display = 'block';
-            
-        //     document.getElementById('searchBtn').addEventListener('click', function() {
-        //     const query = document.getElementById('searchInput').value.trim();
-        //     if (!query) {
-        //         alert('Please enter a search query.');
-        //         return;
-        //     }
-        //     getAccessToken()
-        //     .then(accessToken => {
-        //         return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
-        //             method: 'GET',
-        //             headers: {
-        //                 'Authorization': `Bearer ${accessToken}`,
-        //             },
-        //             credentials: 'include',
-        //         })
-        //     })
-        //     .then(response => {
-        //         // if (!response.ok) {
-        //         //     return response.json()
-        //         //     .then(err => { 
-        //         //         throw new Error(err.error || 'Search failed'); });
-        //         // }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         displaySearchResults(data);
-        //     })
-        //     .catch(error => {
-        //         return null;
-        //         // console.error('Error:', error);
-        //         // alert(`Error: ${error.message}`);
-        //     });
-        // });
-
-        //     function fetchSearchedUserProfile(username) {
-        //         getAccessToken()
-        //         .then(accessToken => {
-        //             return fetch(`/user/${username}/profile/`, { 
-        //             method: 'GET',
-        //             credentials: 'include', // Send cookies with the request if needed
-        //             headers: {
-        //                     'Authorization': `Bearer ${accessToken}`,
-        //                 },
-        //         })})
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             // Hide the search results
-        //             document.getElementById('searchResults').style.display = 'none';
-
-        //             // Show the user's profile
-        //             displayUserProfile(data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error fetching user profile:', error);
-        //         });
-        //     }
-
-        //     function displayUserProfile(user) {
-        //         const profileContainer = document.getElementById('userProfile');
-        //         profileContainer.innerHTML = ''; // Clear previous content if any
-                
-        //         const userProfileCard = user.is_blocked_by_other ? `
-        //             <div class="profile-card">
-        //                 <p>This user has blocked you. Profile information is unavailable.</p>
-        //             </div>
-        //         ` : `
-        //             <div class="profile-card">
-        //                 <img src="${user.image}" alt="${user.username}'s profile picture" class="profile-image">
-        //                 <h1>${user.username}</h1>
-        //                 <p>${user.email}</p>
-        //                 ${getActionButton(user)}
-        //                 ${getBlockButton(user)}
-        //             </div>
-        //         `;
-
-        //         profileContainer.innerHTML = userProfileCard;
-        //         profileContainer.style.display = 'block';
-
-        //         // Add event listeners for buttons only if not blocked by the other user
-        //         if (!user.is_blocked_by_other && !user.is_friend) {
-        //             document.querySelectorAll('.actionFriendBtn').forEach(button => {
-        //                 button.addEventListener('click', (event) => handleFriendAction(user));
-        //             });
-
-        //             const blockUserBtn = document.querySelector('.blockUserBtn');
-        //             if (blockUserBtn) {
-        //                 blockUserBtn.addEventListener('click', () => toggleBlockUser(user.username, user.is_blocked_by_user));
-        //             }
-        //         }
-        //     }
-
-        //     function getActionButton(user) {
-        //         if (user.is_blocked_by_user || user.is_blocked_by_other) {
-        //             // If there's a blocking relationship, show no friend request buttons
-        //             return '';
-        //         }
-
-        //         if (user.has_sent_request) {
-        //             return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Cancel Friend Request</button>`;
-        //         }
-
-        //         if (user.has_received_request) {
-        //             return `
-        //                 <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Accept Friend Request</button>
-        //                 <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Reject Friend Request</button>
-        //             `;
-        //         }
-
-        //         if (user.is_friend) {
-        //             return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Remove Friend</button>`;
-        //         }
-        //         // If no friendship exists and not blocked, show "Send Friend Request"
-        //         return `<button class="actionFriendBtn" data-username="${user.username}">Send Friend Request</button>`;
-        //     }
-            
-        //     function getBlockButton(user) {
-        //         // Always show the Block/Unblock button if the current user is not blocked by the other
-        //         if (!user.is_blocked_by_other) {
-        //             return `
-        //                 <button class="blockUserBtn" data-username="${user.username}" data-is-blocked="${user.is_blocked_by_user}">
-        //                     ${user.is_blocked_by_user ? 'Unblock User' : 'Block User'}
-        //                 </button>
-        //             `;
-        //         }
-        //         return ''; // No block button if current user is blocked by the searched user
-        //     }
-
-        //     function handleFriendAction(user) {
-        //         const actionBtnText = event.target.textContent.trim();
-        //         const friendshipId = event.target.dataset.friendshipId;
-
-        //         if (actionBtnText === 'Accept Friend Request') {
-        //             acceptFriendRequest(friendshipId);
-        //         } else if (actionBtnText === 'Reject Friend Request') {
-        //             rejectFriendRequest(friendshipId);
-        //         } else if (actionBtnText === 'Remove Friend') {
-        //             removeFriend(friendshipId);
-        //         } else if (actionBtnText === 'Cancel Friend Request') {
-        //             cancelFriendRequest(friendshipId);
-        //         } else {
-        //             sendFriendRequest(user.username);
-        //         }
-        //     }
-
-        //     function displaySearchResults(users) {
-        //         const resultsContainer = document.getElementById('searchResults');
-        //         resultsContainer.innerHTML = '';  // Clear previous results
-
-        //         if (users.length === 0) {
-        //             resultsContainer.innerHTML = '<p>No users found.</p>';
-        //             return;
-        //         }
-
-        //         users.forEach(user => {
-        //             const userItem = document.createElement('div');
-        //             userItem.classList.add('user-item');
-                    
-        //             const userImage = document.createElement('img');
-        //             userImage.src = user.image;
-        //             userImage.alt = `${user.username}'s profile picture`;
-                    
-        //             const userInfo = document.createElement('div');
-        //             userInfo.innerHTML = `<a href=""><strong>${user.username}</strong></a><br>${user.email}`;
-        //             userItem.appendChild(userImage);
-        //             userItem.appendChild(userInfo);
-        //             resultsContainer.appendChild(userItem);
-
-        //             userInfo.querySelector('a').addEventListener('click', function(e) {
-        //                 e.preventDefault();
-        //                 const username = `${user.username}`;
-        //                 fetchSearchedUserProfile(username);
-        //             });
-        //         });
-        // }   
-        
-        // })
         document.getElementById('searchBtnInProfile').addEventListener('click', function(){
+
             document.getElementById('searchBar').style.display = 'block';
-            let debounceTimeout; // Timeout for debounce
-            let cachedResults = {}; // Cache for previously searched queries
-
-            document.getElementById('searchInput').addEventListener('input', function (e) {
-            const query = e.target.value.trim();
-
-            // Clear the debounce timeout
-            clearTimeout(debounceTimeout);
-
-            // If the query is too short, clear results and stop
-            if (query.length < 3) {
-                clearSearchResults();
+            
+            document.getElementById('searchBtn').addEventListener('click', function() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert('Please enter a search query.');
                 return;
             }
-
-            // Set a new debounce timeout
-            debounceTimeout = setTimeout(() => {
-                // Check the cache before making a request
-                if (cachedResults[query]) {
-                    displaySearchResults(cachedResults[query]);
-                } else {
-                    performSearch(query);
-                }
-            }, 500); // Increased debounce delay to 500ms
-            });
-
-            function performSearch(query) {
             getAccessToken()
+            .then(accessToken => {
+                return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                    credentials: 'include',
+                })
+            })
+            .then(response => {
+                // if (!response.ok) {
+                //     return response.json()
+                //     .then(err => { 
+                //         throw new Error(err.error || 'Search failed'); });
+                // }
+                return response.json();
+            })
+            .then(data => {
+                displaySearchResults(data);
+            })
+            .catch(error => {
+                return null;
+                // console.error('Error:', error);
+                // alert(`Error: ${error.message}`);
+            });
+        });
+
+            function fetchSearchedUserProfile(username) {
+                getAccessToken()
                 .then(accessToken => {
-                    return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
-                        method: 'GET',
-                        headers: {
+                    return fetch(`/user/${username}/profile/`, { 
+                    method: 'GET',
+                    credentials: 'include', // Send cookies with the request if needed
+                    headers: {
                             'Authorization': `Bearer ${accessToken}`,
                         },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch search results');
-                    }
-                    return response.json();
-                })
-                .then(users => {
-                    // Cache the results for this query
-                    cachedResults[query] = users;
+                })})
+                .then(response => response.json())
+                .then(data => {
+                    // Hide the search results
+                    document.getElementById('searchResults').style.display = 'none';
 
-                    // Display the results
-                    displaySearchResults(users);
+                    // Show the user's profile
+                    displayUserProfile(data);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    displaySearchError('Error fetching search results.');
+                    console.error('Error fetching user profile:', error);
                 });
             }
 
-            // Clear search results
-            function clearSearchResults() {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = '';
+            function displayUserProfile(user) {
+                const profileContainer = document.getElementById('userProfile');
+                profileContainer.innerHTML = ''; // Clear previous content if any
+                
+                const userProfileCard = user.is_blocked_by_other ? `
+                    <div class="profile-card">
+                        <p>This user has blocked you. Profile information is unavailable.</p>
+                    </div>
+                ` : `
+                    <div class="profile-card">
+                        <img src="${user.image}" alt="${user.username}'s profile picture" class="profile-image">
+                        <h1>${user.username}</h1>
+                        <p>${user.email}</p>
+                        ${getActionButton(user)}
+                        ${getBlockButton(user)}
+                    </div>
+                `;
+
+                profileContainer.innerHTML = userProfileCard;
+                profileContainer.style.display = 'block';
+
+                // Add event listeners for buttons only if not blocked by the other user
+                if (!user.is_blocked_by_other && !user.is_friend) {
+                    document.querySelectorAll('.actionFriendBtn').forEach(button => {
+                        button.addEventListener('click', (event) => handleFriendAction(user));
+                    });
+
+                    const blockUserBtn = document.querySelector('.blockUserBtn');
+                    if (blockUserBtn) {
+                        blockUserBtn.addEventListener('click', () => toggleBlockUser(user.username, user.is_blocked_by_user));
+                    }
+                }
             }
 
-            // Display search results dynamically
+            function getActionButton(user) {
+                if (user.is_blocked_by_user || user.is_blocked_by_other) {
+                    // If there's a blocking relationship, show no friend request buttons
+                    return '';
+                }
+
+                if (user.has_sent_request) {
+                    return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Cancel Friend Request</button>`;
+                }
+
+                if (user.has_received_request) {
+                    return `
+                        <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Accept Friend Request</button>
+                        <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Reject Friend Request</button>
+                    `;
+                }
+
+                if (user.is_friend) {
+                    return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Remove Friend</button>`;
+                }
+                // If no friendship exists and not blocked, show "Send Friend Request"
+                return `<button class="actionFriendBtn" data-username="${user.username}">Send Friend Request</button>`;
+            }
+            
+            function getBlockButton(user) {
+                // Always show the Block/Unblock button if the current user is not blocked by the other
+                if (!user.is_blocked_by_other) {
+                    return `
+                        <button class="blockUserBtn" data-username="${user.username}" data-is-blocked="${user.is_blocked_by_user}">
+                            ${user.is_blocked_by_user ? 'Unblock User' : 'Block User'}
+                        </button>
+                    `;
+                }
+                return ''; // No block button if current user is blocked by the searched user
+            }
+
+            function handleFriendAction(user) {
+                const actionBtnText = event.target.textContent.trim();
+                const friendshipId = event.target.dataset.friendshipId;
+
+                if (actionBtnText === 'Accept Friend Request') {
+                    acceptFriendRequest(friendshipId);
+                } else if (actionBtnText === 'Reject Friend Request') {
+                    rejectFriendRequest(friendshipId);
+                } else if (actionBtnText === 'Remove Friend') {
+                    removeFriend(friendshipId);
+                } else if (actionBtnText === 'Cancel Friend Request') {
+                    cancelFriendRequest(friendshipId);
+                } else {
+                    sendFriendRequest(user.username);
+                }
+            }
+
             function displaySearchResults(users) {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = ''; // Clear previous results
+                const resultsContainer = document.getElementById('searchResults');
+                resultsContainer.innerHTML = '';  // Clear previous results
 
-            if (users.length === 0) {
-                resultsContainer.innerHTML = '<p>No users found.</p>';
-                return;
-            }
+                if (users.length === 0) {
+                    resultsContainer.innerHTML = '<p>No users found.</p>';
+                    return;
+                }
 
-            users.forEach(user => {
-                const userItem = document.createElement('div');
-                userItem.classList.add('user-item');
+                users.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.classList.add('user-item');
+                    
+                    const userImage = document.createElement('img');
+                    userImage.src = user.image;
+                    userImage.alt = `${user.username}'s profile picture`;
+                    
+                    const userInfo = document.createElement('div');
+                    userInfo.innerHTML = `<a href=""><strong>${user.username}</strong></a><br>${user.email}`;
+                    userItem.appendChild(userImage);
+                    userItem.appendChild(userInfo);
+                    resultsContainer.appendChild(userItem);
 
-                const userImage = document.createElement('img');
-                userImage.src = user.image;
-                userImage.alt = `${user.username}'s profile picture`;
-
-                const userInfo = document.createElement('div');
-                userInfo.innerHTML = `<a href="#"><strong>${user.username}</strong></a><br>${user.email}`;
-                userItem.appendChild(userImage);
-                userItem.appendChild(userInfo);
-                resultsContainer.appendChild(userItem);
-
-                // Attach event to open user profile
-                userInfo.querySelector('a').addEventListener('click', function (e) {
-                    e.preventDefault();
-                    fetchSearchedUserProfile(user.username);
+                    userInfo.querySelector('a').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const username = `${user.username}`;
+                        fetchSearchedUserProfile(username);
+                    });
                 });
-            });
-            }
-
-            // Display an error message in the search results
-            function displaySearchError(message) {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = `<p class="error-message">${message}</p>`;
-            }
+        }   
+        
         })
+        
+        // document.getElementById('searchBtnInProfile').addEventListener('click', function(){
+        //     document.getElementById('searchBar').style.display = 'block';
+        //     let debounceTimeout; // Timeout for debounce
+        //     let cachedResults = {}; // Cache for previously searched queries
 
+        //     document.getElementById('searchInput').addEventListener('input', function (e) {
+        //     const query = e.target.value.trim();
+
+        //     // Clear the debounce timeout
+        //     clearTimeout(debounceTimeout);
+
+        //     // If the query is too short, clear results and stop
+        //     if (query.length < 1) {
+        //         clearSearchResults();
+        //         return;
+        //     }
+
+        //     // Set a new debounce timeout
+        //     debounceTimeout = setTimeout(() => {
+        //         // Check the cache before making a request
+        //         if (cachedResults[query]) {
+        //             displaySearchResults(cachedResults[query]);
+        //         } else {
+        //             performSearch(query);
+        //         }
+        //     }, 500); // Increased debounce delay to 500ms
+        //     });
+
+        //     function performSearch(query) {
+        //     getAccessToken()
+        //         .then(accessToken => {
+        //             return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
+        //                 method: 'GET',
+        //                 headers: {
+        //                     'Authorization': `Bearer ${accessToken}`,
+        //                 },
+        //                 credentials: 'include',
+        //             });
+        //         })
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 throw new Error('Failed to fetch search results');
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(users => {
+        //             // Cache the results for this query
+        //             cachedResults[query] = users;
+
+        //             // Display the results
+        //             displaySearchResults(users);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             displaySearchError('Error fetching search results.');
+        //         });
+        //     }
+
+        //     // Clear search results
+        //     function clearSearchResults() {
+        //     const resultsContainer = document.getElementById('searchResults');
+        //     resultsContainer.innerHTML = '';
+        //     }
+
+        //     // Display search results dynamically
+        //     function displaySearchResults(users) {
+        //     const resultsContainer = document.getElementById('searchResults');
+        //     resultsContainer.innerHTML = ''; // Clear previous results
+
+        //     if (users.length === 0) {
+        //         resultsContainer.innerHTML = '<p>No users found.</p>';
+        //         return;
+        //     }
+
+        //     users.forEach(user => {
+        //         const userItem = document.createElement('div');
+        //         userItem.classList.add('user-item');
+
+        //         const userImage = document.createElement('img');
+        //         userImage.src = user.image;
+        //         userImage.alt = `${user.username}'s profile picture`;
+
+        //         const userInfo = document.createElement('div');
+        //         userInfo.innerHTML = `<a href="#"><strong>${user.username}</strong></a><br>${user.email}`;
+        //         userItem.appendChild(userImage);
+        //         userItem.appendChild(userInfo);
+        //         resultsContainer.appendChild(userItem);
+
+        //         // Attach event to open user profile
+        //         userInfo.querySelector('a').addEventListener('click', function (e) {
+        //             e.preventDefault();
+        //             // fetchSearchedUserProfile(user.username);
+        //         });
+        //     });
+        //     }
+
+        //     // Display an error message in the search results
+        //     function displaySearchError(message) {
+        //     const resultsContainer = document.getElementById('searchResults');
+        //     resultsContainer.innerHTML = `<p class="error-message">${message}</p>`;
+        //     }
+        // })
 
         // Placeholder functions for friendship management actions
         function displayFriendsList(friends) {

@@ -15,6 +15,7 @@ check for MAX REQUESTS
 check password reset after doing SPA
 ✅ check 2fa with intra
 ✅ user refrech token
+check update input for username and email not to be blank=true
 add dynamic search
 check friendship notifications
 change buttons state/TextContent after clicking (such as send friend req to cancel)
