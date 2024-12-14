@@ -624,7 +624,18 @@ body {
     object-position: center; /* Center the image if it's being cropped */
 }
 
-.modal-user p {
+.modal-user ul {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    padding-left: 5px;
+}
+
+.modal-user .li1 {
+    list-style: none;
     align-self: center;
     font-family: 'Baloo Bhai 2', cursive;
     font-size: 20px;
@@ -718,6 +729,29 @@ body {
 }
 
 .modal-delete-button:active, .modal-block-button:active {
+    transform: translateY(4px);
+    border: none;
+}
+
+.modal-unblock-button {
+    display: none;
+    margin: 30px;
+    font-size: 24px;
+    color: white;
+    width: 120px; /* You can keep this or change it to match the other button */
+    height: 40px;
+    background-color: red;
+    font-family: 'Baloo Bhai', cursive;
+    border-radius: 15px;
+    cursor: pointer;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.modal-unblock-button:active {
     transform: translateY(4px);
     border: none;
 }

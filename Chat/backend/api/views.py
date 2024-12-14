@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from chat.models import Messages, Conversations
-from .serializers import ChatOverviewSerializer, ConversationDetailSerializer, CreateConversationSerializer
+from .serializers import ChatOverviewSerializer, ConversationDetailSerializer, CreateConversationSerializer, ListUsersSerializer
 # from django.contrib.auth.models import User
 from authentication.models import CustomUser as User
 from rest_framework.response import Response
@@ -22,6 +22,13 @@ class   ChatOverview(APIView):
             'conversations': serializeChat.data
             # Add conversations images
         }
+        # print(data['conversations'])
+        if not data['conversations']:
+            print('--------------8---------------')
+            data['conversations'].append({'currentUser': request.user.id})
+            # print(data['conversations'][0]['currentUser'])
+            # data['conversations'][0]['currentUser'] = request.user.id
+            print(data['conversations'][0]['currentUser'])
         return Response(data)
 
 
@@ -51,12 +58,31 @@ class   CreateConversation(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.user.id != request.data.get('user1_id') \
-            and request.user.id != request.data.get('user2_id'): # Check if user is in its friend list
+        user1_id = request.data.get('user1_id')
+        user2_id = request.data.get('user2_id')
+        print('*********WSAL************')
+        print(user1_id)
+        print(user2_id)
+
+        if request.user.id != user1_id \
+            and request.user.id != user2_id:
             return Response({'error': 'You do not have permission to create this conversation.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        existingConversation = Conversations.objects.filter(
+            (Q(user1_id=user1_id) & Q(user2_id=user2_id)) |
+            (Q(user1_id=user2_id) & Q(user2_id=user1_id)
+        )).first()
+        if existingConversation:
+            return Response({'error': 'This conversation already exists.'},status=status.HTTP_400_BAD_REQUEST)
+
         SerializedUsers = CreateConversationSerializer(data=request.data)
         if SerializedUsers.is_valid():
             SerializedUsers.save()
             return Response(SerializedUsers.data, status=status.HTTP_201_CREATED)
         return Response(SerializedUsers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class   ListUsers(APIView):
+    def get(self, request):
+        users = User.objects.exclude(id=request.user.id)
+        SerializedUsers = ListUsersSerializer(users, many=True)
+        return Response(SerializedUsers.data)

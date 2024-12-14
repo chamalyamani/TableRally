@@ -4,8 +4,9 @@ check for MAX REQUESTS
 
 
 
+// CHAT TODO 
 
-
+check DELETE if nothing to delete (chat)
 
 
 
