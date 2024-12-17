@@ -3,6 +3,10 @@ check for MAX BODYSIZE
 check for MAX REQUESTS
 
 
+****** ALL ******
+- if user is deleted, error happens in 'chat_conversations' (foreign_key)
+
+
 
 // CHAT TODO 
 

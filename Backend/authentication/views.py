@@ -522,6 +522,18 @@ class TwoFactorVerifyViewForOldUser(APIView):
                 return response
 
         return JsonResponse({"error": "Invalid 2FA token"}, status=status.HTTP_400_BAD_REQUEST)
+    
+class GetUserImage(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username):
+        try:
+            user_object = CustomUser.objects.get(username=username)
+            return JsonResponse({"image_url": user_object.image_url}, status=status.HTTP_200_OK)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except ValueError:
+            return JsonResponse({"error": "Invalid input"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def health_checker(request):

@@ -18,6 +18,7 @@ urlpatterns = [
     path('disable-2fa/', DisableTwoFactorView.as_view(), name='disable_twoFA'),
     path('verify-2fa/', TwoFactorVerifyViewNewUser.as_view(), name='verify_2fa_token'),
     path('verify-2fa-old/', TwoFactorVerifyViewForOldUser.as_view(), name='verify_2fa_token_old'),
+    path('get-user-img/<str:username>', GetUserImage.as_view()),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

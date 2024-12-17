@@ -127,7 +127,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',  # Allow any access by default
-    )
+    ),
 }
 
 SIMPLE_JWT = {
