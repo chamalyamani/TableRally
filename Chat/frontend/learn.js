@@ -37,7 +37,6 @@ let socket;
 let deleteChat = document.querySelector('.modal-delete-button');
 let blockChat = document.querySelector('.modal-block-button');
 let unblockChat = document.querySelector('.modal-unblock-button');
-let currentSender;
 let urls = [];
 let path;
 let blockList = [];
@@ -274,10 +273,7 @@ function convClickAction(conv, singleConv) {
     conversationTopBar.style.display = 'flex';
     mainChat.style.display = 'flex';
     sending.style.display = 'flex';
-    // if (blockList.includes(conv.id))
-    //     disableMessageBar();
-    // else
-    //     enableMessageBar();
+
     listMessages(conv);
     realTime(conv, singleConv);
 }
@@ -297,15 +293,12 @@ function listMessages(conv) {
             data.messages.forEach(message => {
                 if (message.sender == conv.conversation)
                 {
-                    // console.log("left")
-                    currentSender = message.sender_id;
                     let newLeftMessage = leftMessage.cloneNode(true);
                     newLeftMessage.querySelector('.left-message-p').textContent = message.content;
                     newLeftMessage.style.display = 'inline-block';
                     mainChat.appendChild(newLeftMessage);
                 }
                 else {
-                    currentSender = message.sender_id;
                     let newRightMessage = rightMessage.cloneNode(true);
                     newRightMessage.querySelector('.right-message-p').textContent = message.content;
                     newRightMessage.style.display = 'inline-block';
@@ -367,10 +360,7 @@ async function realTime(conv, singleConv) {
                 messages = mainChat.querySelectorAll('.right-message');
             messages.forEach(message => {
                 console.log(message)
-                // console.log(conv.conversation)
-                // if (currentSender == conv.conversation)
-                // console.log('hna');
-                // message.style.display = 'none';
+
                 message.remove();
             })
             removeBlur();
@@ -434,8 +424,8 @@ async function realTime(conv, singleConv) {
         })
 
         deleteChat.addEventListener('click', () => {
-            let action = { 'action': 'delete', 'sender_id': `${currentSender}` };
-            console.log(currentSender);
+            let action = { 'action': 'delete', 'sender_id': `${currentUser}` };
+            console.log(currentUser);
             socket.send(JSON.stringify(action));
         })
 
