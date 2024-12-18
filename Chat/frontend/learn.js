@@ -222,8 +222,11 @@ function urlHandling() {
 }
 
 function listConversations() {
+    let Token;
+    let img;
     getAccessToken()
         .then(accessToken => {
+            Token = accessToken;
             return fetch('/api/chat/', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${accessToken}`}
@@ -242,22 +245,32 @@ function listConversations() {
                         'single': newSingleConversation,
                         'conv': conv,
                     }
+                    // getting user image form backend
+                    fetch(`/auth/get-user-img/${conv.conversation}`, {
+                        method: 'GET',
+                        headers: { 'Authorization': `Bearer ${Token}`}
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        newSingleConversation.querySelector('.cvr-img').src = data.image_url;
+                        img = data.image_url;
+                    })
                     singleConversationList.push(fullConv);
                     conversations.appendChild(newSingleConversation);
-                    convClick(conv, newSingleConversation);
+                    convClick(conv, newSingleConversation, img);
                 })
             }
         })
         .catch(error => console.error('Error:', error));
 }
 
-function convClick(conv, singleConv) {
+function convClick(conv, singleConv, img) {
     singleConv.addEventListener('click', () => {
-        convClickAction(conv, singleConv);
+        convClickAction(conv, singleConv, img);
     })
 }
 
-function convClickAction(conv, singleConv) {
+function convClickAction(conv, singleConv, img) {
     // console.log(conv);
     // console.log('--88--');
     // console.log(singleConv);
@@ -273,6 +286,7 @@ function convClickAction(conv, singleConv) {
     conversationTopBar.style.display = 'flex';
     mainChat.style.display = 'flex';
     sending.style.display = 'flex';
+    conversationTopBar.querySelector('.img-top-bar').src = singleConv.querySelector('.cvr-img').src;
 
     listMessages(conv);
     realTime(conv, singleConv);
