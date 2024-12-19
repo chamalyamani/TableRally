@@ -143,18 +143,21 @@ modalInput.addEventListener('input', (input) => {
     })
         .then(response => response.json())
         .then(data => data.forEach(user => {
-            // console.log(user)
+            console.log(user)
             let newUser = modalUser.cloneNode(true);
             // console.log(newUser)
             newUser.querySelector('.li1').textContent = user.username;
             newUser.style.display = 'flex';
+            console.log('00000000');
+            console.log(user.image_url);
+            newUser.querySelector('.modal-img').src = user.image_url;
             // userField.appendChild(newUser);
             if (value != '') {
                 let matchingUser = newUser.querySelector('.li1').textContent.toLowerCase().includes(value);
                 if (matchingUser)
                 {
                     userField.appendChild(newUser);
-                    startConversation(newUser, user);
+                    startConversation(newUser, user); //image url not found
                 }
             }
         }))
@@ -199,6 +202,7 @@ function startConversation(singleUser, userData) {
                     let newSingleConversation = singleConversation.cloneNode(true);
                     newSingleConversation.querySelector('.li1').textContent = userData.username;
                     newSingleConversation.style.display = 'flex';
+                    newSingleConversation.querySelector('.cvr-img').src = userData.image_url;
                     let fullConv = {
                         'single': newSingleConversation,
                         'conv': { 'id': data.id, 'conversation': userData.username },
@@ -209,7 +213,7 @@ function startConversation(singleUser, userData) {
                     //     convClickAction({ 'id': data.id, 'conversation': userData.username }, singleUser);
                     // })
                     convClick({ 'id': data.id, 'conversation': userData.username }, newSingleConversation);
-                    convClickAction({ 'id': data.id, 'conversation': userData.username }, newSingleConversation);
+                    convClickAction({ 'id': data.id, 'conversation': userData.username, 'userImage': userData.image_url }, newSingleConversation);
                 }
                 // listConversations();
             })
@@ -222,11 +226,8 @@ function urlHandling() {
 }
 
 function listConversations() {
-    let Token;
-    let img;
     getAccessToken()
         .then(accessToken => {
-            Token = accessToken;
             return fetch('/api/chat/', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${accessToken}`}
@@ -234,6 +235,8 @@ function listConversations() {
         })
         .then(response => response.json())
         .then(data => { 
+            console.log('hnaa');
+            console.log(data);
             currentUser = data.conversations[0].currentUser;
             if (data.conversations[0].id != undefined) {
                 data.conversations.forEach(conv => {
@@ -245,32 +248,25 @@ function listConversations() {
                         'single': newSingleConversation,
                         'conv': conv,
                     }
-                    // getting user image form backend
-                    fetch(`/auth/get-user-img/${conv.conversation}`, {
-                        method: 'GET',
-                        headers: { 'Authorization': `Bearer ${Token}`}
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        newSingleConversation.querySelector('.cvr-img').src = data.image_url;
-                        img = data.image_url;
-                    })
+                    console.log('000000');
+                    console.log(conv);
+                    newSingleConversation.querySelector('.cvr-img').src = conv.userImage;
                     singleConversationList.push(fullConv);
                     conversations.appendChild(newSingleConversation);
-                    convClick(conv, newSingleConversation, img);
+                    convClick(conv, newSingleConversation);
                 })
             }
         })
         .catch(error => console.error('Error:', error));
 }
 
-function convClick(conv, singleConv, img) {
+function convClick(conv, singleConv) {
     singleConv.addEventListener('click', () => {
-        convClickAction(conv, singleConv, img);
+        convClickAction(conv, singleConv);
     })
 }
 
-function convClickAction(conv, singleConv, img) {
+function convClickAction(conv, singleConv) {
     // console.log(conv);
     // console.log('--88--');
     // console.log(singleConv);
@@ -286,7 +282,9 @@ function convClickAction(conv, singleConv, img) {
     conversationTopBar.style.display = 'flex';
     mainChat.style.display = 'flex';
     sending.style.display = 'flex';
-    conversationTopBar.querySelector('.img-top-bar').src = singleConv.querySelector('.cvr-img').src;
+    console.log('?????????');
+    console.log(conv.userImage);
+    conversationTopBar.querySelector('.img-top-bar').src = conv.userImage;
 
     listMessages(conv);
     realTime(conv, singleConv);

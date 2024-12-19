@@ -44,7 +44,7 @@ class   ConversationDetail(APIView):
             else:
                 raise conversation.DoesNotExist()
             messages = Messages.objects.filter(conversation_id=id).order_by('timestamp')
-            serializeConv = ConversationDetailSerializer(messages, many=True)
+            serializeConv = ConversationDetailSerializer(messages, many=True, context={'request': request})
             data = {
                 'display_name': display_name,
                 'messages' : serializeConv.data
@@ -79,10 +79,12 @@ class   CreateConversation(APIView):
         if SerializedUsers.is_valid():
             SerializedUsers.save()
             return Response(SerializedUsers.data, status=status.HTTP_201_CREATED)
+        
         return Response(SerializedUsers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class   ListUsers(APIView):
     def get(self, request):
         users = User.objects.exclude(id=request.user.id)
-        SerializedUsers = ListUsersSerializer(users, many=True)
+        SerializedUsers = ListUsersSerializer(users, many=True, context={'request': request})
+
         return Response(SerializedUsers.data)

@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
         elif self.external_image_url:  # If there's an external URL
             return self.external_image_url
         else:  # Use default static path
-            return f"{settings.STATIC_URL}authentication/img/Default-welcomer.png"
+            return f"{settings.STATIC_URL}profile_images/Default-welcomer.png"
 
     def __str__(self):
         return self.username
