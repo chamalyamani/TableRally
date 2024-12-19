@@ -73,7 +73,7 @@ class   CreateConversation(APIView):
             (Q(user1_id=user2_id) & Q(user2_id=user1_id)
         )).first()
         if existingConversation:
-            return Response({'error': 'This conversation already exists.'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'This conversation already exists.', 'id': existingConversation.id},status=status.HTTP_200_OK)
 
         SerializedUsers = CreateConversationSerializer(data=request.data)
         if SerializedUsers.is_valid():

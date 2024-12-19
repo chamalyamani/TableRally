@@ -182,15 +182,16 @@ function startConversation(singleUser, userData) {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('hnnaaa');
-                console.log(userData.id);
-                console.log(currentUser);
-                if (data['error']) {
-                    console.log('error');
+                console.log('-----------8-----------');
+                console.log(data.id);
+                // console.log('hnnaaa');
+                // console.log(userData.id);
+                // console.log(currentUser);
+                if (data['status']) {
                     for (let i = 0; singleConversationList[i]; i++){
                         if (singleConversationList[i].conv.id == data.id)
                         {
-                            // console.log(singleConversationList[i].single);
+                            console.log(singleConversationList[i].single);
                             convClickAction(singleConversationList[i].conv,
                                 singleConversationList[i].single);
                             break;
