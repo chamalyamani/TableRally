@@ -10,7 +10,6 @@ check for MAX REQUESTS
 
 // CHAT TODO 
 
-Get users profile photo from backend (chat)
 
 
 
