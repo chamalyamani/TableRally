@@ -1,0 +1,39 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%);
+
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#holder {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px  solid  #00766A;
+    border-radius: 10px;
+    width: 70vw;
+    height: 50vh;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+div {
+    border: 2px #003E38 solid;
+    border-radius: 10px;
+    width: 20vw;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+}

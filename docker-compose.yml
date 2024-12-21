@@ -60,6 +60,7 @@ services:
       - ./Backend/staticfiles:/staticfiles/
       - ./Backend/media:/media/
       - ./Chat/frontend:/usr/share/nginx/html/chat
+      - ./PongGame/front/content:/usr/share/nginx/html/ponggame
     depends_on:
       backend:
         condition: service_healthy
@@ -104,7 +105,32 @@ services:
       retries: 5
       start_period: 30s
     init: true
-        
+
+  ponggame:
+    build: ./PongGame/docker
+    container_name: ponggame
+    ports:
+      - "9001:8000"
+    restart: on-failure
+    networks:
+      - backend_default
+    volumes:
+      - ./PongGame/:/PongGame
+      - ./Backend:/Backend
+    env_file: 
+      - .env
+    depends_on:
+      backend:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "echo", "PONG OUI"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    init: true
 
   redis:
     container_name: redis

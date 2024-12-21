@@ -1,0 +1,104 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+* {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+} */
+
+body {
+
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    /* width: 70vw;
+    height: 35vw; */
+    margin: auto;
+    border: 4px solid black;
+    border-radius: 20px;
+}
+
+
+#content {
+    text-align: center;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 98vh;
+    flex-direction: column;
+    width: 90%;
+    /* border: solid blue 2px; */
+}
+.full{
+    /* background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%); */
+
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    /* border: solid red 2px; */
+
+}
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60vw;
+    height: 5vw;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2vw;
+}
+
+h1 {
+    margin: 1vw;
+}
+
+img {
+    width: 4vw;
+    height: 4vw;
+    margin: 1vw;
+}
+
+#sidebar {
+    background-color: rgba(255, 255, 255, 0.1);  
+    width: 90%;
+    height: 80vh;
+    /* border: solid green  2px; */
+    border-radius: 2vw;
+
+}
+
+#side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: solid rgb(0, 207, 235)  2px; */
+    width: 10%;
+}
+
+#score {
+    width: 60vw;
+    /* border: solid rgb(226, 211, 0)  2px; */
+    display: flex;
+    justify-content: space-between;
+}
+
+#score img {
+    width: 4vw;
+    height: 4vw;
+    margin: 1vw;
+    margin-top: 2vw;
+}
+#score h1 {
+    margin: 1vw;
+    margin-top: 2vw;
+} 
+

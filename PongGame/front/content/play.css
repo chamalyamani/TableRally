@@ -1,0 +1,34 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%);
+}
+
+
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+button {
+    width: 20vw;
+    height: 40px;
+    border : 0;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+h1 {
+    font-family: serif;
+}
+
