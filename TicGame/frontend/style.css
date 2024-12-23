@@ -1,0 +1,520 @@
+
+:root {
+    --col1: #013F38;
+    --col2: #3DBDA7;
+    --col3: #3D6975;
+    --col4: #044D46;
+    --col5: #2C8C87;
+    --col6: #00766A;
+    --col6: #027267;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.holder {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%);
+}
+.board_holder {
+    padding: 15px;
+    width: 60%;
+    height: 90%;
+    position: absolute;
+    border: 1px solid grey;
+    border-radius: 15px;
+    margin-right: 200%;
+    /* From https://css.glass */
+    /* background-image: url("/assets/wallpp.jpeg"); */
+    background-size: cover;
+    
+    box-shadow: 0px 5px 20px 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0px 5px 20px 5px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 20px 5px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+}
+
+.winloss {
+    width: 80vh;
+    height: 65%;
+    margin-top: 0vh;
+    background-color: rgba(128, 128, 128, 0.7);
+    position: absolute;
+    border-radius: 5px;
+    border: 1px solid black;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    transition: margin-top 0.5s ease, opacity 0.5s ease;
+}
+#msg{
+    width: 100%;
+    height: 20%;
+    color: #3d9900;
+    font-size: 3em;
+    text-align: center;
+}
+.winloss h2 {
+    width: 100%;
+    height: auto;
+    color: #fff;
+    font-size: 1em;
+    text-align: center;
+}
+.winloss h3 {
+    width: 100%;
+    height: auto;
+    color: #0f0b0b;
+    font-size: 1em;
+    text-align: center;
+}
+
+.button {
+    padding: 12px 24px;
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px var(--shadow-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+/* "Play Again" button */
+#playAgainBtn {
+    background-color: var(--accent-color);
+}
+
+#playAgainBtn:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+/* "Quit" button */
+#quitBtn {
+    background-color: var(--secondary-color);
+}
+
+#quitBtn:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+/* side bar*/
+.sideBar {
+    width: 15%;
+    background-color: var(--col3);
+    opacity: 0.8;
+}
+
+.sideBar ul li {
+    list-style: none;
+}
+
+.sideBar img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/*  side bar end */
+
+/*cont IDX*/
+
+/* h1 {
+    margin-bottom: 20px;
+} */
+
+#gameTitle {
+    width: 100%;
+    height: 10%;
+    color: #fff;
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+.board {
+  width: 60%;
+  height: 100%;
+    display: grid;
+    /* grid-template-columns: repeat(3, 30%);
+    grid-template-rows: repeat(3, 30%); */
+    gap: 2%;
+    /* flex-wrap: wrap; */
+    margin-top: 3%;
+    justify-content: center;
+    align-content:  center;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border: 2px solid #333;
+    /* color: green; */
+    /* font-size: 0.1em; */
+    line-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s, font-size 0.5s ease;
+}
+
+.cell:hover {
+    background-color: #e0e0e0;
+}
+
+.x {
+    color: red;
+    font-size: 5em;
+    animation: bounceIn 0.3s ease-in-out;
+}
+
+.o {
+    color: blue;
+    font-size: 5em;
+    animation: fadeIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes bounceIn {
+    from { font-size : 0em; }
+    to { font-size : 5em; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* #winScore {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: greenyellow;
+} */
+
+#restart-button {
+  /* width: 56%;
+    height: 10%; */
+    padding: 5px;
+    font-size: 2em;
+    cursor: pointer;
+    border: none;
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 1%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#restart-button:hover {
+    background-color: var(--accent-color);
+}
+
+
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+
+/* Board head / info player and match data */
+
+.board_head {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.fp, .sp {
+    width: 20%;
+    height: 100%;
+}
+
+.pl_profil {
+    width: 100%;
+    height: 30%;
+    color: #fff;
+    font-size: 1em;
+}
+
+.score_win {
+    width: 100%;
+    height: 30%;
+    color: #fff;
+    font-size: 1em;
+}
+.sla7 {
+    width: 100%;
+    height: 20%;
+    background-color: #002924;
+    color: #fff;
+    font-size: 1em;
+}
+
+
+
+.turnToggle {
+    width: 30%;
+    height: 10%;
+    border-radius: 50%;
+    font-size: 2em;
+    color: var(--background-color);
+    font-weight: bold;
+    perspective: 1000px;
+    /* transition: all 0.3s ease-in-out; */
+}
+
+.turnToggle .inTurnTog{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.turnToggle .fron, .turnToggle .bac {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50%;
+    backface-visibility: hidden; /* Hide the back face when not visible */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.turnToggle .fron {
+    background-color: var(--border-color);
+}
+
+/* Back styling */
+.turnToggle .bac {
+    background-color: var(--accent-color);
+    transform: rotateY(180deg); /* Rotate the back face */
+}
+
+/* Add class for flipping */
+.turnToggle.your-turn .inTurnTog {
+    transform: rotateY(0deg); /* Show front */
+}
+
+.turnToggle.not-turn .inTurnTog {
+    transform: rotateY(180deg); /* Show back */
+}
+
+
+
+
+
+
+
+/* .turnToggle.your-turn {
+    background-color: #4fff92;
+    color: white;
+}
+
+.turnToggle.not-your-turn {
+    background-color: #ff54479f;
+    color: rgb(0, 0, 0);
+} */
+
+
+.turnShowDiv {
+    width: 100%;
+    height: 10%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.turnShow {
+  width: 50%;
+  height: 100%;
+    color: #fff;
+    background-color: #002924;
+    font-size: 1.5em;
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    margin-top: 0%;
+    transition: margin-top 0.2s ease;
+}
+
+
+
+
+#popup {
+    width: 100%;
+    height: 50%;
+    font-size: 5em;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    /* transform: translate(-50%, -50%) scale(0.8); Start smaller */
+    color: var(--accent-color);
+    font-weight: bold;
+    animation: popupAnimation 2s ease-in-out forwards;
+    pointer-events: none; /* Prevent interaction */
+}
+
+/* Keyframe animation for popup */
+@keyframes popupAnimation {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1.1); /* Slightly larger for pop effect */
+    }
+    40% {
+        transform: scale(1); /* Settle at normal size */
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0; /* Fade out smoothly */
+        transform: scale(0.8); /* Shrink slightly */
+    }
+}
+
+#popup.win {
+    color: rgb(0, 255, 0);
+}
+
+/* Styles for a loss */
+#popup.lose {
+    color: rgba(163, 0, 0, 0.800);
+}
+
+/* Styles for a draw */
+#popup.draw {
+    color: gray;
+}
+
+/* animate the win indexes*/
+
+.win-highlight {
+    transition: all 0.3s ease;
+    animation: glow-text 0.6s ease-in-out infinite alternate;
+}
+
+/* Keyframes for shadow and text color change */
+@keyframes glow-text {
+    0% {
+        box-shadow: 0 0 5px yellow;
+        color: yellow; /* Change text color */
+    }
+    100% {
+        background-color: #3d9900;
+        box-shadow: 0 0 20px orange;
+        color: orange; /* Change text color */
+    }
+}
+
+
+
+
+
+
+#gameTimer {
+    width: 50%;
+    height: 10%;
+    background-color: #00766A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+#gameTimer h1 {
+    width: 50%;
+    z-index: 1;
+    /* background-color: #fff; */
+}
+.loaderTimer {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    position: absolute;
+    margin-right: 200%;
+    transition: margin-right 0.5s ease-in-out;
+}
+
+#gameTimer:hover .loaderTimer {
+    margin-right: 0%;
+}
+.fp img,.sp img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 50%;
+    aspect-ratio: 16/9;
+}
+
+
+
+.infop {
+    /* background-color: #0056b3; */
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+/* libflex */
+.df_fdc_jcc_aic {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.df_jcc_aic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.df_fdc_jcsa_aic {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}

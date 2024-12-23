@@ -1,0 +1,35 @@
+# Step 1: Use the official Python image from the Docker Hub
+FROM python:bullseye
+
+# Step 2: Set the working directory in the container
+# WORKDIR /app
+
+# Step 3: Copy the requirements.txt file into the container
+# Make sure the requirements.txt is in the project root alongside manage.py
+COPY ./tripleT/requirements.txt /tmp
+
+# WORKDIR /TicGame/tripleT
+
+# Step 4: Install dependencies
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Step 5: Copy the rest of the Django project files into the container
+# COPY tripleT .
+
+# Step 6: Set environment variable to specify Django settings module
+# For production, change to the appropriate settings file
+
+
+ENV DJANGO_SETTINGS_MODULE=tripleT.settings
+
+# Step 7: Expose port 8000 for Django development server
+# EXPOSE 8000
+
+# Step 8: Run Django migrations and start the development server
+# Use the default development server for testing purposes  ######python manage.py migrate && 
+# CMD ["sh", "-c", "daphne tripleT.asgi:application"]
+WORKDIR /TicGame/tripleT/
+
+# CMD ["sh", "-c", "daphne -b 0.0.0.0 -p 8000 tripleT.asgi:application"]
+CMD [ "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+
