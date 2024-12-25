@@ -4,7 +4,8 @@ from django.contrib import admin
 from .models import games
 
 class GameAdmin(admin.ModelAdmin):
-    list_display = ('game_id', 'win_id', 'los_id','winner_boards','num_of_games','game_type_db')  # Adjust as needed
+    list_display = ('game_id', 'p1_id', 'p2_id', 'win_id','winner_boards','num_of_games','game_type_db')  # Adjust as needed
     # search_fields = ('single_value',)
+
 
 admin.site.register(games, GameAdmin)

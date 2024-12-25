@@ -60,11 +60,13 @@ msgsDic = {
         "him": {
             "fname": "abbass",
             "lname": "lamba",
+            "pic"  : "",
             "lvl"  : 0,
         },
         "me": {
             "fname": "hmida",
             "lname": "lourim",
+            "pic"  : "",
             "lvl"  : 0,
         }
     },
@@ -114,9 +116,10 @@ msgsDic = {
 
 class player:
     def __init__(self, name, bSize):
-        self.channel_name = name
+        self.channel_name = name[1]
         self.ina_game = ["",1]
         self.game_id = ''
+        self.user_id = name[0]
         self.is_inGame = False
         self._char = ''
         self._turn = T_OFF

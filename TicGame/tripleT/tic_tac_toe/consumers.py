@@ -11,6 +11,7 @@ import json
 import random, time
 from .consu_helper import *
 
+
 #read me :
 # I will need to create a list of all the communication strings for parsing
 # 
@@ -44,6 +45,12 @@ def switchturnUpdtboardAddmoves(p1,p2,idx,is_x_turn):
 class test(AsyncWebsocketConsumer):
     async def connect(self):
         # Here i must check for the user himself is he auth-
+        self.user = self.scope["user"]
+        print(self.user.id)
+        if not self.user.is_authenticated:
+            await self.close(code=4001)
+            return
+        print("USER ID : ",self.user.is_authenticated)
         # get his data needed for the game (name lvl img)
         # know what type he want to play first to 1 3 5 7
         await self.accept()
@@ -68,15 +75,17 @@ class test(AsyncWebsocketConsumer):
     async def resetMoves(self, players):
         players[0].moves = 0
         players[1].moves = 0
-    async def dbInit(self, gameid, game_type):
+    async def dbInit(self, pme, phim, game_type):
         from .models import games
         from asgiref.sync import sync_to_async
         game, created = await sync_to_async(games.objects.get_or_create)(
-            game_id=gameid,
-            game_type_db=game_type
+            game_id=pme.game_id,
+            game_type_db=game_type,
+            # p1_id=pme.user_id,
+            # p2_id=phim.user_id,
             )
         if not created:
-            game.game_id = gameid
+            game.game_id = pme.game_id,
             game.game_type_db = game_type
             await sync_to_async(game.save)()
     
@@ -92,11 +101,11 @@ class test(AsyncWebsocketConsumer):
             # Update the necessary fields.
             if len(p1.winBoards) > len(p2.winBoards):
                 game.win_id = p1.channel_name
-                game.los_id = p2.channel_name
+                # game.los_id = p2.channel_name
                 game.winner_boards = p1.winBoards  # Ensure `win_boards` is a suitable field in your model.
             else:
                 game.win_id = p2.channel_name
-                game.los_id = p1.channel_name
+                # game.los_id = p1.channel_name
                 game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
 
             game.num_of_games = p1.nbGames
@@ -276,6 +285,7 @@ class test(AsyncWebsocketConsumer):
 
         if rand:
             randomize_turn_and_characters()
+
             initialize_boards()
             await self.channel_layer.send(players[0].channel_name, players[0].setup)
             await self.channel_layer.send(players[1].channel_name, players[1].setup)
@@ -290,23 +300,31 @@ class test(AsyncWebsocketConsumer):
 
 
 
-    def genIdGameAndSendToGameBox(self, p1, p2, game_type):
-        gen_game_id = f"{p1.channel_name}_{p2.channel_name}_{int(time.time())}"
-        p1.game_id = p2.game_id = gen_game_id
-        p1.ina_game = p2.ina_game = game_type
-        player_game_map[p1.channel_name] = player_game_map[p2.channel_name] = gen_game_id
-        game_box[gen_game_id] = [p1, p2]
+    def genIdGameAndSendToGameBox(self, pme, phim, game_type):
+        gen_game_id = f"{pme.channel_name}_{phim.channel_name}_{int(time.time())}"
+        pme.game_id = phim.game_id = gen_game_id
+        pme.ina_game = phim.ina_game = game_type
+        player_game_map[pme.channel_name] = player_game_map[phim.channel_name] = gen_game_id
+        game_box[gen_game_id] = [pme, phim]
 
         return
 
     async def setupPlayersAndInit(self, grp, game_type):
-        player1 = player(grp.popleft(), game_type[0])
-        player2 = player(grp.popleft(), game_type[0])
+        check_Me = grp.popleft()
+        check_Him = grp.popleft()
+        if check_Me[0] == self.user.id:
+            player_me = player(check_Me, game_type)
+            player_him = player(check_Him, game_type)
+        else:
+            player_me = player(check_Him, game_type)
+            player_him = player(check_Me, game_type)
+        # player(grp.popleft(), game_type[0])
+        # player(grp.popleft(), game_type[0])
         # create or not db table for this game
-        self.genIdGameAndSendToGameBox(player1, player2, game_type)
-        await self.dbInit(player1.game_id, game_type)
+        self.genIdGameAndSendToGameBox(player_me, player_him, game_type)
+        await self.dbInit(player_me, player_him, game_type)
         # here must get the data of each player to send it
-        await self.initGame([player1, player2], True)
+        await self.initGame([player_me, player_him], True)
 
 
     async def quitGame(self):
@@ -339,7 +357,7 @@ class test(AsyncWebsocketConsumer):
         await self.dist_help(grp, game_type)
 
     async def dist_help(self, grp, game_type):
-        grp.append(self.channel_name)
+        grp.append({self.user.id:self.channel_name})
         if len(grp) >= 2:
             await self.setupPlayersAndInit(grp, game_type)
             return

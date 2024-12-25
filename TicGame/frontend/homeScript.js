@@ -504,10 +504,41 @@ class t3 {
     }
 }
 
-function playgame () {
+function getAccessToken() {
+    return fetch('/auth/get-access-token/', {
+        method: 'GET',
+        credentials: 'include'  // Include cookies in the request
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access_token) {
+            return data.access_token;
+        } else {
+            throw new Error('Access token not found');
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching access token:', error);
+        throw error;
+    });
+}
+
+
+
+async function playgame () {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
-    matchingSocket = new WebSocket('/ws/play/')
+    let tok;
+    await getAccessToken()
+        .then(accessToken => {
+            tok = accessToken;
+        })
+        .catch(error => {
+            console.error('Error getting access token:', error);
+            alert('Error getting access token', error.message);
+        }); 
+
+    matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`)
     // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
     // and the tail size etc ....
     let gg = new t3()
