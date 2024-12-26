@@ -43,10 +43,10 @@ ft4_m5 = deque()
 ft4_m7 = deque()
 
 game_box = {}
-ft4_game_box = {}
+# ft4_game_box = {}
 
 player_game_map = {} # map the player to the game
-ft4_player_game_map = {} # map the player to the game
+# ft4_player_game_map = {} # map the player to the game
 # grp_m2 = deque()
 # grp_m3 = deque()
 msgsDic = {
@@ -131,7 +131,7 @@ class player:
         # self.again = A_OFF
         self._res = 'Draw Match !'
         self.winBoards = []
-        self.board_type = bSize
+        self.board_type = bSize[0]
         self._board = copy.deepcopy(self.init_board())
 
         self.setup  = copy.deepcopy(msgsDic[game_setup])
@@ -144,14 +144,16 @@ class player:
     
     # Update board for all message dictionaries
 
-
-        if bSize == "ft4":
+        if bSize[0] == "ft4":
             self.setup["ina_game"] = 5
+            # print("bSize ::: ",bSize)
         else:
             self.setup["ina_game"] = 3
+        # print("khrejt b hadi  ",self.setup["ina_game"])
             
 
         self.setup["board"] = copy.deepcopy(self.init_board())
+        # print("setup board inside class : ",self.setup["board"])
         self.re_setup["board"] = copy.deepcopy(self.init_board())
         self.inGame["board"] = copy.deepcopy(self.init_board())
         self.gameResult["board"] = copy.deepcopy(self.init_board())

@@ -78,7 +78,9 @@ class t3 {
         // this.functionMap.set("start_game", this.start_game.bind(this))
         this.functionMap.set("in_game", this.in_game.bind(this))
         this.functionMap.set("windrawloose", this.windrawloose.bind(this))
-        this.functionMap.set("partyResult", this.partyRes.bind(this))
+        // this.functionMap.set("partyResult", this.partyRes.bind(this))
+        this.functionMap.set("opponentLeft", this.oppLeftGame.bind(this))
+
         // this.functionMap.set("inform", this.inform.bind(this))
         // this.functionMap.set("loose", this.loose.bind(this))
         // this.functionMap.set("draw", this.loose.bind(this))
@@ -158,7 +160,7 @@ class t3 {
         </div>
       </div>
       
-      <button id="restart-button" onclick="reset()">Quit</button>
+      <button id="restart-button" onclick="leaveGame()">Quit</button>
       </div>
       </div>`
         return htmlBoard
@@ -170,7 +172,22 @@ class t3 {
     //     announce.innerHTML = this.currMsg["msg"]
     //     console.log("inform : ", announce)
     // }
-
+    oppLeftGame(){
+        // this.winloss = document.getElementById("losswin")
+        // let announce = document.getElementById("msg")
+        const winMsg = document.getElementById("popup");
+        winMsg.textContent = ""
+        winMsg.textContent = this.currMsg["message"]
+        winMsg.style.color = "red"
+        winMsg.style.display = "flex"; 
+        setTimeout(() => {
+            this.removeClick()
+            if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+                matchingSocket.close(1000)
+            // location.reload()
+        }, 1000);
+        // console.log("inform : ", announce)
+    }
     async partyRes(){
         let pop = document.getElementById("popup")
         if ( this.currMsg["msg"] )
@@ -322,13 +339,13 @@ class t3 {
     {
         // console.log(this)
         // quitGameBtn.style.backgroundColor = 'red'
-        const msg = {
-            type : "quitGame",
-            // player : this.pSign,
-            // theBoard : this.board
-        }
-        matchingSocket.send(JSON.stringify(msg))
-
+        // const msg = {
+        //     type : "quitGame",
+        //     // player : this.pSign,
+        //     // theBoard : this.board
+        // }
+        // matchingSocket.send(JSON.stringify(msg))
+        location.reload()
 
         // console.log("hello world")
     }
@@ -525,7 +542,7 @@ function getAccessToken() {
 
 
 
-async function playgame () {
+async function playgame (gameType) {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
     let tok;
@@ -543,9 +560,9 @@ async function playgame () {
     // and the tail size etc ....
     let gg = new t3()
     matchingSocket.onopen = async function () {
-        alert('tconnecctaa');
+        // alert('tconnecctaa');
         const msg = {
-            "type" : "ft_classic",
+            "type" : gameType,
             "first_to": gg.first_to
         }
         matchingSocket.send(JSON.stringify(msg));
@@ -572,8 +589,8 @@ async function playgame () {
         // contIDX.innerHTML = ""
         // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
         // console.log("by by : ",gg.cont)
-        alert('gggggg')
-        // location.reload()
+        console.log('this is matchingsocket.onclose function')
+        location.reload()
         matchingSocket = null
         gg = null
 
@@ -581,48 +598,26 @@ async function playgame () {
     }
 }
 
-function playFt4 () {
-    if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-        return
-    matchingSocket = new WebSocket('/ws/play/')
-    // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
-    // and the tail size etc ....
-    let gg = new t3()
-    matchingSocket.onopen = async function () {
-        const msg = {
-            "type" : "ft4",
-            "first_to": gg.first_to
-        }
-        matchingSocket.send(JSON.stringify(msg));
-    }
-    // console.log("WHAT ?")
-    matchingSocket.onmessage = async function(event)
-    {
-        // console.log("ON MESSAGE")
-        gg.currMsg = JSON.parse(event.data)
-        console.log("what i got : ", gg.currMsg.type)
-        console.log("all : ", gg.currMsg)
-        if (gg.functionMap.has(gg.currMsg.type)){
-            // console.log("in IF WINDRaw")
-            await gg.functionMap.get(gg.currMsg.type)()
-        }
-        else
-        {
-            console.log("wayliiiiii  else ??")
-        }
-    }
-    matchingSocket.onclose = async function(event)
-    {
-        // let contIDX = document.getElementById("contIdx")
-        // contIDX.innerHTML = ""
-        // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
-        // console.log("by by : ",gg.cont)
-        location.reload()
-        matchingSocket = null
-        gg = null
+async function playClassic () {
+    await playgame("ft_classic")
+}
 
-        // console.log("by by : ",gg)
+async function playFt4 () {
+    await playgame("ft4")
+}
+
+function leaveGame() {
+    const msg = {
+        type : "leaveGame",
+        // player : this.pSign,
+        // theBoard : this.board
     }
+    matchingSocket.send(JSON.stringify(msg))
+
+    if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+        matchingSocket.close(1000)
+    // console.log("hello world")
+    // location.reload();
 }
 
 

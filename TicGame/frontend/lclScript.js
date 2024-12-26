@@ -56,10 +56,11 @@ class TicTacToeGame {
 
     startGame() {
         if (this.isGameActive) return; // Prevent starting if already active
-    
+        console.log("ggggggggggggggggggggggg")
         this.animWinLose.textContent = `${this.playerTurn}'s Turn`; // Show who's turn it is
         this.isGameActive = true; // Mark the game as active
         this.movesCount = 0;
+        this.playerTurn = 'X'; // X always starts
         // this.boardState.fill(null); // Clear the board state
         this.boardState = Array.from({ length: 9 }, (_, index) => index); // [0, 1, 2, ..., 8]
 
@@ -69,7 +70,8 @@ class TicTacToeGame {
             slot.textContent = '';
             slot.classList.remove('xSlot', 'oSlot');
         });
-    
+        this.startButton.textContent = 'Playing'; // Update Start button
+        
         // Enable the slots for interaction
         this.enableBoard();
     }
@@ -78,15 +80,12 @@ class TicTacToeGame {
         this.boardSlots.forEach(slot => {
             slot.style.pointerEvents = 'auto'; // Enable interaction
         });
-        this.startButton.textContent = 'Playing'; // Update Start button
     }
 
     disableBoard() {
         this.boardSlots.forEach(slot => {
             slot.style.pointerEvents = 'none'; // Disable interaction
         });
-
-        this.startButton.textContent = 'START AGAIN'; // Update Start button for a new game
     }
 
     resetGame() {
@@ -139,14 +138,15 @@ class TicTacToeGame {
             if (this.playerMode === '1' && this.playerTurn === 'X') {
                 // If it's 1-player mode and X just played, disable board and make the bot (O) play
                 this.disableBoard();  // Disable clicks while bot is playing
+                this.switchTurn();
                 setTimeout(() => {
-                    this.switchTurn();
                     // this.minimax(this.boardState, this.playerTurn);  // Bot plays after short delay
                     const bestMove = this.minimax(this.boardState, this.playerTurn).index;
                     // console.log("bestMove ::: ", bestMove)
                     this.handleSlotClick(this.boardSlots[bestMove], bestMove);
                     // this.boardState[bestMove] = this.playerTurn;
-                    this.enableBoard(); // Re-enable the board after bot finishes playing
+                    if (this.isGameActive)
+                        this.enableBoard(); // Re-enable the board after bot finishes playing
                 }, 500);
             } else {
                 this.switchTurn(); // Switch turns in 2-player mode or after bot's turn
@@ -172,7 +172,7 @@ class TicTacToeGame {
         this.animWinLose.textContent = `${player} Wins!`;
         this.animWinLose.classList.add('win-animation');
         this.isGameActive = false;
-
+        this.startButton.textContent = 'START AGAIN'; // Update Start button for a new game
         if (player === 'X') {
             this.xWins++;
             this.statsXWins.textContent = this.xWins;
@@ -189,7 +189,7 @@ class TicTacToeGame {
         this.animWinLose.textContent = "It's a Draw!";
         this.animWinLose.classList.add('draw-animation');
         this.isGameActive = false;
-
+        this.startButton.textContent = 'START AGAIN'; // Update Start button for a new game
         this.draws++;
         this.statsDraws.textContent = this.draws;
 
@@ -198,6 +198,7 @@ class TicTacToeGame {
 
     switchTurn() {
         this.playerTurn = this.playerTurn === 'X' ? 'O' : 'X';
+        console.log("this.playerTurn ::: ", this.playerTurn)
         this.animWinLose.textContent = `${this.playerTurn}'s Turn`;
         this.animWinLose.classList.add('turn-animation');
         setTimeout(() => {

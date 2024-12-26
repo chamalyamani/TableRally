@@ -5,7 +5,7 @@ from collections import defaultdict
 #import the model games
 #this for probably syncronizing server with database
 from channels.db import database_sync_to_async
-
+from authentication.models import CustomUser as User
 import json
 
 import random, time
@@ -55,22 +55,56 @@ class test(AsyncWebsocketConsumer):
         # know what type he want to play first to 1 3 5 7
         await self.accept()
         # await self.receive_json()
-
+    def removeFromGrp(self, name, grp):
+        if name in grp:
+            grp.remove(name)
     async def disconnect(self, code):
         print("this is deco code : ", code)
-        if self.channel_name in grp_m:
-            grp_m.remove(self.channel_name)
-        elif self.channel_name in grp_m3:
-            grp_m3.remove(self.channel_name)
-        elif self.channel_name in grp_m5:
-            grp_m5.remove(self.channel_name)
-        elif self.channel_name in grp_m7:
-            grp_m7.remove(self.channel_name)
-            # grp_m.remove(self.channel_name)
-        if self.channel_name in game_box:
-            game_box.pop(self.channel_name)
-            print("IS FREED FROM GAME_BOX")
+        guId = player_game_map.get(self.channel_name, None)
+        if guId == None:
+            return
+        players = game_box.get(guId, None)
+        if players == None:
+            print("players not found")
+            return
+        # Remove both players from player_game_map
+        for player in players:
+            player_channel_name = player.channel_name
+            if player_channel_name in player_game_map:
+                del player_game_map[player_channel_name]
+                print(f"{player_channel_name} removed from player_game_map")
 
+        # Remove the game from game_box
+        if guId in game_box:
+            del game_box[guId]
+            print(f"Game with guId {guId} removed from game_box")
+        # if self.channel_name in grp_m:
+        #     grp_m.remove(self.channel_name)
+        # elif self.channel_name in grp_m3:
+        #     grp_m3.remove(self.channel_name)
+        # elif self.channel_name in grp_m5:
+        #     grp_m5.remove(self.channel_name)
+        # elif self.channel_name in grp_m7:
+        #     grp_m7.remove(self.channel_name)
+        #     # grp_m.remove(self.channel_name)
+        # if self.channel_name in game_box:
+        #     game_box.pop(self.channel_name)
+        #     print("IS FREED FROM GAME_BOX")
+
+    async def handle_leaveGame(self, players):
+        # players = game_box.get(self.channel_name)
+        leave_message = {
+        'type': 'opponentLeft',
+        'message': f"Your opponent has left the game.",
+        }
+        if ( players[0].channel_name == self.channel_name ):
+            await self.channel_layer.send(players[1].channel_name, leave_message)
+        else:
+            await self.channel_layer.send(players[0].channel_name, leave_message)
+
+        # await self.close(code=1000)
+        # else:
+        #     await self.close(code=1000)
     #function for initializing the game table
     async def resetMoves(self, players):
         players[0].moves = 0
@@ -78,11 +112,14 @@ class test(AsyncWebsocketConsumer):
     async def dbInit(self, pme, phim, game_type):
         from .models import games
         from asgiref.sync import sync_to_async
+        pme_user = await sync_to_async(User.objects.get)(id=pme.user_id)
+        phim_user = await sync_to_async(User.objects.get)(id=phim.user_id)
         game, created = await sync_to_async(games.objects.get_or_create)(
             game_id=pme.game_id,
             game_type_db=game_type,
-            # p1_id=pme.user_id,
-            # p2_id=phim.user_id,
+            p1id=pme_user,
+            p2id=phim_user,
+            winid=pme_user
             )
         if not created:
             game.game_id = pme.game_id,
@@ -94,17 +131,18 @@ class test(AsyncWebsocketConsumer):
         from asgiref.sync import sync_to_async
         
         # Retrieve the game record by `game_id` or another identifier.
-
+        p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
+        p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
         try:
             game = await sync_to_async(games.objects.get)(game_id=p1.game_id)
             
             # Update the necessary fields.
             if len(p1.winBoards) > len(p2.winBoards):
-                game.win_id = p1.channel_name
-                # game.los_id = p2.channel_name
+                game.winid = p1_user
+                # game.los_id = p2.user_id
                 game.winner_boards = p1.winBoards  # Ensure `win_boards` is a suitable field in your model.
             else:
-                game.win_id = p2.channel_name
+                game.winid = p2_user
                 # game.los_id = p1.channel_name
                 game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
 
@@ -120,22 +158,9 @@ class test(AsyncWebsocketConsumer):
         
     async def drawAnnounce(self, pf, ps):
         pf.re_setup["message"] = ps.re_setup["message"] = 2
-        # await self.channel_layer.send(pf.channel_name, pf.partyResult)
-        # await self.channel_layer.send(ps.channel_name, ps.partyResult)
-        # pf.is_inGame = ps.is_inGame = False
         await self.initGame([pf, ps], False)
 
-    # async def checkWin(self, pf, ps):
-    #     bts = pf.board
-
-    #     for c in win_combo:
-    #         if bts[c[0]] == bts[c[1]] == bts[c[2]] and bts[c[0]] != ".":
-    #             winner_char = bts[c[0]]
-    #             await self.handle_win(pf, ps, winner_char, combo=c)
-    #             return 1
-    #     return 0
-
-
+  
     async def checkft4Win(self, pf, ps, idx, bSize, winCount):
         board_2d = [pf.board[i:i + bSize] for i in range(0, len(pf.board), bSize)]
         winComboArr = [idx]
@@ -221,10 +246,10 @@ class test(AsyncWebsocketConsumer):
             # Send the final results
             await self.channel_layer.send(pf.channel_name, pf.gameResult)
             await self.channel_layer.send(ps.channel_name, ps.gameResult)
-
+            # await self.close(code=1000)
             # Reset the game state
-            pf.is_inGame = ps.is_inGame = False
-            ps.nbGames = pf.nbGames = 0
+            # pf.is_inGame = ps.is_inGame = False
+            # ps.nbGames = pf.nbGames = 0
 
         else:
             # Game hasn't ended, inform players of the current round result
@@ -246,6 +271,7 @@ class test(AsyncWebsocketConsumer):
             if players[0].ina_game[0] == "ft4":
                 players[0].board = copy.deepcopy(empty_board_ft4)
                 players[1].board = copy.deepcopy(empty_board_ft4)
+                # print("iiiiiiiina game ???? ::: ", players[0].board)
             elif players[0].ina_game[0] == "ft_classic":
                 players[0].board = copy.deepcopy(empty_board)
                 players[1].board = copy.deepcopy(empty_board)
@@ -287,6 +313,7 @@ class test(AsyncWebsocketConsumer):
             randomize_turn_and_characters()
 
             initialize_boards()
+            print("players[0].setup : ", players[0].setup)
             await self.channel_layer.send(players[0].channel_name, players[0].setup)
             await self.channel_layer.send(players[1].channel_name, players[1].setup)
         else:
@@ -312,12 +339,16 @@ class test(AsyncWebsocketConsumer):
     async def setupPlayersAndInit(self, grp, game_type):
         check_Me = grp.popleft()
         check_Him = grp.popleft()
-        if check_Me[0] == self.user.id:
-            player_me = player(check_Me, game_type)
-            player_him = player(check_Him, game_type)
+
+        check_Me_key = list(check_Me.keys())[0]  # Get the key from the first dictionary
+        check_Him_key = list(check_Him.keys())[0]
+        print("IIIn setup playyyyyer ::: gameTYPE :::: ",game_type)
+        if check_Me_key == self.user.id:
+            player_me = player([check_Me_key,check_Me[check_Me_key]], game_type)
+            player_him = player([check_Him_key, check_Him[check_Him_key]], game_type)
         else:
-            player_me = player(check_Him, game_type)
-            player_him = player(check_Me, game_type)
+            player_me = player([check_Him_key, check_Him[check_Him_key]], game_type)
+            player_him = player([check_Me_key,check_Me[check_Me_key]], game_type)
         # player(grp.popleft(), game_type[0])
         # player(grp.popleft(), game_type[0])
         # create or not db table for this game
@@ -343,6 +374,7 @@ class test(AsyncWebsocketConsumer):
             await self.close(code=4001)
         
         #  two types of games here FT4 and CLASSIC 
+        print("in distributeeeeeeeee : ", grid_type)
         if grid_type == "ft4":
             game_type = ["ft4",int(first_to)]
             grp_map = {1: ft4_m, 3: ft4_m3, 5: ft4_m5, 7: ft4_m7}
@@ -395,6 +427,8 @@ class test(AsyncWebsocketConsumer):
         firstP ,secondP = (players[0], players[1]) if players[0].char == X_CHAR else (players[1], players[0])
         is_x_turn = firstP.turn
 
+        if msg_type == 'leaveGame':
+            await self.handle_leaveGame(players)
         if msg_type == in_gaming:
             if (firstP.turn and firstP.channel_name != self.channel_name) or \
             (secondP.turn and secondP.channel_name != self.channel_name):
@@ -491,6 +525,13 @@ class test(AsyncWebsocketConsumer):
         # Handle waiting messages to send to the WebSocket client
         await self.send(text_data=json.dumps({
             "type": "waiting",
+            "message": event['message']
+        }))
+
+    async def opponentLeft(self, event):
+        # Handle waiting messages to send to the WebSocket client
+        await self.send(text_data=json.dumps({
+            "type": "opponentLeft",
             "message": event['message']
         }))
 
