@@ -2,6 +2,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from collections import defaultdict
 
+from .models import games
+from asgiref.sync import sync_to_async
 #import the model games
 #this for probably syncronizing server with database
 from channels.db import database_sync_to_async
@@ -46,7 +48,8 @@ class test(AsyncWebsocketConsumer):
     async def connect(self):
         # Here i must check for the user himself is he auth-
         self.user = self.scope["user"]
-        print(self.user.id)
+        # print("Using dir()  -----> ",dir(self.user))
+        # print("dict  -----> ",self.user.__dict__)
         if not self.user.is_authenticated:
             await self.close(code=4001)
             return
@@ -58,8 +61,24 @@ class test(AsyncWebsocketConsumer):
     def removeFromGrp(self, name, grp):
         if name in grp:
             grp.remove(name)
+            print("REMOVE FROM GRP")
     async def disconnect(self, code):
         print("this is deco code : ", code)
+
+        # grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
+        # for grp in grps_arr:
+        #     print("len dyal grp ",len(grp_m))
+        #     if self.channel_name in grp:
+        #         grp.remove(self.channel_name)
+        #         print("REMOVE FROM GRP")
+        grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
+        for grp in grps_arr:
+            for item in grp:
+                print("ITEM : ")
+                if self.user.id in item:
+                    grp.remove(item)
+                    print(f"REMOVED {self.user} FROM GRP")
+                    break
         guId = player_game_map.get(self.channel_name, None)
         if guId == None:
             return
@@ -78,6 +97,8 @@ class test(AsyncWebsocketConsumer):
         if guId in game_box:
             del game_box[guId]
             print(f"Game with guId {guId} removed from game_box")
+
+            # self.removeFromGrp(self.channel_name, grp)
         # if self.channel_name in grp_m:
         #     grp_m.remove(self.channel_name)
         # elif self.channel_name in grp_m3:
@@ -86,7 +107,15 @@ class test(AsyncWebsocketConsumer):
         #     grp_m5.remove(self.channel_name)
         # elif self.channel_name in grp_m7:
         #     grp_m7.remove(self.channel_name)
-        #     # grp_m.remove(self.channel_name)
+        # elif self.channel_name in ft4_m:
+        #     ft4_m.remove(self.channel_name)
+        # elif self.channel_name in ft4_m3:
+        #     ft4_m3.remove(self.channel_name)
+        # elif self.channel_name in ft4_m5:
+        #     ft4_m5.remove(self.channel_name)
+        # elif self.channel_name in ft4_m7:
+        #     ft4_m7.remove(self.channel_name)
+            # grp_m.remove(self.channel_name)
         # if self.channel_name in game_box:
         #     game_box.pop(self.channel_name)
         #     print("IS FREED FROM GAME_BOX")
@@ -110,8 +139,6 @@ class test(AsyncWebsocketConsumer):
         players[0].moves = 0
         players[1].moves = 0
     async def dbInit(self, pme, phim, game_type):
-        from .models import games
-        from asgiref.sync import sync_to_async
         pme_user = await sync_to_async(User.objects.get)(id=pme.user_id)
         phim_user = await sync_to_async(User.objects.get)(id=phim.user_id)
         game, created = await sync_to_async(games.objects.get_or_create)(
@@ -126,10 +153,7 @@ class test(AsyncWebsocketConsumer):
             game.game_type_db = game_type
             await sync_to_async(game.save)()
     
-    async def dbUpdate(self, p1, p2):
-        from .models import games
-        from asgiref.sync import sync_to_async
-        
+    async def dbUpdate(self, p1, p2):        
         # Retrieve the game record by `game_id` or another identifier.
         p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
         p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
@@ -265,6 +289,54 @@ class test(AsyncWebsocketConsumer):
             await self.initGame([pf, ps], False)
 
     async def initGame(self,players, rand):
+        async def get_players_data():
+            """ This function is used to get the data
+            of each player to send it to the other player."""
+            print("dkhlt hna 0")
+            if players[0].user_id == self.user.id:
+                print("dkhlt hna 1")
+                # me = await sync_to_async(User.objects.get)(id=players[0].user_id)
+                him = await sync_to_async(User.objects.get)(id=players[1].user_id)
+                # must check for failure 
+                players[0].setup["me"].update({
+                    "fname": self.user.username,
+                    "pic": self.user.external_image_url
+                })
+                players[0].setup["him"].update({
+                    "fname": him.username,
+                    "pic": him.external_image_url
+                })
+                players[1].setup["me"].update({
+                    "fname": him.username,
+                    "pic": him.external_image_url
+                })
+                players[1].setup["him"].update({
+                    "fname": self.user.username,
+                    "pic": self.user.external_image_url
+                })
+            else:
+                # me = await sync_to_async(User.objects.get)(id=players[1].user_id)
+                print("dkhlt hna 2")
+                him = await sync_to_async(User.objects.get)(id=players[0].user_id)
+                # must protect
+                players[0].setup["me"].update({
+                    "fname": him.username,
+                    "pic": him.external_image_url
+                })
+                players[0].setup["him"].update({
+                    "fname": self.user.username,
+                    "pic": self.user.external_image_url
+                })
+                players[1].setup["me"].update({
+                    "fname": self.user.username,
+                    "pic": self.user.external_image_url
+                })
+                players[1].setup["him"].update({
+                    "fname": him.username,
+                    "pic": him.external_image_url
+                })
+            
+            
         def initialize_boards():
             """Initialize players' boards and mark them as in-game."""
             # what about the board inside the msgDic
@@ -310,10 +382,11 @@ class test(AsyncWebsocketConsumer):
         update_opponent_wins(rand)
 
         if rand:
+            await get_players_data()
             randomize_turn_and_characters()
-
             initialize_boards()
             print("players[0].setup : ", players[0].setup)
+            print("players[1].setup : ", players[1].setup)
             await self.channel_layer.send(players[0].channel_name, players[0].setup)
             await self.channel_layer.send(players[1].channel_name, players[1].setup)
         else:
@@ -389,6 +462,10 @@ class test(AsyncWebsocketConsumer):
         await self.dist_help(grp, game_type)
 
     async def dist_help(self, grp, game_type):
+        # if any(self.user.id in entry for entry in grp):
+        #     print("already in game of this type")
+        #     await self.close(code=4003)
+        #     return
         grp.append({self.user.id:self.channel_name})
         if len(grp) >= 2:
             await self.setupPlayersAndInit(grp, game_type)

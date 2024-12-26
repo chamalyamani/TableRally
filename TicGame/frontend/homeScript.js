@@ -4,11 +4,19 @@ let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
 
 class Player {
-    constructor(scoreElementId, armElementId, charElementId, turnElementId) {
+    constructor(scoreElementId, armElementId, charElementId, turnElementId, nameElementId, imgElementId) {
         this.scoreElement = document.getElementById(scoreElementId);
         this.armElement = document.getElementById(armElementId);
         this.charElement = document.getElementById(charElementId);
         this.turnElement = document.getElementById(turnElementId);
+        this.nameElement = document.getElementById(nameElementId);
+        this.imgElement = document.getElementById(imgElementId);
+    }
+    setPlayerName(n) {
+        this.nameElement.textContent = n;
+    }
+    setPlayerImg(i) {
+        this.imgElement.src = i;
     }
     updatePlayerTurn(t) {
         
@@ -462,9 +470,14 @@ class t3 {
         this.turnShow = document.getElementById("turnShow")
         // this.turnShow.style.marginTop = "0%"
   
-        this.zhisP = new Player("thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis");
-        this.thatP = new Player("opponent_score", "opponent_arm", "opponent_char", "turnToggleThat");
+        this.zhisP = new Player("thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis", "thisPlayer_name", "thisPlayer_img");
+        this.thatP = new Player("opponent_score", "opponent_arm", "opponent_char", "turnToggleThat", "opponent_name", "opponent_img");
         
+        this.zhisP.setPlayerName(this.currMsg["me"]["fname"])
+        this.zhisP.setPlayerImg(this.currMsg["me"]["pic"])
+        this.thatP.setPlayerName(this.currMsg["him"]["fname"])
+        this.thatP.setPlayerImg(this.currMsg["him"]["pic"])
+
         this.setupDataBoard(0,0)
         // this.turnShow.style.marginTop = "100%"
         this.turnShow.textContent = this.zhisP.turn ? "Your Turn" : "Opponent's Turn"
