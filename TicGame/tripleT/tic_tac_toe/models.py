@@ -14,6 +14,8 @@ class games(models.Model):
     num_of_games = models.IntegerField(default=0)
     game_type_db = models.JSONField(default=list) 
     
+# class gameBoard(models.Model):
+
 
 
     # must know how to not register quited games or not finished games

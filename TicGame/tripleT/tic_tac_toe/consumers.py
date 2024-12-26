@@ -155,6 +155,7 @@ class test(AsyncWebsocketConsumer):
     
     async def dbUpdate(self, p1, p2):        
         # Retrieve the game record by `game_id` or another identifier.
+        print("gggggggggggggggggggggggggggggggggg")
         p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
         p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
         try:
@@ -171,7 +172,8 @@ class test(AsyncWebsocketConsumer):
                 game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
 
             game.num_of_games = p1.nbGames
-            
+            print("number of gameeeee:   ",game.num_of_games)
+            print("winner Boooooards :   ",game.winner_boards) 
             # Save the updated record.
             await sync_to_async(game.save)()
         
