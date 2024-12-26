@@ -120,16 +120,32 @@
 // };
 
 
+function getAccessToken() {
+    return fetch('/auth/get-access-token/', {
+        method: 'GET',
+        credentials: 'include'  // Include cookies in the request
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access_token) {
+            return new WebSocket(`/ws/game/?Token=${data.access_token}`);
+        } else {
+            throw new Error('Access token not found');
+        }
+        console.log(">>", data)
+    })
+    .catch(error => {
+        console.error('Error fetching access token:', error);
+        console.log()
+        throw error;
+    });
+}
 
 
+const chatSocket =  getAccessToken();
 
-
-const chatSocket = new WebSocket('/ws/game/');
 const canvas = document.getElementById("Game");
 const context = canvas.getContext('2d');
-
-
-
 
 function waiting()
 {
