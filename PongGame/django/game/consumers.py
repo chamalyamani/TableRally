@@ -16,6 +16,7 @@ groups = []
 GamePlay = []
 second_player = False
 LiveGameArr = []
+acepted_users = []
 x = 0
 
 def CreateGameName():
@@ -101,9 +102,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         
         self.user = self.scope['user']
-        print(">>>>>>>>", self.user.is_authenticated)
-        await self.accept()
-        await self.add_to_waiting_list()
+        print(">>>>>>>>", self.user.external_image_url)
+        if (self.user in acepted_users) == False:
+            print("user self == ",self.user)
+            await self.accept()
+            acepted_users.append(self.user)
+            await self.send(text_data=json.dumps({"TITLE": "wait", "image": self.user.external_image_url}))
+            await self.add_to_waiting_list()
+        else :
+            print("alredy exist ",self.user)
+            print(acepted_users)
+            await self.close()
+            return 
+        
 
 
     async def add_to_waiting_list(self):
@@ -158,7 +169,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         break
                 except ValueError:
                     pass
-                    # print("pass!")
         await asyncio.sleep(1)
         await self.channel_layer.group_send(
         self.group_name,
@@ -166,6 +176,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type" : "start",
             "group" : self.group_name,
             "TITLE" : "start",
+            "player2_image" : self.user.external_image_url
+            
         }
         )
 
@@ -175,12 +187,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, code):
+        # player_wait_for_group.remove(self.player2)
+        # main_player.remove(self.channel_name)
+        # LiveGameArr.remove(self.game)
+        # acepted_users.remove(self.user)
         pass
 
     async def start(self, event):
         TITLE = event["TITLE"]
 
-        await self.send(text_data=json.dumps({"TITLE": TITLE}))
+        await self.send(text_data=json.dumps({"TITLE": TITLE, "image2": event["player2_image"]}))
 
     async def loopsend(self, event):
         TITLE = event["TITLE"]

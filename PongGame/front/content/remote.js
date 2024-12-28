@@ -1,157 +1,42 @@
-// group_name = "";
+let chatSocket;
+let image;
+let image2 = 'boy.png';
 
-// const paddleWidth = 5, paddleHeight = 70;
-// const player1 = { x: 5, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, color: '#FFF' };
-// const player2 = { x: canvas.width - paddleWidth - 5, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, color: '#FFF' };
-
-// const ball = { x: canvas.width / 2, y: canvas.height / 2, radius: 8, speed: 4, velocityX: 4, velocityY: 4, color: 'withe' };
-
-// function draw() {
+async function getAccessToken() {
+  try {
+    console.log("hello 2");
     
-//     context.clearRect(0, 0, canvas.width, canvas.height);
-//     context.fillStyle = "rgba(0, 0, 0, 0.2)";
-//     context.fillRect(0, 0, canvas.width, canvas.height);
-
-
-//     context.fillStyle = player1.color;
-//     context.fillRect(player1.x , player1.y, player1.width, player1.height);
-
-//     context.fillStyle = player2.color;
-//     context.fillRect(player2.x, player2.y , player2.width, player2.height);
-
-//     context.fillStyle = ball.color;
-//     context.beginPath();
-//     context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
-//     context.fill();
-
-//     context.beginPath();
-//     context.setLineDash([4, 2]);
-//     context.moveTo(canvas.width / 2, 0);
-//     context.lineTo(canvas.width / 2, 350);
-//     context.lineWidth = 2;
-//     context.strokeStyle = "white";
-//     context.stroke();
-// }
-// stepX = 1
-// stepY = 1
-
-// function MoveBall() 
-// {
-//         const data = {TITLE : "move_ball",}
-//         chatSocket.send(JSON.stringify(data));
-//     }
-    
-//     const keys = {
-//             up: false,
-//             down: false,
-//         };
-        
-//         window.addEventListener("keydown", function (event) {
-//                 if (event.key === 'ArrowUp') keys.up = true;
-//                 if (event.key === 'ArrowDown') keys.down = true;
-//             });
-            
-//             window.addEventListener("keyup", function (event) {
-//                     if (event.key === 'ArrowUp') keys.up = false;
-//                     if (event.key === 'ArrowDown') keys.down = false;
-// });
-
-
-// function MovePlayer()
-// {
-//     if (keys.up == true  )
-//     {        
-//         const data =  {TITLE : "move_player", player_direction : "up"}
-//         chatSocket.send(JSON.stringify(data))
-//     }
-//     if (keys.down == true ) 
-//     {
-//         const data =  {TITLE : "move_player", player_direction : "down"}
-//         chatSocket.send(JSON.stringify(data))
-//     }
-// }
-
-// function gameLoop() {
-//         MovePlayer();
-//         MoveBall();
-//         draw();
-//     requestAnimationFrame(gameLoop);
-// }
-
-
-
-
-// chatSocket.onmessage = function(e) 
-// {
-    //         const data = JSON.parse(e.data);
-    //     if(data.TITLE == "start")
-    //     {
-    //         group_name = data.message;
-    //         nowait();
-    //         const info = {
-        //                 "TITLE" : "info",
-        //                 "canvas_width" : canvas.width , 
-        //                 "canvas_height" : canvas.height,
-        //                 "paddleWidth" : paddleWidth,
-        //                 "paddleHeight" : paddleHeight,
-        //                 "player1" : player1, 
-        //                 "player2" : player2,
-//                 "ball" : ball,
-//             }
-//             chatSocket.send(JSON.stringify(info))
-//             gameLoop();
-//         }
-//         else if(data.TITLE == "move_ball")
-//         {
-//             ball.x = data.ballX
-//             ball.y = data.ballY
-
-//         }
-//         else if(data.TITLE == "move_player")
-//         {
-//             if(data.player == "player1")
-//             player1.y = data.position
-//         else
-//             player2.y = data.position
-
-//     }
-
-
-// };
-
-
-function getAccessToken() {
-    return fetch('/auth/get-access-token/', {
-        method: 'GET',
-        credentials: 'include'  // Include cookies in the request
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access_token) {
-            return new WebSocket(`/ws/game/?Token=${data.access_token}`);
-        } else {
-            throw new Error('Access token not found');
-        }
-        console.log(">>", data)
-    })
-    .catch(error => {
-        console.error('Error fetching access token:', error);
-        console.log()
-        throw error;
+    const response = await fetch("/auth/get-access-token/", {
+      method: "GET",
+      credentials: "include",
     });
+    console.log("hello 3");
+    
+    const data = await response.json();
+    console.log(">>", data.access_token, "<<");
+    if (data.access_token) {
+      console.log("hello 4");
+      chatSocket = new WebSocket(`/ws/game/?Token=${data.access_token}`);
+    } else {
+      throw new Error("Access token not found");
+    }
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+    throw error;
+  }
 }
 
+console.log("hello 1");
 
-const chatSocket =  getAccessToken();
-
-const canvas = document.getElementById("Game");
-const context = canvas.getContext('2d');
-
-function waiting()
-{
-    // const x = document.getElementById("test")
-    // x.innerHTML = "wait.........."
-    document.documentElement.innerHTML = `
+getAccessToken()
+.then(() => {    
+    console.log("hello 5");
+    const canvas = document.getElementById("Game");
+    const context = canvas.getContext("2d");
+    console.log("helo 6");
+    
+    function waiting() {
+      document.documentElement.innerHTML = `
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,23 +46,16 @@ function waiting()
     <link rel="stylesheet" href="file.css">
 </head>
 <body>
-    <div class="circle"><img src="boy.png"></div>
+    <div class="circle"><img src="${image}"></div>
     <p>vs</p>
     <div class="circle"><img src="boy.png"></div>
 </body>
 </html> 
       `;
+    }
 
-
-}
-
-function nowait()
-{
-    // console.log("no wait");
-    // const x = document.getElementById("test")
-    // x.innerHTML = ""
-    
-    document.documentElement.innerHTML = `
+    function nowait() {
+      document.documentElement.innerHTML = `
     <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -196,15 +74,15 @@ function nowait()
                 <h1>Game</h1>
                 <div id="imges">
                     <img src="notification-bell.png">
-                    <img src="boy.png">
+                    <img src="${image}">
                 </div>
             </div>
             <div id="score">
-                <img src="boy.png">
+                <img src="${image}">
                 <h1 id="score1"  >0</h1>
                 <p id="test"></p>
                 <h1 id="score2">0</h1>
-                <img src="boy.png">
+                <img src="${image2}">
             </div>
 
             <canvas id="Game" width="700" height="350"></canvas>
@@ -217,100 +95,153 @@ function nowait()
     
 </body>
 </html>
+`;
+    }
+
+    function draw(context, canvas, ballx, bally, player1, player2) {
+      // console.log("draw start");
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = "rgba(0, 0, 0, 0.2)";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      context.fillStyle = "#FFF";
+      context.fillRect(5, player1, 5, 70);
+
+      context.fillStyle = "#FFF";
+      context.fillRect(canvas.width - 10, player2, 5, 70);
+
+      context.fillStyle = "#FFF";
+      context.beginPath();
+      context.arc(ballx, bally, 8, 0, Math.PI * 2, false);
+      context.fill();
+
+      context.beginPath();
+      context.setLineDash([4, 2]);
+      context.moveTo(canvas.width / 2, 0);
+      context.lineTo(canvas.width / 2, 350);
+      context.lineWidth = 2;
+      context.strokeStyle = "white";
+      context.stroke();
+
+      // console.log("draw end");
+    }
+
+    chatSocket.onopen = function (event) {
+      console.log("wait..................................");
+
+    //   waiting();
+    };
+
+    chatSocket.onerror = (error) => {
+      console.log("onerror enter");
+      
+      document.documentElement.innerHTML =
+      `
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="chose.css">
+      <title>Document</title>
+      </head>
+      <body>
+      <div id="holder">
+      <a href="local.html">
+      <div>
+      <!-- <img src="local3.png"> -->
+      <p>local</p>
+      </div>
+      </a> 
+      <a href="remote.html">
+      <div>
+      <p>remote</p>
+                <!-- <img id="remote" src="local3.png"> -->
+            </div>
+        </a>
+        <a href="tournament.html">
+        <div>
+        <p>tournament</p>
+                <!-- <img  src="local3.png"> -->
+                </div>
+                </a>
+                </div>
+</body>
+</html>
 `
+console.log("onerror exit");
 
-}
+  };
 
-
-function draw(context, canvas,ballx, bally, player1, player2) {
-    // console.log("draw start");
-    
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "rgba(0, 0, 0, 0.2)";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-
-    context.fillStyle = '#FFF';
-    context.fillRect(5 , player1, 5, 70);
-
-    context.fillStyle = '#FFF';
-    context.fillRect(canvas.width - 10, player2, 5, 70);
-
-    context.fillStyle = '#FFF';
-    context.beginPath();
-    context.arc(ballx, bally, 8, 0, Math.PI * 2, false);
-    context.fill();
-
-    context.beginPath();
-    context.setLineDash([4, 2]);
-    context.moveTo(canvas.width / 2, 0);
-    context.lineTo(canvas.width / 2, 350);
-    context.lineWidth = 2;
-    context.strokeStyle = "white";
-    context.stroke();
-
-
-
-    // console.log("draw end");
-
-}
-
-
-
-
-chatSocket.onopen =  function(event) {
-    console.log("wait");
-    
-    waiting();
+  chatSocket.onclose = (event) => {
+    if (!event.wasClean) {
+        console.error("WebSocket connection closed unexpectedly.");
+    } else {
+        console.log("WebSocket connection closed cleanly.");
+    }
 };
-
-chatSocket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    if(data.TITLE == "start")
-    {
-
-        nowait();
-    }
-    if(data.TITLE == "gameloop")
-    {
-        const canvas = document.getElementById("Game");
-        const context = canvas.getContext('2d');        draw(context, canvas, data.ballx, data.bally, data.player1, data.player2)
-        document.getElementById("score1").innerHTML = data.score1
-        document.getElementById("score2").innerHTML = data.score2
-    }
-
-}
-
-function MovePlayer()
-{
-
-        // console.log("moveplaye function woe")
-        if (keys.up == true  )
-        {        
-            const data =  {TITLE : "move_player", player_direction : "up"}
-            chatSocket.send(JSON.stringify(data))
-        }
-        if (keys.down == true ) 
+    chatSocket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+	  console.log(data.TITLE, data.image)
+      if (data.TITLE == "start") {
+        if(data.image2 != image)
         {
-            const data =  {TITLE : "move_player", player_direction : "down"}
-            chatSocket.send(JSON.stringify(data))
+          image2 = data.image2
         }
-        requestAnimationFrame(MovePlayer)
-}
+        nowait();
+        
+      }
+      if (data.TITLE == "gameloop") {
+        const canvas = document.getElementById("Game");
+        const context = canvas.getContext("2d");
+        draw(
+          context,
+          canvas,
+          data.ballx,
+          data.bally,
+          data.player1,
+          data.player2
+        );
+        document.getElementById("score1").innerHTML = data.score1;
+        document.getElementById("score2").innerHTML = data.score2;
+      }
+      if (data.TITLE == "wait") {
+		    image = data.image
+        waiting()
+      }
+    };
 
-const keys = {
-    up: false,
-    down: false,
-};
+    function MovePlayer() {
+      // console.log("moveplaye function woe")
+      if (keys.up == true) {
+        const data = { TITLE: "move_player", player_direction: "up" };
+        chatSocket.send(JSON.stringify(data));
+      }
+      if (keys.down == true) {
+        const data = { TITLE: "move_player", player_direction: "down" };
+        chatSocket.send(JSON.stringify(data));
+      }
+      requestAnimationFrame(MovePlayer);
+    }
 
-window.addEventListener("keydown", function (event) {
-    if (event.key === 'ArrowUp') keys.up = true;
-    if (event.key === 'ArrowDown') keys.down = true;
-});
-    
-window.addEventListener("keyup", function (event) {
-    if (event.key === 'ArrowUp') keys.up = false;
-    if (event.key === 'ArrowDown') keys.down = false;
-});
+    const keys = {
+      up: false,
+      down: false,
+    };
 
-MovePlayer();
+    window.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowUp") keys.up = true;
+      if (event.key === "ArrowDown") keys.down = true;
+    });
+
+    window.addEventListener("keyup", function (event) {
+      if (event.key === "ArrowUp") keys.up = false;
+      if (event.key === "ArrowDown") keys.down = false;
+    });
+
+    MovePlayer();
+    console.log("WebSocket connection established:", chatSocket);
+  })
+  .catch((error) => {
+    console.error("Error initializing WebSocket:", error);
+  });
