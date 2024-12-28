@@ -5,6 +5,7 @@ let messageInput = document.querySelector('.message-bar');
 let div1 = document.querySelector('.div1');
 let div2 = document.querySelector('.div2');
 let div3 = document.querySelector('.div3');
+let div4 = document.querySelector('.div4');
 let modal = document.querySelector('.modal');
 let modalUser = document.querySelector('.modal-user')
 let modalContent = document.querySelector('.modal-content');
@@ -18,8 +19,10 @@ let blockButton = document.querySelector('.block-button');
 let modalButton = document.querySelector('.modal-button');
 let modalButton2 = document.querySelector('.modal-button2');
 let modalButton3 = document.querySelector('.modal-button3');
+let modalButton4 = document.querySelector('.modal-button4');
 let modalCancelButton = document.querySelector('.modal-cancel-button');
 let modalCancelButton3 = document.querySelector('.modal-cancel-button3');
+let modalCancelButton4 = document.querySelector('.modal-cancel-button4');
 let messageBar = document.querySelector('.message-bar');
 let newChatPageButton = document.querySelector('.new-chat-page button');
 let conversations = document.querySelector('.conversations');
@@ -63,6 +66,7 @@ const addFriend = () => {
     div1.style.display = 'flex';
     div2.style.display = 'none';
     div3.style.display = 'none';
+    div4.style.display = 'none'
 }
 
 plusIcon.addEventListener('click', addFriend);
@@ -73,6 +77,8 @@ modalButton2.addEventListener('click', removeBlur);
 
 modalButton3.addEventListener('click', removeBlur);
 
+modalButton4.addEventListener('click', removeBlur);
+
 deleteButton.addEventListener('click', () => {
     chatBar.style.filter = 'blur(5px)';
     chatContent.style.filter = 'blur(5px)';
@@ -80,6 +86,7 @@ deleteButton.addEventListener('click', () => {
     div1.style.display = 'none'
     div2.style.display = 'flex'
     div3.style.display = 'none'
+    div4.style.display = 'none'
 })
 
 blockButton.addEventListener('click', () => {
@@ -89,27 +96,24 @@ blockButton.addEventListener('click', () => {
     div1.style.display = 'none'
     div2.style.display = 'none'
     div3.style.display = 'flex'
+    div4.style.display = 'none'
+})
+
+playButton.addEventListener('click', () => { 
+    chatBar.style.filter = 'blur(5px)';
+    chatContent.style.filter = 'blur(5px)';
+    modal.style.display = 'block';
+    div1.style.display = 'none'
+    div2.style.display = 'none'
+    div3.style.display = 'none'
+    div4.style.display = 'flex'
 })
 
 modalCancelButton.addEventListener('click', removeBlur);
 
 modalCancelButton3.addEventListener('click', removeBlur);
 
-// sendButton.addEventListener('click', () => {
-//     if (messageInput.value)
-//     {
-//         console.log(messageInput.value);
-//         messageInput.value = '';
-//     }
-// })
-
-// messageBar.addEventListener('keydown', (event) => {
-//     if (event.key == 'Enter' && messageInput.value)
-//     {
-//         console.log(messageInput.value);
-//         messageInput.value = '';
-//     }
-// })
+modalCancelButton4.addEventListener('click', removeBlur);
 
 newChatPageButton.addEventListener('click', addFriend);
 
@@ -150,7 +154,6 @@ modalInput.addEventListener('input', (input) => {
             // console.log(newUser)
             newUser.querySelector('.li1').textContent = user.username;
             newUser.style.display = 'flex';
-            console.log('00000000');
             console.log(user.image_url);
             newUser.querySelector('.modal-img').src = user.image_url;
             // userField.appendChild(newUser);
@@ -291,18 +294,6 @@ function convClickAction(conv, singleConv) {
 
     listMessages(conv);
     realTime(conv, singleConv);
-    playButton.addEventListener('click', () => { 
-        console.log(conv)
-        getAccessToken()
-            .then(accessToken => {
-                let socket2 = new WebSocket(`/ws/play/?Token=${accessToken}`);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert(`Error: ${error.message}`);
-            });
-
-    })
 }
 
 function listMessages(conv) {

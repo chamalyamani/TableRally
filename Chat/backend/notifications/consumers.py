@@ -6,6 +6,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
         self.user = self.scope['user']
         self.user_notification_id = f'user_notification_{self.user.id}'
         print ('user ===> ', self.user.id)
+        print ('group ===> ', self.user_notification_id)
 
         if not self.user.is_authenticated:
             print ("USER is NOT authenticated")
@@ -21,9 +22,8 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_dic = json.loads(text_data)
-        print ('RECIEVA')
 
-        if 'message_notification' in text_data_dic:
+        if text_data_dic['type'] == 'message_notification':
             receiver_id = text_data_dic['receiver_id']
             await self.channel_layer.group_send(
                 f'user_notification_{receiver_id}',
@@ -33,7 +33,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        elif 'game_request_notification' in text_data_dic:
+        elif text_data_dic['type'] == 'game_request_notification':
             receiver_id = text_data_dic['receiver_id']
             await self.channel_layer.group_send(
                 f'user_notification_{receiver_id}',
