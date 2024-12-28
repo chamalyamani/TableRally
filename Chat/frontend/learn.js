@@ -37,6 +37,8 @@ let socket;
 let deleteChat = document.querySelector('.modal-delete-button');
 let blockChat = document.querySelector('.modal-block-button');
 let unblockChat = document.querySelector('.modal-unblock-button');
+let playButton = document.querySelector('.play-button');
+let chats = document.querySelector('.chats');
 let urls = [];
 let path;
 let blockList = [];
@@ -289,6 +291,18 @@ function convClickAction(conv, singleConv) {
 
     listMessages(conv);
     realTime(conv, singleConv);
+    playButton.addEventListener('click', () => { 
+        console.log(conv)
+        getAccessToken()
+            .then(accessToken => {
+                let socket2 = new WebSocket(`/ws/play/?Token=${accessToken}`);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            });
+
+    })
 }
 
 function listMessages(conv) {
@@ -336,6 +350,7 @@ async function realTime(conv, singleConv) {
     if (!socket || socket.readyState !== WebSocket.OPEN)
         socket = new WebSocket(`/ws/chat/${conv.id}/?Token=${token}`);
     socket.onmessage = ({ data }) => {
+        chats.textContent = 'Salam';
         let receivedMessage = JSON.parse(data);
         // console.log('mmmmm');
         // console.log(receivedMessage);
