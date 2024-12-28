@@ -3,6 +3,8 @@
 let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
 
+
+
 class Player {
     constructor(scoreElementId, armElementId, charElementId, turnElementId, nameElementId, imgElementId) {
         this.scoreElement = document.getElementById(scoreElementId);
@@ -119,7 +121,7 @@ class t3 {
       </div>
       <div class="board_head">
       <div class="fp df_fdc_jcsa_aic">
-        <div class="pl_profil df_fdc_jcc_aic" id="fp_profil">
+        <div class="pl_profil" id="fp_profil">
           <img src="" alt="" id="thisPlayer_img">
           <h5 id="thisPlayer_name">abbass</h5>
         </div>
@@ -147,7 +149,7 @@ class t3 {
       <div id="popup" class="">
       </div>
       <div class="sp df_fdc_jcsa_aic">
-        <div class="pl_profil df_fdc_jcc_aic" id="sp_profil">
+        <div class="pl_profil" id="sp_profil">
           <img src="" alt="" id="opponent_img">
           <h5 id="opponent_name">hmida</h5>
         </div>
@@ -431,9 +433,13 @@ class t3 {
     /** problem after re_setup f ft4 3la wed had update board ma khdamch o hta reset dl board */
     async re_setup(){
         this.board = this.currMsg["board"]
-        await this.removeClick()
+        // alert(".")
+        console.log("getting daba inside re_setup : ")
         this.updateBoard()
+        await this.removeClick()
+        // setTimeout(() => {
         await this.showWinMessage(this.currMsg["reslt"])
+        // }, 1000)
         this.board = Array(this.gType**2).fill('.');
         this.formatCells()
         this.setupDataBoard(this.currMsg["wins"],this.currMsg["opwins"])
@@ -603,7 +609,7 @@ async function playgame (gameType) {
         // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
         // console.log("by by : ",gg.cont)
         console.log('this is matchingsocket.onclose function')
-        location.reload()
+        // location.reload()
         matchingSocket = null
         gg = null
 
@@ -630,7 +636,7 @@ function leaveGame() {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         matchingSocket.close(1000)
     // console.log("hello world")
-    // location.reload();
+    location.reload();
 }
 
 
@@ -673,7 +679,9 @@ t3.prototype.lmClick = function (ev) {
 }
 
 t3.prototype.updateBoard = function () {
+    console.log("rah dkheeeeeelt hna ")
     this.cells.forEach( (lm, i) => {
+        console.log("o hta hnaaaaaaaaaaaaaa")
         if( lm && this.board[i] != "." && lm.innerHTML.trim() === ""){
             let g = this.board[i]
             let p = document.createElement("p")

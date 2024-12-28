@@ -49,11 +49,12 @@ class test(AsyncWebsocketConsumer):
         # Here i must check for the user himself is he auth-
         self.user = self.scope["user"]
         # print("Using dir()  -----> ",dir(self.user))
-        # print("dict  -----> ",self.user.__dict__)
+        print("dict  -----> ",self.user.__dict__)
         if not self.user.is_authenticated:
             await self.close(code=4001)
             return
         print("USER ID : ",self.user.is_authenticated)
+        print("this user is  : ",self.user.image_url)
         # get his data needed for the game (name lvl img)
         # know what type he want to play first to 1 3 5 7
         await self.accept()
@@ -138,48 +139,83 @@ class test(AsyncWebsocketConsumer):
     async def resetMoves(self, players):
         players[0].moves = 0
         players[1].moves = 0
-    async def dbInit(self, pme, phim, game_type):
-        pme_user = await sync_to_async(User.objects.get)(id=pme.user_id)
-        phim_user = await sync_to_async(User.objects.get)(id=phim.user_id)
-        game, created = await sync_to_async(games.objects.get_or_create)(
-            game_id=pme.game_id,
-            game_type_db=game_type,
-            p1id=pme_user,
-            p2id=phim_user,
-            winid=pme_user
-            )
-        if not created:
-            game.game_id = pme.game_id,
-            game.game_type_db = game_type
-            await sync_to_async(game.save)()
-    
-    async def dbUpdate(self, p1, p2):        
-        # Retrieve the game record by `game_id` or another identifier.
-        print("gggggggggggggggggggggggggggggggggg")
-        p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
-        p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
-        try:
-            game = await sync_to_async(games.objects.get)(game_id=p1.game_id)
-            
-            # Update the necessary fields.
-            if len(p1.winBoards) > len(p2.winBoards):
-                game.winid = p1_user
-                # game.los_id = p2.user_id
-                game.winner_boards = p1.winBoards  # Ensure `win_boards` is a suitable field in your model.
-            else:
-                game.winid = p2_user
-                # game.los_id = p1.channel_name
-                game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
+    async def dbInit(self, p1, p2, game_type):
+        """Create a game record and save all necessary data with exception handling."""
+        print("Saving Game Data...")
 
-            game.num_of_games = p1.nbGames
-            print("number of gameeeee:   ",game.num_of_games)
-            print("winner Boooooards :   ",game.winner_boards) 
-            # Save the updated record.
-            await sync_to_async(game.save)()
+        from asgiref.sync import sync_to_async
+        from .models import games
+        from django.core.exceptions import ObjectDoesNotExist
+
+        try:
+            # Retrieve users
+            p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
+            p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
+        except ObjectDoesNotExist as e:
+            print(f"Error retrieving users: {e}")
+            return  # Handle gracefully, e.g., log or notify
+
+        # Determine the winner
+        winner = p1_user if len(p1.winBoards) > len(p2.winBoards) else p2_user
+        winner_boards = p1.winBoards if len(p1.winBoards) > len(p2.winBoards) else p2.winBoards
+
+        try:
+            # Create the game record
+            game = await sync_to_async(games.objects.create)(
+                # game_id=p1.game_id,
+                game_type_db=game_type,
+                p1id=p1_user,
+                p2id=p2_user,
+                winid=winner,
+                winner_boards=winner_boards,
+                num_of_games=p1.nbGames,
+            )
+            print(f"Game record created:")
+        except Exception as e:
+            print(f"Error creating game record: {e}")
+    # async def dbInit(self, pme, phim, game_type):
+    #     print("daba f dbINIIIIIIIIIIIT")
+    #     pme_user = await sync_to_async(User.objects.get)(id=pme.user_id)
+    #     phim_user = await sync_to_async(User.objects.get)(id=phim.user_id)
+    #     game, created = await sync_to_async(games.objects.get_or_create)(
+    #         game_id=pme.game_id,
+    #         game_type_db=game_type,
+    #         p1id=pme_user,
+    #         p2id=phim_user,
+    #         winid=pme_user
+    #         )
+    #     if not created:
+    #         # game.game_id = pme.game_id,
+    #         game.game_type_db = game_type
+    #         await sync_to_async(game.save)()
+    
+    # async def dbUpdate(self, p1, p2):        
+    #     # Retrieve the game record by `game_id` or another identifier.
+    #     print("daba f DB UUUUUUUUUUUUPDAAAATE")
+    #     p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
+    #     p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
+    #     try:
+    #         game = await sync_to_async(games.objects.get)(game_id=p1.game_id)
+            
+    #         # Update the necessary fields.
+    #         if len(p1.winBoards) > len(p2.winBoards):
+    #             game.winid = p1_user
+    #             # game.los_id = p2.user_id
+    #             game.winner_boards = p1.winBoards  # Ensure `win_boards` is a suitable field in your model.
+    #         else:
+    #             game.winid = p2_user
+    #             # game.los_id = p1.channel_name
+    #             game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
+
+    #         game.num_of_games = p1.nbGames
+    #         print("number of gameeeee:   ",game.num_of_games)
+    #         print("winner Boooooards :   ",game.winner_boards) 
+    #         # Save the updated record.
+    #         await sync_to_async(game.save)()
         
-        except games.DoesNotExist:
-            # Handle the case where the game record doesn't exist.
-            print("Game record not found.")
+    #     except games.DoesNotExist:
+    #         # Handle the case where the game record doesn't exist.
+    #         print("Game record not found.")
 
         
     async def drawAnnounce(self, pf, ps):
@@ -189,7 +225,8 @@ class test(AsyncWebsocketConsumer):
   
     async def checkft4Win(self, pf, ps, idx, bSize, winCount):
         board_2d = [pf.board[i:i + bSize] for i in range(0, len(pf.board), bSize)]
-        winComboArr = [idx]
+        print("ANA DABA F checkft4Win")
+        # print("winComboArr : ",winComboArr)
         # Convert the 1D index to 2D coordinates
         row = idx // bSize
         col = idx % bSize
@@ -204,6 +241,7 @@ class test(AsyncWebsocketConsumer):
 
         for direction in directions:
             count = 1  # Include the starting position
+            winComboArr = [idx]
 
             for dr, dc in direction:
                 r, c = row, col
@@ -223,6 +261,7 @@ class test(AsyncWebsocketConsumer):
                     # Increment the count if it matches
                     count += 1
                     winComboArr.append(r * bSize + c)
+                    # print()
 
                     # If we've reached the win condition, handle the win
                     if count == winCount:
@@ -239,7 +278,18 @@ class test(AsyncWebsocketConsumer):
         and manages game re-initialization.
         """
         bts = pf.board
+        # print("bts : ", bts)
+        print("combo : ", combo)
+        bts_list = list(bts)
 
+        # Loop through the indexes in combo and make them uppercase
+        for idx in combo:
+            if 0 <= idx < len(bts):  # Ensure index is valid
+                bts_list[idx] = bts_list[idx].upper()
+
+        # Join the list back into a string
+        bts = ''.join(bts_list)
+        print("bts after applying combo : ", bts)
         if winner_char == pf.char:
             pf.wins += 1
             pf.winBoards.append(bts)
@@ -266,13 +316,19 @@ class test(AsyncWebsocketConsumer):
             })
 
             # Save the final state of the game in the database
-            if self.channel_name == pf.channel_name:
-                await self.dbUpdate(pf, ps)
+        # if self.channel_name == pf.channel_name:
+            print("hani dezt mn hna ---------")
+            await self.dbInit(pf, ps, pf.ina_game)
+            # await self.dbUpdate(pf, ps)
 
             # Send the final results
             await self.channel_layer.send(pf.channel_name, pf.gameResult)
             await self.channel_layer.send(ps.channel_name, ps.gameResult)
-            # await self.close(code=1000)
+            # await self.channel_layer.send(pf.channel_name, Force quite for both)
+            # await self.channel_layer.send(ps.channel_name, Force quite for both)
+            #this code is for end of game
+
+            await self.close(code=4010)
             # Reset the game state
             # pf.is_inGame = ps.is_inGame = False
             # ps.nbGames = pf.nbGames = 0
@@ -281,11 +337,13 @@ class test(AsyncWebsocketConsumer):
             # Game hasn't ended, inform players of the current round result
             pf.re_setup.update({
                 "message": 1 if winner_char == pf.char else 0,
-                "winLms": combo
+                "winLms": combo,
+                "board" : pf.board
             })
             ps.re_setup.update({
                 "message": 1 if winner_char == ps.char else 0,
-                "winLms": combo
+                "winLms": combo,
+                "board" : ps.board
             })
 
             await self.initGame([pf, ps], False)
@@ -302,19 +360,19 @@ class test(AsyncWebsocketConsumer):
                 # must check for failure 
                 players[0].setup["me"].update({
                     "fname": self.user.username,
-                    "pic": self.user.external_image_url
+                    "pic": self.user.image_url
                 })
                 players[0].setup["him"].update({
                     "fname": him.username,
-                    "pic": him.external_image_url
+                    "pic": him.image_url
                 })
                 players[1].setup["me"].update({
                     "fname": him.username,
-                    "pic": him.external_image_url
+                    "pic": him.image_url
                 })
                 players[1].setup["him"].update({
                     "fname": self.user.username,
-                    "pic": self.user.external_image_url
+                    "pic": self.user.image_url
                 })
             else:
                 # me = await sync_to_async(User.objects.get)(id=players[1].user_id)
@@ -323,19 +381,19 @@ class test(AsyncWebsocketConsumer):
                 # must protect
                 players[0].setup["me"].update({
                     "fname": him.username,
-                    "pic": him.external_image_url
+                    "pic": him.image_url
                 })
                 players[0].setup["him"].update({
                     "fname": self.user.username,
-                    "pic": self.user.external_image_url
+                    "pic": self.user.image_url
                 })
                 players[1].setup["me"].update({
                     "fname": self.user.username,
-                    "pic": self.user.external_image_url
+                    "pic": self.user.image_url
                 })
                 players[1].setup["him"].update({
                     "fname": him.username,
-                    "pic": him.external_image_url
+                    "pic": him.image_url
                 })
             
             
@@ -349,8 +407,6 @@ class test(AsyncWebsocketConsumer):
             elif players[0].ina_game[0] == "ft_classic":
                 players[0].board = copy.deepcopy(empty_board)
                 players[1].board = copy.deepcopy(empty_board)
-            players[0].is_inGame = True
-            players[1].is_inGame = True
 
         def update_opponent_wins(rand):
             """Update opponent wins based on whether it's a random game."""
@@ -386,16 +442,18 @@ class test(AsyncWebsocketConsumer):
         if rand:
             await get_players_data()
             randomize_turn_and_characters()
-            initialize_boards()
             print("players[0].setup : ", players[0].setup)
             print("players[1].setup : ", players[1].setup)
             await self.channel_layer.send(players[0].channel_name, players[0].setup)
             await self.channel_layer.send(players[1].channel_name, players[1].setup)
         else:
             setup_turns()
-            initialize_boards()
+            # initialize_boards()
             await self.channel_layer.send(players[0].channel_name, players[0].re_setup)
             await self.channel_layer.send(players[1].channel_name, players[1].re_setup)
+        initialize_boards()
+        players[0].is_inGame = True
+        players[1].is_inGame = True
 
           
 
@@ -403,7 +461,7 @@ class test(AsyncWebsocketConsumer):
 
 
     def genIdGameAndSendToGameBox(self, pme, phim, game_type):
-        gen_game_id = f"{pme.channel_name}_{phim.channel_name}_{int(time.time())}"
+        gen_game_id = f"{pme.user_id}_{phim.user_id}_{int(time.time())}"
         pme.game_id = phim.game_id = gen_game_id
         pme.ina_game = phim.ina_game = game_type
         player_game_map[pme.channel_name] = player_game_map[phim.channel_name] = gen_game_id
@@ -428,7 +486,7 @@ class test(AsyncWebsocketConsumer):
         # player(grp.popleft(), game_type[0])
         # create or not db table for this game
         self.genIdGameAndSendToGameBox(player_me, player_him, game_type)
-        await self.dbInit(player_me, player_him, game_type)
+        # await self.dbInit(player_me, player_him, game_type)
         # here must get the data of each player to send it
         await self.initGame([player_me, player_him], True)
 
@@ -478,13 +536,24 @@ class test(AsyncWebsocketConsumer):
                 "message": "en couuuurs. ."
             })
 
+    # async self.friendGame(self, content):
+    #     friend_id = content.get('friend_id', None)
+    #     if friend_id is None:
+    #         await self.close(code=4001)  # Invalid or missing game type
+    #         return
+
+
     async def receive(self, text_data):
         # data must be parsed here 
         # and then create the players
         txt_json = json.loads(text_data)
+        print("RECEIVE : ", txt_json)
         msg_type = txt_json.get("type", None)
         if msg_type == None:
             return
+        # could receive a message that says there is two users that wants to play together
+        # if msg_type == 'friendGame':
+        #     await self.friendGame(txt_json)
         #must be handled if is already in game or is not in game 
         if msg_type == 'ft_classic' or msg_type == 'ft4':
             await self.distribute(txt_json, msg_type)

@@ -221,3 +221,6 @@ class player:
         # -----------------------------------------------------------------------------------------
         # -----------------------------------------------------------------------------------------
 
+        # import export js for sending wherever the user is
+        # new general socket
+        # new js static file that manages the notifications
