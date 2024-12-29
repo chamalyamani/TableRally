@@ -128,10 +128,8 @@ class UpdateProfileView(APIView):
                 return True
         return False
 
-# def get_csrf_token(request):
-#     # This will return the CSRF token to the frontend
-#     csrf_token = get_token(request)
-#     return JsonResponse({'csrfToken': csrf_token})
+def get_csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})
 
 class UserSearchView(APIView):
     """

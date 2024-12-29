@@ -54,7 +54,7 @@ services:
     container_name: nginx
     build: ./nginx/
     ports:
-      - "443:443"
+      - "4443:443"
     volumes:
       - ./frontend:/usr/share/nginx/html/backend
       - ./Backend/staticfiles:/staticfiles/
@@ -163,7 +163,7 @@ services:
     container_name: redis
     image: redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - backend_default
     healthcheck:

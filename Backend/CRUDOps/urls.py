@@ -9,12 +9,11 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('<str:username>/profile/', SearchedProfileView.as_view(), name='user_profile'),
-    # path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),
+    path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     path('delete-account/', DeleteAccountView.as_view(), name='delete-account'),
     path('update-profile/', UpdateProfileView.as_view(), name='update-account'),
     path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name='password_reset/password_reset_form.html',  # Your frontend form template
         email_template_name='password_reset/password_reset_email.txt',  # Plain text email template
         subject_template_name='password_reset/password_reset_subject.txt',  # Email subject
     ), name='password_reset'),
@@ -27,4 +26,3 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-# here ana chaimaa kanktb lk hit bnacdm kishufni f[post dyalk] hh 
