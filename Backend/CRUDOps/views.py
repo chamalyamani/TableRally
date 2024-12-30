@@ -251,10 +251,10 @@ class DownloadUserDataView(APIView):
         return response
 
 # function downloadUserData() {
-#   fetch('/download-data/', {
+#   fetch('/user/download-data/', {
 #     method: 'GET',
 #     headers: {
-#       'Authorization': `Bearer ${token}`, // Use the JWT token if applicable
+#       'Authorization': `Bearer ${token}`,
 #     },
 #   })
 #     .then(response => response.blob())
