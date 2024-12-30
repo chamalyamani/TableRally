@@ -22,6 +22,8 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset/password_reset_complete.html'), name='password_reset_complete'),
     path('search/', UserSearchView.as_view(), name='user_search'),
     path('password-reset-template/', password_reset_template, name='password_reset_template'),
+    path('anonymize/', AnonymizeUserDataView.as_view(), name='anonymize-user'),
+    path('download-data/', DownloadUserDataView.as_view(), name='download-user-data'),
 
 ]
 if settings.DEBUG:

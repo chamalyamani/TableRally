@@ -1,4 +1,5 @@
 /database/
+/frontend/
 !/database/data/.gitkeep
 Backend/CRUDOps/__pycache__
 Backend/authentication/__pycache__

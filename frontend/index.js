@@ -3,16 +3,19 @@ const appState = {
   profileImage: "",
 };
 
-function renderPage(page, data) {
+function renderPage(page) 
+{
   const app = document.getElementById("app");
   const loader = document.getElementById("loader");
   const template = document.getElementById(`${page}-template`);
 
-  if (template) {
+  if (template) 
+    {
     loader.style.display = "block";
 
     const existingLink = document.getElementById("page-css");
-    if (existingLink) {
+    if (existingLink) 
+      {
       existingLink.remove();
     }
 
@@ -21,15 +24,17 @@ function renderPage(page, data) {
     link.id = "page-css";
     link.href = `styles/${page}.css?ts=${new Date().getTime()}`;
 
-    link.onload = () => {
+    link.onload = () =>
+    {
       app.innerHTML = "";
       const clone = template.content.cloneNode(true);
       app.appendChild(clone);
 
       updateCommonElements();
 
-      if (page === "dashboard" && data) {
-        dashboardProcess(data);
+      if (page === "dashboard") 
+      {
+        dashboardProcess();
       }
 
       initializePageScripts(page);
@@ -44,36 +49,45 @@ function renderPage(page, data) {
   }
 }
 
-function updateActiveNav(page) {
+function updateActiveNav(page) 
+{
   const navElements = document.querySelectorAll(".nav-element");
-  navElements.forEach((navElement) => {
+  navElements.forEach((navElement) => 
+    {
     const img = navElement.querySelector("img");
     const navigateTo = img?.dataset.navigate;
 
-    if (!navigateTo) {
+    if (!navigateTo) 
+      {
       console.warn("Attribut data-navigate manquant pour un élément.");
       return; // Passe à l'élément suivant
     }
 
-    if (navigateTo === page) {
+    if (navigateTo === page) 
+      {
       navElement.classList.add("active");
       console.log(`Ajout de la classe active à : ${navigateTo}`);
-    } else {
+    } 
+    else 
+    {
       navElement.classList.remove("active");
     }
   });
 }
 
-function navigateTo(page, data) {
-  renderPage(page, data);
+function navigateTo(page) {
+  renderPage(page);
   history.pushState({ page }, "", `/${page}`);
 }
 
-function initializePageScripts(page) {
+function initializePageScripts(page) 
+{
   initializeCommonScripts();
   switch (page) {
-    // case 'dashboard':
-    //   break;
+
+    case 'dashboard':
+      dashboardProcess();
+      break;
 
     case "settings":
       initializeTwoFactorSection();
@@ -91,9 +105,6 @@ function initializePageScripts(page) {
     case "reset-password":
       resetPassword();
       break;
-
-    // default:
-    //   console.log(`Aucun script spécifique pour la page "${page}".`);
   }
 }
 
@@ -184,10 +195,11 @@ function handleLoginResponse(data) {
   if (data.error) {
     const errorDiv = document.getElementById("error-message");
     errorDiv.textContent = data.error;
-    // errorDiv.style.display = 'block';
+
   } else if (data.temporary_token) {
     navigateTo("authentication");
     window.temporaryToken = data.temporary_token;
+
   } else {
     // localStorage.removeItem('alertShown');
     appState.username = data.username;
@@ -215,7 +227,33 @@ function updateCommonElements() {
   }
 }
 
-function dashboardProcess(data) {
+async function dashboardProcess() {
+
+  const response = await fetch('/auth/callback/', {
+    method: 'GET',
+    credentials: 'include',  // Ensure cookies are sent with the request
+  });
+
+  if (!response.ok) {
+      // throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+      return;
+  }
+
+  const data = await response.json();
+
+  if (data.is_42_logged_in) {
+      if (data.message === "2FA is required") {
+          // handleLoginResponse(data);
+          alert("OOOOk")
+        } else {
+          // fetchAndDisplayUserProfile();
+          alert("WIIIII")
+      }
+  }
+  // else {
+  //     fetchAndDisplayUserProfile();
+  // }
+
   // Example: Update an image's `src`
   const profileImage = document.getElementById("profileImage");
   if (profileImage && data.image) {
@@ -271,8 +309,8 @@ function loginProcess() {
   if (login42Btn) {
     login42Btn.addEventListener("click", (e) => {
       e.preventDefault();
-      window.location.href = '/auth/login/42-intra';
       localStorage.setItem('authFetchRequired', 'true');
+      window.location.href = '/auth/login/42-intra';
     });
   }
 }
@@ -368,41 +406,7 @@ document.addEventListener("DOMContentLoaded", function () {
       navigateTo(page);
     }
   });
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-  
-  console.log("wiiiiiiiiiii");
-  if (code) {
-    // Fetch user data using the `code`
-    fetch(`/auth/callback?code=${code}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("User data:", data);
 
-        // Store user data locally or in a global state
-        localStorage.setItem("user", JSON.stringify(data));
-
-        // Clear the URL to remove the query string
-        window.history.replaceState({}, document.title, "/");
-
-        // Navigate to the dashboard
-        navigateTo("dashboard");
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        alert("Failed to log in. Please try again.");
-      });
-  }
 });
 
 function loadTemplate(url, callback) {
@@ -536,3 +540,4 @@ function loadPasswordResetConfirm(uidb64, token) {
     }
   });
 }
+

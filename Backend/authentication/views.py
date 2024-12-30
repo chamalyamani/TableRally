@@ -167,6 +167,7 @@ class UserAuthenticationView(APIView):
             request.session['is_42_logged_in'] = True
 
             return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
+        
         request.session['is_42_logged_in'] = True
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -251,7 +252,6 @@ class GetAccessTokenView(APIView):
         if access_token:
             return Response({"access_token": access_token}, status=status.HTTP_200_OK)
         return Response({"access_token": None}, status=status.HTTP_204_NO_CONTENT)
-
 
 # Authenticaion using JWT concept with credentials
 class RegisterView(APIView):
@@ -525,3 +525,4 @@ class TwoFactorVerifyViewForOldUser(APIView):
 
 def health_checker(request):
     return HttpResponse("Service ready", status=status.HTTP_200_OK)
+

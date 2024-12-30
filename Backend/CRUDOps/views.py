@@ -31,6 +31,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
+import json
+
 
 User = get_user_model()
     
@@ -210,6 +213,63 @@ class SearchedProfileView(APIView):
         }
 
         return Response(user_data)
+
+
+class AnonymizeUserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        user.anonymize()
+        return Response({"message": "Your data has been anonymized."})
+
+class DownloadUserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        user_data = {
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "image": user.image_url,
+            "date_joined": user.date_joined.isoformat() if user.date_joined else None,
+            "last_login": user.last_login.isoformat() if user.last_login else None,
+            "is_active": user.is_active,
+        }
+
+        response_data = json.dumps(user_data, indent=4)
+
+        response = HttpResponse(
+            response_data,
+            content_type="application/json"
+        )
+
+        response['Content-Disposition'] = 'attachment; filename="user_data.json"'
+        return response
+
+# function downloadUserData() {
+#   fetch('/download-data/', {
+#     method: 'GET',
+#     headers: {
+#       'Authorization': `Bearer ${token}`, // Use the JWT token if applicable
+#     },
+#   })
+#     .then(response => response.blob())
+#     .then(blob => {
+#       const url = window.URL.createObjectURL(blob);
+#       const a = document.createElement('a');
+#       a.style.display = 'none';
+#       a.href = url;
+#       a.download = 'user_data.json'; // Filename
+#       document.body.appendChild(a);
+#       a.click();
+#       window.URL.revokeObjectURL(url);
+#     })
+#     .catch(error => console.error('Error downloading data:', error));
+# }
 
 def password_reset_template(request):
     return render(request, 'password_reset/password_reset_form.html')

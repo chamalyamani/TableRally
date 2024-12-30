@@ -29,5 +29,13 @@ class CustomUser(AbstractUser):
         else:  # Use default static path
             return f"{settings.STATIC_URL}profile_images/Default-welcomer.png"
 
+    def anonymize(self):
+        self.first_name = "Anonymous"
+        self.last_name = ""
+        self.email = f"anon_{self.id}@example.com"
+        self.username = f"anon_{self.id}"
+        self.image = f"profile_images/Default-welcomer.png"
+        self.save()
+    
     def __str__(self):
         return self.username
