@@ -23,6 +23,19 @@
     --text-align-default: left;
 }
 
+#err_pop{
+    width: 50vh;
+    height: 10vh;
+    position: absolute;
+    top: -15vh;
+    background-color: var(--border-color);
+    z-index: 1;
+    font-size: 1.5em;
+    color: var(--background-color);
+    text-align: center;
+    transition: all 0.5s ease;
+}
+
 * {
     margin: 0;
     padding: 0;

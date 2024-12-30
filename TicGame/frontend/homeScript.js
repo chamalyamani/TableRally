@@ -2,8 +2,24 @@
 
 let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
+let gg = null
+let first_to = document.querySelector('input[name="game-choice"]:checked').value;
 
-
+function back_to_home() {
+    
+    // console.log(principal_html)
+    let changeable_div = document.getElementById('contIdx')
+    changeable_div.innerHTML = ""
+    changeable_div.innerHTML = principal_html
+    gg = null
+    // location.reload()
+    // matchingSocket = null
+    // gg = null
+    // Update the DOM with the fetched HTML content
+    // document.open()
+    // document.write(html)
+    // document.close()
+}
 
 class Player {
     constructor(scoreElementId, armElementId, charElementId, turnElementId, nameElementId, imgElementId) {
@@ -50,21 +66,10 @@ class Player {
     }
 }
 
-
 class t3 {
     constructor() {
         
-      this.gameOver = `
-      <div id="contIdx" class="container df_fdc_jcc_aic">
-        <div class="winloss" id="losswin">
-            <h1 id="msg"></h1>
-            <h2>Number of Games Played: <span id="nbofgames"></span></h1>
-            <h3>You Scored : <span id="winScore"></span></h1>
-            <h3>He Scored : <span id="hescore"></span></h1>
-            <button class="button" id="quitBtn">OK</button>
-        </div>
-        </div>
-      `
+      this.gameOver = gOver_html
         // this.matchingSocket = null;
         this.currMsg = null;
         this.zhisP = null
@@ -76,7 +81,7 @@ class t3 {
         this.cont = document.getElementById("contIdx")
         this.winloss = document.getElementById("losswin")
         this.turnShow = document.getElementById("turnShow")
-        this.first_to = document.querySelector('input[name="game-choice"]:checked').value;
+        
         // this.wins = 0;
         this.board = ""
         this.gType = 0
@@ -88,7 +93,7 @@ class t3 {
         // this.functionMap.set("start_game", this.start_game.bind(this))
         this.functionMap.set("in_game", this.in_game.bind(this))
         this.functionMap.set("windrawloose", this.windrawloose.bind(this))
-        // this.functionMap.set("partyResult", this.partyRes.bind(this))
+        this.functionMap.set("error_handle", this.err_msg.bind(this))
         this.functionMap.set("opponentLeft", this.oppLeftGame.bind(this))
 
         // this.functionMap.set("inform", this.inform.bind(this))
@@ -100,88 +105,7 @@ class t3 {
         this.quit.bind(this)
         this.lmClickHandler = this.lmClick.bind(this);
     }
-  
-    generateHtmlBoard(ina_game){
-        const cellPercentage = (ina_game === 3) ? '30%' : '15%';
-        const totalCells = ina_game * ina_game;
-        let boardCells = "";
-        for (let i = 0; i < totalCells; i++) {
-            boardCells += `<div class="cell disabled" id="cell-${i}"></div>`;
-        }
-        let htmlBoard = `
-        <div id="contIdx" class="container df_fdc_jcc_aic">
-      <div id="board_holder_id" class="board_holder df_fdc_jcsa_aic">
-      <div class="turnShowDiv df_fdc_jcc_aic">
-          <h1 class="turnShow df_jcc_aic" id="turnShow">
-          </h1>
-      </div>
-      <div class="" id="gameTimer">
-        <h1 class="df_jcc_aic">30s</h1>
-        <div class="loaderTimer"></div>
-      </div>
-      <div class="board_head">
-      <div class="fp df_fdc_jcsa_aic">
-        <div class="pl_profil" id="fp_profil">
-          <img src="" alt="" id="thisPlayer_img">
-          <h5 id="thisPlayer_name">abbass</h5>
-        </div>
-        <div class="turnToggle df_jcc_aic" id="turnToggleZis">
-            <div class="inTurnTog">
-                <div class="fron">✔</div>
-                <div class="bac">✘</div>
-            </div>
-        </div>  
-        <div class="score_win df_fdc_jcc_aic">
-          <h1>LOT</h1>
-          <h3 id="thisPlayer_score">0</h3>
-        </div>
-        <div class="sla7 df_fdc_jcc_aic" id="fpArm">
-          <h1 id="thisPlayer_arm"></h1>
-          <h2 id="thisPlayer_char"></h2>
-        </div>
-      </div>
-      <div class="board" style="
-      grid-template-columns: repeat(${ina_game}, ${cellPercentage});
-      grid-template-rows: repeat(${ina_game}, ${cellPercentage});
-      ">
-      ${boardCells}
-      </div>
-      <div id="popup" class="">
-      </div>
-      <div class="sp df_fdc_jcsa_aic">
-        <div class="pl_profil" id="sp_profil">
-          <img src="" alt="" id="opponent_img">
-          <h5 id="opponent_name">hmida</h5>
-        </div>
-        <div class="turnToggle df_jcc_aic" id="turnToggleThat">
-            <div class="inTurnTog">
-                <div class="fron">✔</div>
-                <div class="bac">✘</div>
-            </div>
-        </div>    
-        <div class="score_win df_fdc_jcc_aic">
-          <h1>LOT</h1>
-          <h3 id="opponent_score">0</h3>
-        </div>
-          <div class="sla7 df_fdc_jcc_aic" id="spArm">
-            <h1 id="opponent_arm"></h1>
-            <h2 id="opponent_char"></h2>
-          </div>
-        </div>
-      </div>
-      
-      <button id="restart-button" onclick="leaveGame()">Quit</button>
-      </div>
-      </div>`
-        return htmlBoard
-    }
-    // inform(){
-    //     // this.winloss = document.getElementById("losswin")
-    //     let announce = document.getElementById("msg")
-    //     announce.innerHTML = ""
-    //     announce.innerHTML = this.currMsg["msg"]
-    //     console.log("inform : ", announce)
-    // }
+
     oppLeftGame(){
         // this.winloss = document.getElementById("losswin")
         // let announce = document.getElementById("msg")
@@ -192,31 +116,35 @@ class t3 {
         winMsg.style.display = "flex"; 
         setTimeout(() => {
             this.removeClick()
-            if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-                matchingSocket.close(1000)
+            // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+            //     matchingSocket.close(1000)
             // location.reload()
         }, 1000);
         // console.log("inform : ", announce)
     }
-    async partyRes(){
-        let pop = document.getElementById("popup")
-        if ( this.currMsg["msg"] )
-        {
-            this.turnShow.innerHTML = "You Won !"
-            await this.showWinMessage("You Won !")
-        }
-        else
-        {
-            this.turnShow.innerHTML = "You Lost !"
-            await this.showWinMessage("You Lost !")
-        }
-        // this.zhisP.updatePlayerScore(this.currMsg["myscore"])
-        // this.thatP.updatePlayerScore(this.currMsg["hiscore"])
-        // let score = this.currMsg["score"]
-        // this.wins+= score
-        // update score players
-        // switch to display Who won 
-        // 
+
+    err_msg(){
+        let pop = document.getElementById("err_pop")
+        const closeCode = this.currMsg["code"];
+        const closeReason = this.currMsg["msg"];
+        console.log("hna f err_msg handler : ", closeCode, "  :  ", closeReason)
+        // Update the content of the popup
+        pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
+    
+        // Make the popup visible with animation
+        pop.style.transition = "top 0.5s ease";
+        pop.style.top = "0vh";
+    
+        // Hide the popup after a delay
+        setTimeout(() => {
+            pop.style.top = "-15vh";
+    
+            // Clear the text after hiding for a cleaner reset
+            setTimeout(() => {
+                pop.textContent = "";
+            }, 500); // Matches the transition time
+        }, 2000); // Keep the popup visible for 3 seconds
+        // console.log('onclose : ', event.code, "  :  ", event.reason)
     }
 
     async showWinMessage(mesg) {
@@ -262,102 +190,24 @@ class t3 {
                 resolve(); // Resolve the promise after the animation completes
             }, 2000); // Match the animation duration
         });
-    
-        // setTimeout(() => {
-        //     console.log("give the none back")
-        //     this.currMsg["combo"].forEach(index => {
-        //         const cell = this.cells[index];
-        //         cell.classList.remove("win-highlight");
-        //     });
-        //     winMsg.style.display = "none";
-        //     winMsg.classList.remove("win", "lose", "draw")
-        // }, 2000);
     }
     waiting(){
         let counter = 1
         document.getElementById("id_dynamic").style.opacity = "0"
         setTimeout(() => {
-            this.cont.innerHTML = `
-            <div class="wait" id="id_wait">
-                <div class="cube-container df_jcc_aic">
-                    <div class="cube">
-                        <div class="face front">
-                            <div class="boardAnim">
-                                <div>X</div><div>O</div><div>X</div>
-                                <div>O</div><div>X</div><div>O</div>
-                                <div>X</div><div>X</div><div>X</div>
-                            </div>
-                        </div>
-                        <div class="face back">
-                            <div class="boardAnim">
-                                <div>O</div><div>O</div><div>O</div>
-                                <div>X</div><div>O</div><div>X</div>
-                                <div>X</div><div>O</div><div>X</div>
-                            </div>
-                        </div>
-                        <div class="face left">
-                            <div class="boardAnim">
-                                <div>X</div><div>X</div><div>O</div>
-                                <div>O</div><div>O</div><div>O</div>
-                                <div>X</div><div>X</div><div>O</div>
-                            </div>
-                        </div>
-                        <div class="face right">
-                            <div class="boardAnim">
-                                <div>O</div><div>X</div><div>O</div>
-                                <div>X</div><div>X</div><div>X</div>
-                                <div>O</div><div>O</div><div>O</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h1>Matching with a random player</h1>
-            </div>
-        `
+            this.cont.innerHTML = wait_html
             setTimeout(() => {
             document.getElementById("id_wait").style.marginLeft = "0%"
             }, 10)
         }, 50)
 
-        
-
-        // const intervalId = setInterval(() => {
-        //     counter++; // Increment the counter
-            
-        //     if (counter > 30) { // Check if the counter has reached 20
-        //         clearInterval(intervalId); // Stop the timer && must re
-        //         // location.reload()
-        //         // matchingSocket = null
-        //         // gg = null
-        //     }
-        // }, 1000);
     }
-
-    // playAgain()
-    // {
-    //     console.log("gg you click on play again")
-    //     playAgainBtn.style.backgroundColor = 'green'
-    //     const msg = {
-    //         type : "playAgain",
-    //         // player : this.pSign,
-    //         // theBoard : this.board
-    //     }
-    //     matchingSocket.send(JSON.stringify(msg))
-    // }
-    
-    quit()
+ 
+    async quit()
     {
-        // console.log(this)
-        // quitGameBtn.style.backgroundColor = 'red'
-        // const msg = {
-        //     type : "quitGame",
-        //     // player : this.pSign,
-        //     // theBoard : this.board
-        // }
-        // matchingSocket.send(JSON.stringify(msg))
-        location.reload()
-
-        // console.log("hello world")
+        // change it with fetch + animation
+        back_to_home()
+        // location.reload()
     }
     
     async windrawloose(){
@@ -462,7 +312,7 @@ class t3 {
         this.gType = this.currMsg["ina_game"]
         // console.log(this.generateHtmlBoard(this.gType))
         // return
-        this.cont.outerHTML = this.generateHtmlBoard(this.gType);
+        this.cont.outerHTML = generateHtmlBoard(this.gType);
         let bHolderShow = document.getElementById("board_holder_id")
         setTimeout(() => {
             bHolderShow.style.marginRight = "0%"
@@ -559,8 +409,6 @@ function getAccessToken() {
     });
 }
 
-
-
 async function playgame (gameType) {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
@@ -571,50 +419,63 @@ async function playgame (gameType) {
         })
         .catch(error => {
             console.error('Error getting access token:', error);
-            alert('Error getting access token', error.message);
+            // alert('Error getting access token', error.message);
         }); 
-
+    
     matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`)
     // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
     // and the tail size etc ....
-    let gg = new t3()
     matchingSocket.onopen = async function () {
         // alert('tconnecctaa');
         const msg = {
             "type" : gameType,
-            "first_to": gg.first_to
+            "first_to": first_to
         }
         matchingSocket.send(JSON.stringify(msg));
+        
+        gg = new t3()
+        matchingSocket.onmessage = async function(event)
+        {
+            // console.log("ON MESSAGE")
+            gg.currMsg = JSON.parse(event.data)
+            console.log("what i got : ", gg.currMsg.type)
+            console.log("all : ", gg.currMsg)
+            if (gg.functionMap.has(gg.currMsg.type)){
+                // console.log("in IF WINDRaw")
+                await gg.functionMap.get(gg.currMsg.type)()
+            }
+            else
+            {
+                console.log("wayliiiiii  else ??")
+            }
+        }
+        matchingSocket.onerror = async function(event)
+        {
+            console.log('this is matchingsocket.onerror function')
+            // location.reload()
+            // console.log("by by : ",gg.cont)
+            matchingSocket = null
+            // gg = null
+        }
+        matchingSocket.onclose = async function(event)
+        {
+            if (event.code != 4010)
+            {
+                back_to_home()
+            }
+            // else
+            // {
+
+            // }
+            
+            matchingSocket = null
+            // should not be null because there is the button OK to quit the gameover there will call the 
+            // back home and free gg
+            // gg = null
+            event.wasClean = true ? console.log("clean") : console.log("not clean")
+        }
     }
     // console.log("WHAT ?")
-    matchingSocket.onmessage = async function(event)
-    {
-        // console.log("ON MESSAGE")
-        gg.currMsg = JSON.parse(event.data)
-        console.log("what i got : ", gg.currMsg.type)
-        console.log("all : ", gg.currMsg)
-        if (gg.functionMap.has(gg.currMsg.type)){
-            // console.log("in IF WINDRaw")
-            await gg.functionMap.get(gg.currMsg.type)()
-        }
-        else
-        {
-            console.log("wayliiiiii  else ??")
-        }
-    }
-    matchingSocket.onclose = async function(event)
-    {
-        // let contIDX = document.getElementById("contIdx")
-        // contIDX.innerHTML = ""
-        // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
-        // console.log("by by : ",gg.cont)
-        console.log('this is matchingsocket.onclose function')
-        // location.reload()
-        matchingSocket = null
-        gg = null
-
-        // console.log("by by : ",gg)
-    }
 }
 
 async function playClassic () {
@@ -626,17 +487,13 @@ async function playFt4 () {
 }
 
 function leaveGame() {
-    const msg = {
-        type : "leaveGame",
-        // player : this.pSign,
-        // theBoard : this.board
-    }
+    const msg = { type : "leaveGame" }
     matchingSocket.send(JSON.stringify(msg))
 
-    if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-        matchingSocket.close(1000)
+    // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+    //     matchingSocket.close(1000)
     // console.log("hello world")
-    location.reload();
+    // location.reload();
 }
 
 

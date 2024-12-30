@@ -9,8 +9,9 @@ in_gaming   = "in_game"
 game_reslt  = "windrawloose"
 wait4Match  = "waiting"
 rePlay_req  = "inform"
-party_reslt = "partyResult"
+# party_reslt = "partyResult"
 re_setup = "re_setup"
+err_handle = "error_handle"
 T_ON    = True
 A_ON    = True
 T_OFF   = False
@@ -19,16 +20,11 @@ A_OFF   = False
 X_CHAR = 'x'
 O_CHAR = 'o'
 
-# win_combo = [
-#     [0, 1, 2],  # Row 1
-#     [3, 4, 5],  # Row 2
-#     [6, 7, 8],  # Row 3
-#     [0, 3, 6],  # Column 1
-#     [1, 4, 7],  # Column 2
-#     [2, 5, 8],  # Column 3
-#     [0, 4, 8],  # Diagonal 1
-#     [2, 4, 6]   # Diagonal 2
-# ]
+codeToMsg = {
+    4001 : "You are not athenticated !",
+    4002 : "Parse error !",
+    4003 : "You are already in waiting list !",
+}
 
 # game mode groups
 grp_m = deque()
@@ -98,16 +94,12 @@ msgsDic = {
         "board"     : [],
         "combo"     : []
     },
-    party_reslt :   {
-        "type"      : "partyResult",
-        "player"    : "",
-        "msg"       : ""
-    },
-    # rePlay_req        :   {
-    #     "type"  : "inform",
-    #     "msg"   : "Let's Play again !"
-    # }
-    # ,
+    err_handle        :   {
+        "type"  : "error_handle",
+        "code"   : 0,
+        "msg"   : ""
+    }
+    ,
     wait4Match       :   {
         "type": "waiting",
         "message": "en couuuurs. ."
@@ -128,17 +120,18 @@ class player:
         self.lvl = 0.55
         self.nbGames = 0
         self._wins = 0
-        # self.again = A_OFF
+        # self.again = A_OFF 
         self._res = 'Draw Match !'
         self.winBoards = []
         self.board_type = bSize[0]
         self._board = copy.deepcopy(self.init_board())
 
         self.setup  = copy.deepcopy(msgsDic[game_setup])
+        self.err  = copy.deepcopy(msgsDic[err_handle])
         self.re_setup  = copy.deepcopy(msgsDic[re_setup])
         self.inGame = copy.deepcopy(msgsDic[in_gaming])
         self.gameResult = copy.deepcopy(msgsDic[game_reslt])
-        self.partyResult = copy.deepcopy(msgsDic[party_reslt])
+        # self.partyResult = copy.deepcopy(msgsDic[party_reslt])
         # self.playAgainMsg   = copy.deepcopy(msgsDic[rePlay_req])
         self.waitingMsg = copy.deepcopy(msgsDic[wait4Match])
     
@@ -169,7 +162,7 @@ class player:
     @wins.setter
     def wins(self, value):
         self._wins = value
-        self.partyResult["myscore"] = value
+        # self.partyResult["myscore"] = value
         self.inGame["wins"] = value
         self.re_setup["wins"] = value
         # self.setup["wins"] = value

@@ -46,80 +46,67 @@ def switchturnUpdtboardAddmoves(p1,p2,idx,is_x_turn):
 
 class test(AsyncWebsocketConsumer):
     async def connect(self):
-        # Here i must check for the user himself is he auth-
-        self.user = self.scope["user"]
-        # print("Using dir()  -----> ",dir(self.user))
-        print("dict  -----> ",self.user.__dict__)
-        if not self.user.is_authenticated:
+        try:
+            self.user = self.scope["user"]
+            # print("Using dir()  -----> ",dir(self.user))
+            # print("dict  -----> ",self.user.__dict__)
+            if not self.user.is_authenticated:
+                await self.close(code=4001)
+                return
+            await self.accept()
+            print("ACCEPTED CNX FOR USER ID : ",self.user.is_authenticated, 
+                  "userName : ", self.user.username)
+        except Exception as e:
+            print("EXCEPTION : in connect", e)
             await self.close(code=4001)
-            return
-        print("USER ID : ",self.user.is_authenticated)
-        print("this user is  : ",self.user.image_url)
-        # get his data needed for the game (name lvl img)
-        # know what type he want to play first to 1 3 5 7
-        await self.accept()
-        # await self.receive_json()
-    def removeFromGrp(self, name, grp):
-        if name in grp:
-            grp.remove(name)
-            print("REMOVE FROM GRP")
+        
+
+    # def removeFromGrp(self, name, grp):
+    #     if name in grp:
+    #         grp.remove(name)
+    #         print("REMOVE FROM GRP")
     async def disconnect(self, code):
-        print("this is deco code : ", code)
+        try:
+            print("this is deco code : ", code)
+            if code == 4005:
+                print("i wont delete you from the grp")
+                return
+            # NOOOOO NEED TO DELETE THEM FROM GRP SiNCE THEY HAVE BEEN POPED OUT
+            # BUT YES WHEN SOMEONE JUST ENTERED AND DISCONNECTED WITHOUT ANY MATCHING
+            # HE MUST BE FREED FROM THE GRP THATS WHY THIS IS MADE
 
-        # grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
-        # for grp in grps_arr:
-        #     print("len dyal grp ",len(grp_m))
-        #     if self.channel_name in grp:
-        #         grp.remove(self.channel_name)
-        #         print("REMOVE FROM GRP")
-        grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
-        for grp in grps_arr:
-            for item in grp:
-                print("ITEM : ")
-                if self.user.id in item:
-                    grp.remove(item)
-                    print(f"REMOVED {self.user} FROM GRP")
-                    break
-        guId = player_game_map.get(self.channel_name, None)
-        if guId == None:
-            return
-        players = game_box.get(guId, None)
-        if players == None:
-            print("players not found")
-            return
-        # Remove both players from player_game_map
-        for player in players:
-            player_channel_name = player.channel_name
-            if player_channel_name in player_game_map:
-                del player_game_map[player_channel_name]
-                print(f"{player_channel_name} removed from player_game_map")
+            grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
+            for grp in grps_arr:
+                # print("len dyal grp ",len(grp_m))
+                for item in grp:
+                    print("ITEM : ")
+                    if self.user.id in item:
+                        grp.remove(item)
+                        print(f"REMOVED {self.user} FROM GRP")
+                        break
 
-        # Remove the game from game_box
-        if guId in game_box:
-            del game_box[guId]
-            print(f"Game with guId {guId} removed from game_box")
+            guId = player_game_map.get(self.user.id, None)
+            if guId == None:
+                return
+            players = game_box.get(guId, None)
+            if players == None:
+                print("players not found")
+                return
+            # Remove both players from player_game_map
+            for player in players:
+                player_id = player.user_id
+                if player_id in player_game_map:
+                    del player_game_map[player_id]
+                    print(f"{player_id} removed from player_game_map")
 
-            # self.removeFromGrp(self.channel_name, grp)
-        # if self.channel_name in grp_m:
-        #     grp_m.remove(self.channel_name)
-        # elif self.channel_name in grp_m3:
-        #     grp_m3.remove(self.channel_name)
-        # elif self.channel_name in grp_m5:
-        #     grp_m5.remove(self.channel_name)
-        # elif self.channel_name in grp_m7:
-        #     grp_m7.remove(self.channel_name)
-        # elif self.channel_name in ft4_m:
-        #     ft4_m.remove(self.channel_name)
-        # elif self.channel_name in ft4_m3:
-        #     ft4_m3.remove(self.channel_name)
-        # elif self.channel_name in ft4_m5:
-        #     ft4_m5.remove(self.channel_name)
-        # elif self.channel_name in ft4_m7:
-        #     ft4_m7.remove(self.channel_name)
-            # grp_m.remove(self.channel_name)
-        # if self.channel_name in game_box:
-        #     game_box.pop(self.channel_name)
-        #     print("IS FREED FROM GAME_BOX")
+            # Remove the game from game_box
+            if guId in game_box:
+                del game_box[guId]
+                print(f"Game with guId {guId} removed from game_box")
+        except Exception as e:
+            print("EXCEPTION : in disconnect", e)
+            # await self.close(code=4001)
+        # await self.channel_layer.send(self.channel_name, { "type" : "cnx_closed", "message" : code })
 
     async def handle_leaveGame(self, players):
         # players = game_box.get(self.channel_name)
@@ -132,7 +119,13 @@ class test(AsyncWebsocketConsumer):
         else:
             await self.channel_layer.send(players[0].channel_name, leave_message)
 
-        # await self.close(code=1000)
+        
+        # await self.channel_layer.send(self.channel_name, {
+        #     "type": "error_handle",
+        #     "code": 12,
+        #     "msg" : "safi you left the game ? "
+        # })
+        await self.close(code=4011)
         # else:
         #     await self.close(code=1000)
     #function for initializing the game table
@@ -156,67 +149,23 @@ class test(AsyncWebsocketConsumer):
             return  # Handle gracefully, e.g., log or notify
 
         # Determine the winner
-        winner = p1_user if len(p1.winBoards) > len(p2.winBoards) else p2_user
-        winner_boards = p1.winBoards if len(p1.winBoards) > len(p2.winBoards) else p2.winBoards
+        winner          = p1_user       if len(p1.winBoards) > len(p2.winBoards) else p2_user
+        winner_boards   = p1.winBoards  if len(p1.winBoards) > len(p2.winBoards) else p2.winBoards
 
         try:
             # Create the game record
             game = await sync_to_async(games.objects.create)(
                 # game_id=p1.game_id,
-                game_type_db=game_type,
-                p1id=p1_user,
-                p2id=p2_user,
-                winid=winner,
-                winner_boards=winner_boards,
-                num_of_games=p1.nbGames,
+                game_type_db    = game_type,
+                p1id            = p1_user,
+                p2id            = p2_user,
+                winid           = winner,
+                winner_boards   = winner_boards,
+                num_of_games    = p1.nbGames,
             )
             print(f"Game record created:")
         except Exception as e:
             print(f"Error creating game record: {e}")
-    # async def dbInit(self, pme, phim, game_type):
-    #     print("daba f dbINIIIIIIIIIIIT")
-    #     pme_user = await sync_to_async(User.objects.get)(id=pme.user_id)
-    #     phim_user = await sync_to_async(User.objects.get)(id=phim.user_id)
-    #     game, created = await sync_to_async(games.objects.get_or_create)(
-    #         game_id=pme.game_id,
-    #         game_type_db=game_type,
-    #         p1id=pme_user,
-    #         p2id=phim_user,
-    #         winid=pme_user
-    #         )
-    #     if not created:
-    #         # game.game_id = pme.game_id,
-    #         game.game_type_db = game_type
-    #         await sync_to_async(game.save)()
-    
-    # async def dbUpdate(self, p1, p2):        
-    #     # Retrieve the game record by `game_id` or another identifier.
-    #     print("daba f DB UUUUUUUUUUUUPDAAAATE")
-    #     p1_user = await sync_to_async(User.objects.get)(id=p1.user_id)
-    #     p2_user = await sync_to_async(User.objects.get)(id=p2.user_id)
-    #     try:
-    #         game = await sync_to_async(games.objects.get)(game_id=p1.game_id)
-            
-    #         # Update the necessary fields.
-    #         if len(p1.winBoards) > len(p2.winBoards):
-    #             game.winid = p1_user
-    #             # game.los_id = p2.user_id
-    #             game.winner_boards = p1.winBoards  # Ensure `win_boards` is a suitable field in your model.
-    #         else:
-    #             game.winid = p2_user
-    #             # game.los_id = p1.channel_name
-    #             game.winner_boards = p2.winBoards  # Ensure `win_boards` is a suitable field in your model.
-
-    #         game.num_of_games = p1.nbGames
-    #         print("number of gameeeee:   ",game.num_of_games)
-    #         print("winner Boooooards :   ",game.winner_boards) 
-    #         # Save the updated record.
-    #         await sync_to_async(game.save)()
-        
-    #     except games.DoesNotExist:
-    #         # Handle the case where the game record doesn't exist.
-    #         print("Game record not found.")
-
         
     async def drawAnnounce(self, pf, ps):
         pf.re_setup["message"] = ps.re_setup["message"] = 2
@@ -318,17 +267,18 @@ class test(AsyncWebsocketConsumer):
             # Save the final state of the game in the database
         # if self.channel_name == pf.channel_name:
             print("hani dezt mn hna ---------")
-            await self.dbInit(pf, ps, pf.ina_game)
+            # await self.         (pf, ps, pf.ina_game)
             # await self.dbUpdate(pf, ps)
 
             # Send the final results
             await self.channel_layer.send(pf.channel_name, pf.gameResult)
             await self.channel_layer.send(ps.channel_name, ps.gameResult)
-            # await self.channel_layer.send(pf.channel_name, Force quite for both)
-            # await self.channel_layer.send(ps.channel_name, Force quite for both)
+
+            await self.channel_layer.send(pf.channel_name, { "type" : "force_quit" })
+            await self.channel_layer.send(ps.channel_name, { "type" : "force_quit" })
             #this code is for end of game
 
-            await self.close(code=4010)
+            # await self.close(code=4010)
             # Reset the game state
             # pf.is_inGame = ps.is_inGame = False
             # ps.nbGames = pf.nbGames = 0
@@ -353,48 +303,26 @@ class test(AsyncWebsocketConsumer):
             """ This function is used to get the data
             of each player to send it to the other player."""
             print("dkhlt hna 0")
+            print("Entering get_players_data...")
+
+    # Determine the index of the current user and the opponent
             if players[0].user_id == self.user.id:
-                print("dkhlt hna 1")
-                # me = await sync_to_async(User.objects.get)(id=players[0].user_id)
-                him = await sync_to_async(User.objects.get)(id=players[1].user_id)
-                # must check for failure 
-                players[0].setup["me"].update({
-                    "fname": self.user.username,
-                    "pic": self.user.image_url
-                })
-                players[0].setup["him"].update({
-                    "fname": him.username,
-                    "pic": him.image_url
-                })
-                players[1].setup["me"].update({
-                    "fname": him.username,
-                    "pic": him.image_url
-                })
-                players[1].setup["him"].update({
-                    "fname": self.user.username,
-                    "pic": self.user.image_url
-                })
+                me_index, hi_index = 0, 1
             else:
-                # me = await sync_to_async(User.objects.get)(id=players[1].user_id)
-                print("dkhlt hna 2")
-                him = await sync_to_async(User.objects.get)(id=players[0].user_id)
-                # must protect
-                players[0].setup["me"].update({
-                    "fname": him.username,
-                    "pic": him.image_url
-                })
-                players[0].setup["him"].update({
-                    "fname": self.user.username,
-                    "pic": self.user.image_url
-                })
-                players[1].setup["me"].update({
-                    "fname": self.user.username,
-                    "pic": self.user.image_url
-                })
-                players[1].setup["him"].update({
-                    "fname": him.username,
-                    "pic": him.image_url
-                })
+                me_index, hi_index = 1, 0
+
+            # Fetch opponent's data asynchronously
+            try:
+                him = await sync_to_async(User.objects.get)(id=players[hi_index].user_id)
+            except Exception as e:
+                print(f"Error fetching opponent's data in initGame: {e}")
+                return
+            # Update setup data for both players
+            players[me_index].setup["me"].update({  "fname": self.user.username,"pic": self.user.image_url })
+            players[hi_index].setup["him"].update({ "fname": self.user.username,"pic": self.user.image_url })
+
+            players[me_index].setup["him"].update({ "fname": him.username, "pic": him.image_url })
+            players[hi_index].setup["me"].update({  "fname": him.username, "pic": him.image_url })
             
             
         def initialize_boards():
@@ -464,7 +392,7 @@ class test(AsyncWebsocketConsumer):
         gen_game_id = f"{pme.user_id}_{phim.user_id}_{int(time.time())}"
         pme.game_id = phim.game_id = gen_game_id
         pme.ina_game = phim.ina_game = game_type
-        player_game_map[pme.channel_name] = player_game_map[phim.channel_name] = gen_game_id
+        player_game_map[pme.user_id] = player_game_map[phim.user_id] = gen_game_id
         game_box[gen_game_id] = [pme, phim]
 
         return
@@ -501,10 +429,11 @@ class test(AsyncWebsocketConsumer):
         first_to = content.get('first_to', None)
     
         if first_to is None:
-            await self.close(code=4001)  # Invalid or missing game type
+            await self.close(code=4002)
             return
         if first_to not in ["1", "3", "5", "7"]:
-            await self.close(code=4001)
+            await self.close(code=4002)
+            return
         
         #  two types of games here FT4 and CLASSIC 
         print("in distributeeeeeeeee : ", grid_type)
@@ -526,6 +455,16 @@ class test(AsyncWebsocketConsumer):
         #     print("already in game of this type")
         #     await self.close(code=4003)
         #     return
+        if self.user.id in player_game_map:
+            await self.close(code=4005)
+            return
+        # search in all the grps if the user is already in one of them
+        for g in [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]:
+            for item in g:
+                if self.user.id in item:
+                    print("already in game of this type")
+                    await self.close(code=4005)
+                    return
         grp.append({self.user.id:self.channel_name})
         if len(grp) >= 2:
             await self.setupPlayersAndInit(grp, game_type)
@@ -546,76 +485,82 @@ class test(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # data must be parsed here 
         # and then create the players
-        txt_json = json.loads(text_data)
-        print("RECEIVE : ", txt_json)
-        msg_type = txt_json.get("type", None)
-        if msg_type == None:
-            return
-        # could receive a message that says there is two users that wants to play together
-        # if msg_type == 'friendGame':
-        #     await self.friendGame(txt_json)
-        #must be handled if is already in game or is not in game 
-        if msg_type == 'ft_classic' or msg_type == 'ft4':
-            await self.distribute(txt_json, msg_type)
-        
-        # this is for the 5/5 grid game first to four 
-        # if msg_type == 'ft4':
-        #     await self.distribute(txt_json, msg_type)
-        
-        if msg_type == 'quitGame':
-            await self.quitGame()
-        guId = player_game_map.get(self.channel_name, None)
-        if guId == None:
-            return
-        players = game_box.get(guId, None)
-        if players == None:
-            print("players not found")
-            return
-        #prevent the other player from playing
-        firstP ,secondP = (players[0], players[1]) if players[0].char == X_CHAR else (players[1], players[0])
-        is_x_turn = firstP.turn
-
-        if msg_type == 'leaveGame':
-            await self.handle_leaveGame(players)
-        if msg_type == in_gaming:
-            if (firstP.turn and firstP.channel_name != self.channel_name) or \
-            (secondP.turn and secondP.channel_name != self.channel_name):
-                print("BOOOM")
-                return
-            if not firstP.is_inGame or not secondP.is_inGame:
-                return
-            clickIdx = txt_json.get("clickIdx", None)
-            if clickIdx == None:
-                return
+        try:
+            txt_json = json.loads(text_data)
+            print("RECEIVE : ", txt_json)
+            msg_type = txt_json.get("type", None)
+            if msg_type == None:
+                raise Exception("No type in the message")
+            # could receive a message that says there is two users that wants to play together
+            # if msg_type == 'friendGame':
+            #     await self.friendGame(txt_json)
+            #must be handled if is already in game or is not in game 
+            if msg_type == 'ft_classic' or msg_type == 'ft4':
+                await self.distribute(txt_json, msg_type)
             
-            # here its the board update and switch turn
-            if switchturnUpdtboardAddmoves(firstP, secondP, clickIdx, is_x_turn):
-                return
+            # this is for the 5/5 grid game first to four 
+            # if msg_type == 'ft4':
+            #     await self.distribute(txt_json, msg_type)
+            
+            if msg_type == 'quitGame':
+                await self.quitGame()
+            guId = player_game_map.get(self.user.id, None)
+            if guId == None:
+                raise Exception("No game found for this user")
+            players = game_box.get(guId, None)
+            if players == None:
+                raise Exception("No players found for this game")
+            #prevent the other player from playing
+            firstP ,secondP = (players[0], players[1]) if players[0].char == X_CHAR else (players[1], players[0])
+            is_x_turn = firstP.turn
 
+            if msg_type == 'leaveGame':
+                await self.handle_leaveGame(players)
+            if msg_type == in_gaming:
+                if (firstP.turn and firstP.channel_name != self.channel_name) or \
+                (secondP.turn and secondP.channel_name != self.channel_name):
+                    raise Exception("Not your turn")
+                if not firstP.is_inGame or not secondP.is_inGame:
+                    raise Exception("Not in game")
+                clickIdx = txt_json.get("clickIdx", None)
+                if clickIdx == None:
+                    raise Exception("No click index")
+                
+                # here its the board update and switch turn
+                if switchturnUpdtboardAddmoves(firstP, secondP, clickIdx, is_x_turn):
+                    # self.channel_layer.send(self.channel_name, {
+                    #     "type": "error_handle",
+                    #     "code": 2,
+                    #     "msg": "Invalid move."
+                    # })
+                    raise Exception("Invalid move")
+        except Exception as e:
+            print("EXCEPTION : in receive", e)
+            return    
             # here its the winner check for the 3/3 grid 
-            if firstP.ina_game[0] == "ft_classic":
-                if firstP.moves >= 3 or secondP.moves >= 3:
-                    if await self.checkft4Win(firstP, secondP, clickIdx, 3, 3):
-                        await self.resetMoves(players)
-                        return
-                # here its the draw check
-                if firstP.moves + secondP.moves == 9:
-                    await self.drawAnnounce(firstP, secondP)
+        if firstP.ina_game[0] == "ft_classic":
+            if firstP.moves >= 3 or secondP.moves >= 3:
+                if await self.checkft4Win(firstP, secondP, clickIdx, 3, 3):
                     await self.resetMoves(players)
                     return
-            # here its the winner check for the 5/5 grid
-            elif firstP.ina_game[0] == "ft4":
-                if firstP.moves >= 4 or secondP.moves >= 4:
-                    if await self.checkft4Win(firstP, secondP, clickIdx, 5, 4):
-                        await self.resetMoves(players)
-                        return
-                # here its the draw check
-                if firstP.moves + secondP.moves == 25:
-                    await self.drawAnnounce(firstP, secondP)
+            # here its the draw check
+            if firstP.moves + secondP.moves == 9:
+                await self.drawAnnounce(firstP, secondP)
+                await self.resetMoves(players)
+                return
+        # here its the winner check for the 5/5 grid
+        elif firstP.ina_game[0] == "ft4":
+            if firstP.moves >= 4 or secondP.moves >= 4:
+                if await self.checkft4Win(firstP, secondP, clickIdx, 5, 4):
                     await self.resetMoves(players)
                     return
-            await self.channel_layer.send(firstP.channel_name, firstP.inGame)
-            await self.channel_layer.send(secondP.channel_name, secondP.inGame)
+            # here its the draw check
+            if firstP.moves + secondP.moves == 25:
+                await self.drawAnnounce(firstP, secondP)
+                await self.resetMoves(players)
+                return
+        await self.channel_layer.send(firstP.channel_name, firstP.inGame)
+        await self.channel_layer.send(secondP.channel_name, secondP.inGame)
     
 
 
@@ -638,12 +583,12 @@ class test(AsyncWebsocketConsumer):
             "board": event["board"],
             "combo": event["combo"]
         }))
-    async def partyResult(self, event):
-        await self.send(text_data=json.dumps({
-            "type": event["type"],
-            "player": event["player"],
-            "msg" : event["msg"]
-        }))
+    # async def partyResult(self, event):
+    #     await self.send(text_data=json.dumps({
+    #         "type": event["type"],
+    #         "player": event["player"],
+    #         "msg" : event["msg"]
+    #     }))
     async def setup(self, event):
         # Handle setup messages to send to the WebSocket client
         await self.send(text_data=json.dumps({
@@ -675,6 +620,9 @@ class test(AsyncWebsocketConsumer):
             "type": "waiting",
             "message": event['message']
         }))
+    
+    async def force_quit(self, event):
+        await self.close(code=4010)
 
     async def opponentLeft(self, event):
         # Handle waiting messages to send to the WebSocket client
@@ -682,6 +630,7 @@ class test(AsyncWebsocketConsumer):
             "type": "opponentLeft",
             "message": event['message']
         }))
+        await self.close(code=4011)
 
     async def in_game(self, event):
         await self.send(text_data=json.dumps({
@@ -689,6 +638,12 @@ class test(AsyncWebsocketConsumer):
             "turn": event.get("turn"),
             # "played_now": event.get("played_now"),
             "board": event["board"]
+        }))
+    async def error_handle(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "error_handle",
+            "code": event["code"],
+            "msg": event["msg"]
         }))
     
 
