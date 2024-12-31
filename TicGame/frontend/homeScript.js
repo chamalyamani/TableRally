@@ -69,8 +69,6 @@ class Player {
 class t3 {
     constructor() {
         
-      this.gameOver = gOver_html
-        // this.matchingSocket = null;
         this.currMsg = null;
         this.zhisP = null
         this.thatP = null
@@ -225,7 +223,7 @@ class t3 {
         await this.showWinMessage(this.currMsg["message"])
         // this.zhisP.updatePlayerScore(this.currMsg["wins"])
         this.cont = document.getElementById("contIdx")
-        this.cont.outerHTML = this.gameOver;
+        this.cont.innerHTML = gOver_html;
 
         // document.querySelector('.winloss').firstChild.textContent = this.currMsg["msg"]
         document.querySelector('.winloss').style.display = 'flex';
@@ -479,7 +477,7 @@ async function playgame (gameType) {
 }
 
 async function playClassic () {
-    await playgame("ft_classic")
+    await playgame("ft_classi")
 }
 
 async function playFt4 () {

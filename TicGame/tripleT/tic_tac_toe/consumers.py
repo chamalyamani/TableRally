@@ -71,6 +71,8 @@ class test(AsyncWebsocketConsumer):
             if code == 4005:
                 print("i wont delete you from the grp")
                 return
+            if code == 1006:
+                print("code 1006 inform the other player that you left unexpectedly")
             # NOOOOO NEED TO DELETE THEM FROM GRP SiNCE THEY HAVE BEEN POPED OUT
             # BUT YES WHEN SOMEONE JUST ENTERED AND DISCONNECTED WITHOUT ANY MATCHING
             # HE MUST BE FREED FROM THE GRP THATS WHY THIS IS MADE
@@ -87,11 +89,11 @@ class test(AsyncWebsocketConsumer):
 
             guId = player_game_map.get(self.user.id, None)
             if guId == None:
-                return
+                Exception("No game found for this user")
             players = game_box.get(guId, None)
             if players == None:
                 print("players not found")
-                return
+                Exception("No players found for this game")
             # Remove both players from player_game_map
             for player in players:
                 player_id = player.user_id
@@ -111,8 +113,9 @@ class test(AsyncWebsocketConsumer):
     async def handle_leaveGame(self, players):
         # players = game_box.get(self.channel_name)
         leave_message = {
-        'type': 'opponentLeft',
-        'message': f"Your opponent has left the game.",
+        'type': 'error_handle',
+        'code': 1,
+        'msg' : "Your opponent has left the game.",
         }
         if ( players[0].channel_name == self.channel_name ):
             await self.channel_layer.send(players[1].channel_name, leave_message)
@@ -120,12 +123,12 @@ class test(AsyncWebsocketConsumer):
             await self.channel_layer.send(players[0].channel_name, leave_message)
 
         
-        # await self.channel_layer.send(self.channel_name, {
-        #     "type": "error_handle",
-        #     "code": 12,
-        #     "msg" : "safi you left the game ? "
-        # })
-        await self.close(code=4011)
+        await self.channel_layer.send(self.channel_name, {
+            "type": "error_handle",
+            "code": 1,
+            "msg" : "safi you left the game ? "
+        })
+        # await self.close(code=4011)
         # else:
         #     await self.close(code=1000)
     #function for initializing the game table
@@ -491,9 +494,13 @@ class test(AsyncWebsocketConsumer):
             msg_type = txt_json.get("type", None)
             if msg_type == None:
                 raise Exception("No type in the message")
+            if msg_type not in expected_types:
+                raise Exception("Invalid message type")
+            
             # could receive a message that says there is two users that wants to play together
             # if msg_type == 'friendGame':
             #     await self.friendGame(txt_json)
+
             #must be handled if is already in game or is not in game 
             if msg_type == 'ft_classic' or msg_type == 'ft4':
                 await self.distribute(txt_json, msg_type)
@@ -502,8 +509,8 @@ class test(AsyncWebsocketConsumer):
             # if msg_type == 'ft4':
             #     await self.distribute(txt_json, msg_type)
             
-            if msg_type == 'quitGame':
-                await self.quitGame()
+            # if msg_type == 'quitGame':
+            #     await self.quitGame()
             guId = player_game_map.get(self.user.id, None)
             if guId == None:
                 raise Exception("No game found for this user")
@@ -519,24 +526,33 @@ class test(AsyncWebsocketConsumer):
             if msg_type == in_gaming:
                 if (firstP.turn and firstP.channel_name != self.channel_name) or \
                 (secondP.turn and secondP.channel_name != self.channel_name):
-                    raise Exception("Not your turn")
+                    raise ValueError("Not your turn")
                 if not firstP.is_inGame or not secondP.is_inGame:
-                    raise Exception("Not in game")
+                    raise ValueError("Not in game")
                 clickIdx = txt_json.get("clickIdx", None)
                 if clickIdx == None:
-                    raise Exception("No click index")
+                    raise ValueError("No click index")
                 
                 # here its the board update and switch turn
                 if switchturnUpdtboardAddmoves(firstP, secondP, clickIdx, is_x_turn):
-                    # self.channel_layer.send(self.channel_name, {
-                    #     "type": "error_handle",
-                    #     "code": 2,
-                    #     "msg": "Invalid move."
-                    # })
-                    raise Exception("Invalid move")
+                    raise ValueError("Invalid move")
+        except ValueError as e:
+            print("VAlueError : in receive", e)
+            await self.channel_layer.send(self.channel_name, {
+                "type": "error_handle",
+                "code": 2,
+                "msg": str(e)
+            })
+            return
         except Exception as e:
             print("EXCEPTION : in receive", e)
-            return    
+            await self.channel_layer.send(self.channel_name, {
+                "type": "error_handle",
+                "code": 1,
+                "msg": str(e)
+            })
+            # await self.close(code=4004)
+            return
             # here its the winner check for the 3/3 grid 
         if firstP.ina_game[0] == "ft_classic":
             if firstP.moves >= 3 or secondP.moves >= 3:
@@ -645,6 +661,9 @@ class test(AsyncWebsocketConsumer):
             "code": event["code"],
             "msg": event["msg"]
         }))
+        print("....................................", event["code"])
+        if event["code"] == 1:
+            await self.close(code=4004)
     
 
 

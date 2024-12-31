@@ -1,7 +1,7 @@
 
 // let dynamic_div = document.getElementById('id_dynamic');
 
-let gOver_html = `<div id="contIdx" class="container df_fdc_jcc_aic">
+let gOver_html = `
         <div class="winloss" id="losswin">
             <h1 id="msg"></h1>
             <h2>Number of Games Played: <span id="nbofgames"></span></h1>
@@ -9,8 +9,8 @@ let gOver_html = `<div id="contIdx" class="container df_fdc_jcc_aic">
             <h3>He Scored : <span id="hescore"></span></h1>
             <button class="button" id="quitBtn">OK</button>
         </div>
-        </div>`;
-
+        `;
+// </div><div id="contIdx" class="container df_fdc_jcc_aic">
 
 let wait_html = `
 <div class="wait" id="id_wait">

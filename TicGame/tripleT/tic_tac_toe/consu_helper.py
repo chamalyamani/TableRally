@@ -20,11 +20,12 @@ A_OFF   = False
 X_CHAR = 'x'
 O_CHAR = 'o'
 
-codeToMsg = {
-    4001 : "You are not athenticated !",
-    4002 : "Parse error !",
-    4003 : "You are already in waiting list !",
-}
+expected_types = ["ft_classic", "ft4", "leaveGame", "in_game"]
+# codeToMsg = {
+#     4001 : "You are not athenticated !",
+#     4002 : "Parse error !",
+#     4003 : "You are already in waiting list !",
+# }
 
 # game mode groups
 grp_m = deque()

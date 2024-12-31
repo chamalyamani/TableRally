@@ -522,7 +522,7 @@ body {
 .cube-container {
     width: 100%;
     height: 100%;
-    background-image: url("../tic_tac_toe/assets/bgAnim.png");
+    background-image: url("./assets/bgAnim.png");
     background-size: cover; /* Ensures the image covers the container */
     background-position: center; /* Centers the image */
     background-repeat: no-repeat;
