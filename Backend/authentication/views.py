@@ -30,6 +30,7 @@ from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
 from django.views.generic.base import RedirectView
+from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 
 class Initiate42LoginView(RedirectView):
     permanent = False  # Indicates this is a temporary redirect
@@ -171,18 +172,11 @@ class UserAuthenticationView(APIView):
         request.session['is_42_logged_in'] = True
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-        image_url = request.build_absolute_uri(user.image_url)
-        response = JsonResponse({
-            'username': user.username,
-            'email': user.email,
-            'image': image_url,
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        })
 
+        response = redirect('https://localhost:4443/dashboard')
         response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='Lax' )# Set to True in production
         response.set_cookie( key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax') # Set to True in production
-
+        
         return response
 
 class tokenHolderFor2faWith_42API(APIView):
@@ -522,6 +516,25 @@ class TwoFactorVerifyViewForOldUser(APIView):
                 return response
 
         return JsonResponse({"error": "Invalid 2FA token"}, status=status.HTTP_400_BAD_REQUEST)
+
+class checkAuthStatus(APIView):
+    permission_classes = [AllowAny] 
+
+    def get(self, request):
+
+        response_data = {
+            'authenticated': False,
+        }
+
+        jwt_authenticator = JWTAuthentication()
+        try:
+            jwt_authenticator.get_validated_token(request.headers.get('Authorization', '').split(' ')[1])
+            response_data['authenticated'] = True
+        except (InvalidToken, AuthenticationFailed, IndexError):
+            pass
+
+        return Response(response_data)
+
 
 def health_checker(request):
     return HttpResponse("Service ready", status=status.HTTP_200_OK)
