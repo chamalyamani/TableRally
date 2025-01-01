@@ -22,5 +22,5 @@ urlpatterns = [
     path('', views.home, name="home"),
     path('index/', views.index, name="index"),
     path('admin/', admin.site.urls),
-    path('gamesByWinId/<str:user_win_id>/', views.gamesByWinId.as_view(), name="gamesByWinId"),
+    path('gamesByWinId/', views.gamesByWinId.as_view(), name="gamesByWinId"),
 ]

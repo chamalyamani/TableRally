@@ -39,6 +39,8 @@ ft4_m3 = deque()
 ft4_m5 = deque()
 ft4_m7 = deque()
 
+friends_grp = deque()
+
 game_box = {}
 # ft4_game_box = {}
 

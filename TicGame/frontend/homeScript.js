@@ -425,6 +425,8 @@ async function playgame (gameType) {
     // and the tail size etc ....
     matchingSocket.onopen = async function () {
         // alert('tconnecctaa');
+        // this on open msg sent is for the default, but for the friend game
+        // it must be another msg that will hold the username of the friend
         const msg = {
             "type" : gameType,
             "first_to": first_to
@@ -477,7 +479,7 @@ async function playgame (gameType) {
 }
 
 async function playClassic () {
-    await playgame("ft_classi")
+    await playgame("ft_classic")
 }
 
 async function playFt4 () {
@@ -548,4 +550,15 @@ t3.prototype.updateBoard = function () {
     })
 }
 
+// -----------------------> must fetch data here using token JWT instead of ID
+// getAccessToken()
+//         .then(accessToken => {
+//             return fetch('gamesByWinId/', {
+//                 method: 'GET',
+//                 headers: { 'Authorization': `Bearer ${accessToken}`}
+//             })
+//         })
+//         .then(response => response.json())
+//         .then(data => { console.log(data); })
+//         .catch(error => console.error('Error:', error));
 // window.location.host

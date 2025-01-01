@@ -42,6 +42,15 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                     'receiver': receiver_id,
                 }
             )
+        elif text_data_dic['type'] == 'game_resp':
+            receiver_id = text_data_dic['receiver_id']
+            await self.channel_layer.group_send(
+                f'user_notification_{receiver_id}',
+                {
+                    'type': 'game_resp',
+                    'receiver': receiver_id,
+                }
+            )
 
     async def send_message_notification(self, event):
         await self.send(text_data=json.dumps(
@@ -55,6 +64,13 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(
             {
                 'type': 'game_request_notification',
+                'receiver': event['receiver']
+            }
+        ))
+    async def game_resp(self, event):
+        await self.send(text_data=json.dumps(
+            {
+                'type': 'game_resp',
                 'receiver': event['receiver']
             }
         ))

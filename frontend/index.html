@@ -1800,16 +1800,32 @@
         .then(accessToken => {
             notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
             notif_socket.onmessage = ({data}) => {
-                console.log('Message Received is ', data);
-                notificationPopup.classList.add('show');
-                setTimeout(() => {
-                    notificationPopup.classList.remove('show');
-                }, 3000); // Hide after 3 seconds
+                const datap = JSON.parse(data);
+                console.log('Message Received is ', datap.type);
+                // if game response is received
+                // game matching logic
+                if (datap.type === 'game_resp') {
+                    alert('game_resp');
+                }
+                else {
+                    notificationPopup.addEventListener('click', () => {
+                        let jsonMessage = {'type': 'game_resp', 'receiver_id': '2'}
+                        notif_socket.send(JSON.stringify(jsonMessage));
+                        // logic game matching 
+                        // alert('game_resp');
+                    })
+                    notificationPopup.classList.add('show');
+                    setTimeout(() => {
+                        notificationPopup.classList.remove('show');
+                    }, 3000); // Hide after 3 seconds
+                }
             }
             notif_socket.onopen = () => {
                 sendNotif.addEventListener('click', () => {
-                    let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '8'}
+                    let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '3'}
                     notif_socket.send(JSON.stringify(jsonMessage));
+                    console.log('Notification sent');
+
                 })
             }
         })
@@ -1818,6 +1834,9 @@
 
         notifications();
 
+        // function sendGamerequest(){
+
+        // }
         // function displayNotifications(notifications) {
         //     const notificationsContainer = document.getElementById('notificationsContainer');
         //     notificationsContainer.innerHTML = ''; // Clear previous notifications

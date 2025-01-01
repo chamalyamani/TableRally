@@ -401,12 +401,17 @@ class test(AsyncWebsocketConsumer):
         return
 
     async def setupPlayersAndInit(self, grp, game_type):
+        # here i must check if the grp is friend grp 
+        # I think i wont need too if i send a deque directly
         check_Me = grp.popleft()
         check_Him = grp.popleft()
 
-        check_Me_key = list(check_Me.keys())[0]  # Get the key from the first dictionary
+        check_Me_key = list(check_Me.keys())[0]  # Get the id of the user from the first dictionary
         check_Him_key = list(check_Him.keys())[0]
         print("IIIn setup playyyyyer ::: gameTYPE :::: ",game_type)
+        # creating the players using the userID and the channel name
+        # bingo ! 
+        # check the next function where the players will have access to each others data
         if check_Me_key == self.user.id:
             player_me = player([check_Me_key,check_Me[check_Me_key]], game_type)
             player_him = player([check_Him_key, check_Him[check_Him_key]], game_type)
@@ -483,6 +488,19 @@ class test(AsyncWebsocketConsumer):
     #     if friend_id is None:
     #         await self.close(code=4001)  # Invalid or missing game type
     #         return
+    #    if friend_id == self.user.id:
+    #         await self.close(code=4001)  # Invalid or missing game type
+    #         return
+    #     if friend_id in player_game_map:
+    #         await self.close(code=4005)  # User is already in a game
+    #         return
+    #     if self.user.id in player_game_map:
+    #         await self.close(code=4005)  # User is already in a game
+    #         return
+    #     if friend_id in friends_grp:
+    #         here you must normally send both players to the game box
+    #         add each user into a deque with there id and channel name
+    #         await self.setupPlayersAndInit(2friends deque, choose a game type)
 
 
     async def receive(self, text_data):
@@ -498,6 +516,17 @@ class test(AsyncWebsocketConsumer):
                 raise Exception("Invalid message type")
             
             # could receive a message that says there is two users that wants to play together
+            # this current one will have the id or username of the one who wants to play with (self have username in the msg)
+            # check if the other user is in the grp by his username or id
+            # if he is in the grp then create the game and send the setup message
+            # if he is not in the grp then add the user to the grp and wait for the other user
+            # in the grp you will add the user id or username and the channel name
+
+            # each player comes he must look for his opponent in that grp
+            # if he finds him then he must create the game and send the setup message
+            # if he doesnt he must set a timer for the other player to come
+            # if the timer ends then he must remove himself from the grp
+            
             # if msg_type == 'friendGame':
             #     await self.friendGame(txt_json)
 
@@ -577,7 +606,7 @@ class test(AsyncWebsocketConsumer):
                 return
         await self.channel_layer.send(firstP.channel_name, firstP.inGame)
         await self.channel_layer.send(secondP.channel_name, secondP.inGame)
-    
+
 
 
     
