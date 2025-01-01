@@ -250,7 +250,7 @@ class GetAccessTokenView(APIView):
 
         if access_token:
             return Response({"access_token": access_token}, status=status.HTTP_200_OK)
-        return Response({"access_token": None}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"access_token": None}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # Authenticaion using JWT concept with credentials

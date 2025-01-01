@@ -6,8 +6,40 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="index.css">
     
-    </head>
+    <style>
+        #notificationPopup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+        #notificationPopup.show {
+            display: block;
+        }
+        .notification-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .notification-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+        
+</head>
+    
 <body>
+    <div id="notificationPopup">This is a notification!</div>
+
     <div id="error-message" style="display: none; color: red;"></div>
 
     <!-- Login form for credentials -->
@@ -106,6 +138,7 @@
         <div class="button-wrapper">
             <div class="column1">
                 <button class="btn outline" id="fetchProfileBtn">Fetch Profile</button>
+                <button class="btn outline" id="notif-button">Send Notif</button>
                 <button class="btn outline" id="update-btn">Update Profile</button>
                 <button class="btn outline" id="saveChangesBtn" style="display: none;">Save Changes</button>
                 <button class="btn fill" id="logoutBtn">LOGOUT</button>
@@ -1756,24 +1789,34 @@
             });
         }
 
-
         /*   NOTIFICATIONS */
 
-        // function fetchNotifications() {
-        //     getAccessToken()
-        //     .then(accessToken => {
-        //         return fetch('/friends/notifications/', {
-        //             method: 'GET',
-        //             credentials: 'include', // Ensure cookies are sent
-        //             headers: { 'Authorization': `Bearer ${accessToken}` },
-        //         })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             displayNotifications(data);
-        //         })
-        //         .catch(error => console.error('Error fetching notifications:', error));
-        //     })
-        // }
+        let sendNotif = document.querySelector('#notif-button')
+        const notificationPopup = document.getElementById('notificationPopup');
+
+        function notifications() {
+        //alert('ahh');
+        getAccessToken()
+        .then(accessToken => {
+            notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
+            notif_socket.onmessage = ({data}) => {
+                console.log('Message Received is ', data);
+                notificationPopup.classList.add('show');
+                setTimeout(() => {
+                    notificationPopup.classList.remove('show');
+                }, 3000); // Hide after 3 seconds
+            }
+            notif_socket.onopen = () => {
+                sendNotif.addEventListener('click', () => {
+                    let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '8'}
+                    notif_socket.send(JSON.stringify(jsonMessage));
+                })
+            }
+        })
+        .catch(error => console.error('Error fetching notifications:', error));
+        }
+
+        notifications();
 
         // function displayNotifications(notifications) {
         //     const notificationsContainer = document.getElementById('notificationsContainer');
