@@ -10,6 +10,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('<str:username>/profile/', SearchedProfileView.as_view(), name='user_profile'),
     path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),
+    path('get-temporary-token/', get_temporary_token, name='get_csrf_token'),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     path('delete-account/', DeleteAccountView.as_view(), name='delete-account'),
     path('update-profile/', UpdateProfileView.as_view(), name='update-account'),

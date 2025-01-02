@@ -43,6 +43,8 @@ class UserProfileView(APIView):
     def get(self, request):
         user = request.user
         return Response({
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "username": user.username,
             "email": user.email,
             "image": user.image_url,
@@ -67,13 +69,16 @@ class UpdateProfileView(APIView):
     def put(self, request):
         user = request.user
         data = request.data
+
         try:
             # Update user profile fields
             anythingModified = False
 
             anythingModified |= self.update_username(user, data)
+            anythingModified |= self.update_first_name(user, data)
+            anythingModified |= self.update_last_name(user, data)
             anythingModified |= self.update_email(user, data)
-            anythingModified |= self.update_password(user, data)
+            anythingModified |= self.update_password(user, data) 
             anythingModified |= self.update_image(user, request)
 
             if anythingModified:
@@ -92,6 +97,20 @@ class UpdateProfileView(APIView):
         new_username = data.get('username', user.username)
         if new_username != user.username:
             user.username = new_username
+            return True 
+        return False 
+
+    def update_first_name(self, user, data):
+        new_first_name = data.get('first_name', user.first_name)
+        if new_first_name != user.first_name:
+            user.first_name = new_first_name
+            return True 
+        return False 
+
+    def update_last_name(self, user, data):
+        new_last_name = data.get('last_name', user.last_name)
+        if new_last_name != user.last_name:
+            user.last_name = new_last_name
             return True 
         return False 
 
@@ -133,6 +152,10 @@ class UpdateProfileView(APIView):
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+def get_temporary_token(request):
+    temporary_token = request.COOKIES.get('temporary_token')
+    return JsonResponse({'temporary_token': temporary_token})
 
 class UserSearchView(APIView):
     """
@@ -213,7 +236,6 @@ class SearchedProfileView(APIView):
         }
 
         return Response(user_data)
-
 
 class AnonymizeUserDataView(APIView):
     permission_classes = [IsAuthenticated]
