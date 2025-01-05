@@ -194,14 +194,150 @@ body {
 }
 
 .unitLG {
-    width: 90%;
-    height: 20%;
+    width: 100%;
+    height: 25%;
     background-color: var(--primary-color);
     /* margin-top: 1%; */
     display: flex;
     opacity: 0.8;
     margin: 1% auto 1% auto;
     cursor: pointer;
+}
+
+.player-pic{
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    background-color: black;
+    border: 0.3vh solid green;
+}
+
+.player{
+    width: 30%;
+    height: 100%;
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--border-color);
+    /* background-color: red; */
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.game-info{
+    width: 70%;
+    height: 100%;
+    /* background-color: blue; */
+    display: flex;
+    overflow-x: auto;
+    /* flex-direction: column; */
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+}
+
+.tt_hold_board{
+    flex-shrink: 0;
+    width: 30%;
+    height: 90%;
+    /* background-color: yellow; */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    max-width: 20%;
+    max-height: 70%;
+}
+.tt_hold_board div{
+    width: 30%;
+    height: 30%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+}
+
+
+
+.ff_hold_board{
+    flex-shrink: 0;
+    width: 30%;
+    height: 90%;
+    /* background-color: yellow; */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    max-width: 20%;  
+    max-height: 70%;  
+}
+.ff_hold_board div{
+    width: 18%;
+    height: 18%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    font-size: 0.7em;
+}
+
+.game-info::-webkit-scrollbar {
+    height: 0px; /* Set height to 0 to hide the horizontal scrollbar */
+    opacity: 0;
+}
+
+.game-info::-webkit-scrollbar-track {
+    background: var(--accent-color); /* Background of the scrollbar track */
+}
+
+.game-info::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners for scrollbar */
+    border: 2px solid var(--accent-color); /* Adds space around the thumb */
+}
+
+.listOfLG::-webkit-scrollbar {
+    width: 0px;
+    opacity: 0;  /* Width of the scrollbar */
+}
+
+.listOfLG::-webkit-scrollbar-track {
+    background: var(--accent-color); /* Background of the scrollbar track */
+}
+
+.listOfLG::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners for scrollbar */
+    border: 2px solid var(--accent-color); /* Adds some space around the thumb */
+}
+
+/* For Firefox */
+
+
+/* .game-info::-webkit-scrollbar {
+    height: 0px;
+    opacity: 0;
+}
+
+.game-info::-webkit-scrollbar-track {
+    background: var(--accent-color);
+}
+
+.game-info::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    border: 2px solid var(--accent-color);
+} */
+
+
+.win-combo {
+    color: greenyellow;
+    font-weight: bold;
+    /* font-size: 16px;  */
 }
 
 /* GAME DESCRIPTION PART */

@@ -3,7 +3,7 @@
 let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
 let gg = null
-let first_to = document.querySelector('input[name="game-choice"]:checked').value;
+
 
 function back_to_home() {
     
@@ -12,6 +12,7 @@ function back_to_home() {
     changeable_div.innerHTML = ""
     changeable_div.innerHTML = principal_html
     gg = null
+    fetchGameData()
     // location.reload()
     // matchingSocket = null
     // gg = null
@@ -226,7 +227,8 @@ class t3 {
         this.cont.innerHTML = gOver_html;
 
         // document.querySelector('.winloss').firstChild.textContent = this.currMsg["msg"]
-        document.querySelector('.winloss').style.display = 'flex';
+        let winDiv = document.querySelector('.winloss')
+        winDiv.style.display = 'flex';
         // document.getElementById("turnShow").innerText = this.currMsg["msg"]
         // let playAgainBtn = document.getElementById('playAgainBtn')
         let quitGameBtn = document.getElementById('quitBtn')
@@ -237,9 +239,9 @@ class t3 {
         // console.log("Ha ch9amto : ",this.currMsg["wins"])
         msgRes.textContent = this.currMsg["msg"]
         if ( this.currMsg["message"] )
-            msgRes.style.color = "green"
+            winDiv.style.background = "linear-gradient(135deg, #4caf50, #2e7d32)"
         else
-            msgRes.style.color = "red"
+            winDiv.style.background = "linear-gradient(135deg, #f44336, #c62828)"
         winScore.textContent = this.currMsg["wins"]
         nb_games.textContent = this.currMsg["nbGames"]
         hescore.textContent = this.currMsg["opwins"]
@@ -420,6 +422,7 @@ async function playgame (gameType) {
             // alert('Error getting access token', error.message);
         }); 
     
+    let first_to = document.querySelector('input[name="game-choice"]:checked').value;
     matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`)
     // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
     // and the tail size etc ....
@@ -459,6 +462,8 @@ async function playgame (gameType) {
         }
         matchingSocket.onclose = async function(event)
         {
+            // 4010 is the end of game close, not back to home but to the gameover
+            // then he must click [OK] to go back to home
             if (event.code != 4010)
             {
                 back_to_home()
@@ -551,14 +556,26 @@ t3.prototype.updateBoard = function () {
 }
 
 // -----------------------> must fetch data here using token JWT instead of ID
-// getAccessToken()
-//         .then(accessToken => {
-//             return fetch('gamesByWinId/', {
-//                 method: 'GET',
-//                 headers: { 'Authorization': `Bearer ${accessToken}`}
-//             })
-//         })
-//         .then(response => response.json())
-//         .then(data => { console.log(data); })
-//         .catch(error => console.error('Error:', error));
+function fetchGameData(){
+
+    getAccessToken()
+            .then(accessToken => {
+                console.log("hhhhhhhhhhhhhhhhhhhhhhhh")
+                return fetch('/gamesByWinId/', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}`}
+                })
+            })
+            .then(response => response.json())
+            .then(data => { console.log(data); 
+                let list = document.getElementById("listOfLGID")
+                data.forEach( game => {
+                    // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ before : ', game)
+                    gameUnit(game, list)
+                })
+            })
+            .catch(error => console.error('Error:', error));
+}
+
+fetchGameData()
 // window.location.host

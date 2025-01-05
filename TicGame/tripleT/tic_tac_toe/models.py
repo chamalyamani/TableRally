@@ -10,6 +10,7 @@ class games(models.Model):
     p2id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2')
     winid = models.ForeignKey(User, on_delete=models.CASCADE, related_name='win_id')
     # los_id = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE, related_name='games_lost')
+    l_score = models.IntegerField(default=0)
     winner_boards = models.JSONField(default=list)
     num_of_games = models.IntegerField(default=0)
     game_type_db = models.JSONField(default=list)

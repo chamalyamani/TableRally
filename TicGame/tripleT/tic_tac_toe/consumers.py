@@ -71,8 +71,6 @@ class test(AsyncWebsocketConsumer):
             if code == 4005:
                 print("i wont delete you from the grp")
                 return
-            if code == 1006:
-                print("code 1006 inform the other player that you left unexpectedly")
             # NOOOOO NEED TO DELETE THEM FROM GRP SiNCE THEY HAVE BEEN POPED OUT
             # BUT YES WHEN SOMEONE JUST ENTERED AND DISCONNECTED WITHOUT ANY MATCHING
             # HE MUST BE FREED FROM THE GRP THATS WHY THIS IS MADE
@@ -94,6 +92,15 @@ class test(AsyncWebsocketConsumer):
             if players == None:
                 print("players not found")
                 Exception("No players found for this game")
+            
+            if code == 1006 or code == 1001:
+                idxHim = 1 if players[0].user_id == self.user.id else 0
+                await self.channel_layer.send(players[idxHim].channel_name, {
+                    "type": "error_handle",
+                    "code": 1,
+                    "msg": "Your opponent has been disconnected unexpectedly."
+                })
+                print("code 1006 inform the other player that you left unexpectedly")
             # Remove both players from player_game_map
             for player in players:
                 player_id = player.user_id
@@ -154,7 +161,7 @@ class test(AsyncWebsocketConsumer):
         # Determine the winner
         winner          = p1_user       if len(p1.winBoards) > len(p2.winBoards) else p2_user
         winner_boards   = p1.winBoards  if len(p1.winBoards) > len(p2.winBoards) else p2.winBoards
-
+        loss_score = len(p1.winBoards) if len(p1.winBoards) < len(p2.winBoards) else len(p2.winBoards)
         try:
             # Create the game record
             game = await sync_to_async(games.objects.create)(
@@ -165,6 +172,7 @@ class test(AsyncWebsocketConsumer):
                 winid           = winner,
                 winner_boards   = winner_boards,
                 num_of_games    = p1.nbGames,
+                l_score         = loss_score,
             )
             print(f"Game record created:")
         except Exception as e:
@@ -250,6 +258,7 @@ class test(AsyncWebsocketConsumer):
             ps.winBoards.append(bts)
 
         # Check if the game ends
+        print("pf.wins : ", pf.wins, " pf.ina_game[1] : ", pf.ina_game[1])
         if pf.wins == pf.ina_game[1] or ps.wins == ps.ina_game[1]:
             pf.res = "You won the game!" if winner_char == pf.char else "You lost the game!"
             ps.res = "You won the game!" if winner_char == ps.char else "You lost the game!"
@@ -270,7 +279,7 @@ class test(AsyncWebsocketConsumer):
             # Save the final state of the game in the database
         # if self.channel_name == pf.channel_name:
             print("hani dezt mn hna ---------")
-            # await self.         (pf, ps, pf.ina_game)
+            await self.dbInit(pf, ps, pf.ina_game)
             # await self.dbUpdate(pf, ps)
 
             # Send the final results
@@ -437,11 +446,9 @@ class test(AsyncWebsocketConsumer):
         first_to = content.get('first_to', None)
     
         if first_to is None:
-            await self.close(code=4002)
-            return
+            raise ValueError("First_to value is missing", 1)
         if first_to not in ["1", "3", "5", "7"]:
-            await self.close(code=4002)
-            return
+            raise ValueError("First_to value is invalid", 1)
         
         #  two types of games here FT4 and CLASSIC 
         print("in distributeeeeeeeee : ", grid_type)
@@ -454,8 +461,7 @@ class test(AsyncWebsocketConsumer):
 
         grp = grp_map.get(game_type[1], None)
         if grp is None:
-            await self.close(code=4002) 
-            return
+            raise ValueError("Error Not possible to find the group", 1) 
         await self.dist_help(grp, game_type)
 
     async def dist_help(self, grp, game_type):
@@ -464,15 +470,17 @@ class test(AsyncWebsocketConsumer):
         #     await self.close(code=4003)
         #     return
         if self.user.id in player_game_map:
-            await self.close(code=4005)
-            return
+            raise ValueError("User is already in a game", 3)
+            # await self.close(code=4005)
+            # return
         # search in all the grps if the user is already in one of them
         for g in [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]:
             for item in g:
                 if self.user.id in item:
-                    print("already in game of this type")
-                    await self.close(code=4005)
-                    return
+                    raise ValueError("User is waiting for a game", 3)
+                    # print("already in game of this type")
+                    # await self.close(code=4005)
+                    # return
         grp.append({self.user.id:self.channel_name})
         if len(grp) >= 2:
             await self.setupPlayersAndInit(grp, game_type)
@@ -500,6 +508,8 @@ class test(AsyncWebsocketConsumer):
     #     if friend_id in friends_grp:
     #         here you must normally send both players to the game box
     #         add each user into a deque with there id and channel name
+    #         get the players channel name and id from the friends_grp
+    #
     #         await self.setupPlayersAndInit(2friends deque, choose a game type)
 
 
@@ -511,9 +521,9 @@ class test(AsyncWebsocketConsumer):
             print("RECEIVE : ", txt_json)
             msg_type = txt_json.get("type", None)
             if msg_type == None:
-                raise Exception("No type in the message")
+                raise Exception("No type in the message", 1)
             if msg_type not in expected_types:
-                raise Exception("Invalid message type")
+                raise Exception("Invalid message type", 1)
             
             # could receive a message that says there is two users that wants to play together
             # this current one will have the id or username of the one who wants to play with (self have username in the msg)
@@ -533,6 +543,7 @@ class test(AsyncWebsocketConsumer):
             #must be handled if is already in game or is not in game 
             if msg_type == 'ft_classic' or msg_type == 'ft4':
                 await self.distribute(txt_json, msg_type)
+                return
             
             # this is for the 5/5 grid game first to four 
             # if msg_type == 'ft4':
@@ -542,10 +553,10 @@ class test(AsyncWebsocketConsumer):
             #     await self.quitGame()
             guId = player_game_map.get(self.user.id, None)
             if guId == None:
-                raise Exception("No game found for this user")
+                raise Exception("No game found for this user", 1)
             players = game_box.get(guId, None)
             if players == None:
-                raise Exception("No players found for this game")
+                raise Exception("No players found for this game", 1)
             #prevent the other player from playing
             firstP ,secondP = (players[0], players[1]) if players[0].char == X_CHAR else (players[1], players[0])
             is_x_turn = firstP.turn
@@ -555,33 +566,34 @@ class test(AsyncWebsocketConsumer):
             if msg_type == in_gaming:
                 if (firstP.turn and firstP.channel_name != self.channel_name) or \
                 (secondP.turn and secondP.channel_name != self.channel_name):
-                    raise ValueError("Not your turn")
+                    raise ValueError("Not your turn", 2)
                 if not firstP.is_inGame or not secondP.is_inGame:
-                    raise ValueError("Not in game")
+                    raise ValueError("Not in game", 2)
                 clickIdx = txt_json.get("clickIdx", None)
                 if clickIdx == None:
-                    raise ValueError("No click index")
+                    raise ValueError("No click index", 2)
                 
                 # here its the board update and switch turn
                 if switchturnUpdtboardAddmoves(firstP, secondP, clickIdx, is_x_turn):
                     raise ValueError("Invalid move")
         except ValueError as e:
-            print("VAlueError : in receive", e)
+            err_msg, err_code = e.args
+            print("VAlueError : in receive : err_msg : ", err_msg, " err_code : ", err_code)
             await self.channel_layer.send(self.channel_name, {
                 "type": "error_handle",
-                "code": 2,
-                "msg": str(e)
+                "code": err_code,
+                "msg": str(err_msg)
             })
             return
-        except Exception as e:
-            print("EXCEPTION : in receive", e)
-            await self.channel_layer.send(self.channel_name, {
-                "type": "error_handle",
-                "code": 1,
-                "msg": str(e)
-            })
-            # await self.close(code=4004)
-            return
+        # except Exception as e:
+        #     print("EXCEPTION : in receive", e)
+        #     await self.channel_layer.send(self.channel_name, {
+        #         "type": "error_handle",
+        #         "code": 1,
+        #         "msg": str(e)
+        #     })
+        #     # await self.close(code=4004)
+        #     return
             # here its the winner check for the 3/3 grid 
         if firstP.ina_game[0] == "ft_classic":
             if firstP.moves >= 3 or secondP.moves >= 3:
@@ -693,6 +705,8 @@ class test(AsyncWebsocketConsumer):
         print("....................................", event["code"])
         if event["code"] == 1:
             await self.close(code=4004)
+        elif event["code"] == 3:
+            await self.close(code=4005)
     
 
 
