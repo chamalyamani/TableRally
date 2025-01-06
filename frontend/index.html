@@ -1,1882 +1,1006 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="index.css">
-    
-    <style>
-        #notificationPopup {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #333;
-            color: #fff;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            display: none;
-            z-index: 1000;
-        }
-        #notificationPopup.show {
-            display: block;
-        }
-        .notification-button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .notification-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-        
-</head>
-    
-<body>
-    <div id="notificationPopup">This is a notification!</div>
+<html>
+    <head>
+        <title>Planet Pong</title>
+        <meta charset="UTF-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;600;800&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <div id="error-message" style="display: none; color: red;"></div>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles/global.css">
 
-    <!-- Login form for credentials -->
-    <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login with Credentials</button>
-        <button id="login42Btn" type="button">Login with 42 API</button>
-        <p>Don't have an account? <a href="#" id="toggleToRegister">Register</a></p>
-    </form>
+    </head>
 
-    <form id="registerForm" style="display: none;">
-        <label for="registerUsername">Username:</label>
-        <input type="text" id="registerUsername" name="registerUsername" required>
-        <label for="firstname">First name:</label>
-        <input type="text" id="firstname" name="firstname" required>
-        <label for="lastname">Last name:</label>
-        <input type="text" id="lastname" name="lastname" required>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required>
-        <label for="registerPassword">password:</label>
-        <input type="password" id="registerPassword" name="registerPassword" required>
-        <label for="registerConfirm_password">Confirm password:</label>
-        <input type="password" id="registerConfirm_password" name="registerConfirm_password" required>
-        
-        <p>Already have an account? <a href="#" id="toggleToLogin">Login</a></p>
-        <button type="submit">Register</button>
-    </form>
+    <body>
+        <div class="color-overlay"></div>
 
-    <div id="2faUse" style="display: none;">
-        <label for="2faToken">2FA Token:</label>
-        <input type="text" id="2faTokenAfterLogin" name="2fa_token">
-        <button type="submit" id="submit2FATokenAfterLogin">Submit 2FA Token</button>
-    </div>
-    <div id="app-container">
-        <p id="password-forgotten">
-            Forgot your password?
-            <button id="passwordReset" >Reset your password</button>
-            <form id="passwordResetForm">
-            </form>
-            <form id="passwordResetConfirmForm">
-            </form>
-        </p>
-    </div>
-
-    <!-- Enable 2fa -->
-    <div id="qrCodeContainer" style="display:none;">
-        <h3>Scan this QR code with your authenticator app</h3>
-        <img id="qrCode" src="" alt="QR Code" />
-    </div>
-
-    <div id="verify2FA" style="display: none;">
-        <h3>Enter the 2FA token from your authenticator app</h3>
-        <input type="text" id="2faTokenInputSetup" placeholder="Enter your 2FA token"/>
-        <button class="btn outline" id="submit2FATokenSetup">Verify 2FA Token</button>
-    </div>
-
-    <!-- User profile card -->
-    <div id="userCard" class="user-card">
-        <!-- Profile Image -->
-        <img id="userImage">
-        
-        <!-- Non-editable fields for profile information -->
-        <h1 id="userName"></h1>
-        <p id="userEmail"></p>
-    
-        <!-- Editable inputs (hidden initially) -->
-        <div id="editFields" style="display: none;">
-            <div class="profile-picture-wrapper">
-                <!-- Profile Image -->
-                <img id="userImageUpdate" alt="Profile Image" class="profile-picture">
-                
-                <!-- Hidden file input for uploading new image -->
-                <input type="file" id="editImage" accept="image/*" style="display: none;">
-                
-                <!-- Pen icon overlay -->
-                <label for="editImage" class="edit-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="blue" width="24px" height="24px">
-                        <path d="M0 0h24v24H0V0z" fill="none"/>
-                        <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm2.92 3.67H5v-.92l9.06-9.06.92.92-9.06 9.06zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    </svg>
-                </label>
+        <!-- global notif div -->
+        <div class="toast">
+          <div class="toast-content">
+            <!-- Cercle vert pour le check -->
+            <div class="icon-circle-success success">
+              <img src="assests/check.png" alt="Check" class="icon-image">
             </div>
-            <input type="text" id="editUsername" placeholder="Enter new username">
-            <input type="password" id="OldPassword" placeholder="Enter old password">
-            <input type="password" id="editPassword" placeholder="Enter new password">
-            <input type="password" id="confirm_password" placeholder="Confirm new password">
-            <input type="email" id="editEmail" placeholder="Enter new email">
-            <!-- <input type="file" id="editImage" accept="image/*"> -->
-        </div>
-    
-
-        <!-- Button controls -->
-        <div class="button-wrapper">
-            <div class="column1">
-                <button class="btn outline" id="fetchProfileBtn">Fetch Profile</button>
-                <button class="btn outline" id="notif-button">Send Notif</button>
-                <button class="btn outline" id="update-btn">Update Profile</button>
-                <button class="btn outline" id="saveChangesBtn" style="display: none;">Save Changes</button>
-                <button class="btn fill" id="logoutBtn">LOGOUT</button>
-                <button class="btn fill" id="deleteAccountBtn">DELETE Account</button>
-                <button class="btn outline" id="enable2FA">Enable 2FA</button>
-                <button class="btn outline" id="searchBtnInProfile">Search</button>
+        
+            <!-- Cercle rouge pour l'erreur -->
+            <div class="icon-circle-error error">
+              <img src="assests/close.png" alt="Error" class="icon-image">
             </div>
-
-            <div class="column1">
-                <button class="btn outline" id="friendsListBtn">Friends list</button>
-                <button class="btn outline" id="incomingFriendRequestsBtn">Incoming Friends Requests</button>
-                <button class="btn outline" id="outgoingFriendRequestsBtn">Outgoing Friends Requests</button>
-                <button class="btn outline" id="blockedList">Blocked Users List</button>
-                <!-- <button class="btn outline" id="notifsList" onclick="fetchNotifications()">Check Notifications</button> -->
-                <ul id="notifications-list"></ul>
+        
+            <div class="message">
+              <span id="notif-type" class="text text-1"></span>
+              <span id="notif-message" class="text text-2"></span>
             </div>
-            
+          </div>
+          
+          <i class="fa-solid fa-xmark close"></i>
+          
+          <div  class="progress"></div>
         </div>
 
-        <div id="searchBar" style="display: none;">
-            <h2>Search for Users</h2>
-            <input type="text" id="searchInput" placeholder="Search by username, email, etc.">
-            <button class="btn outline" id="searchBtn">Search</button>
-    
-            <div id="searchResults"></div>
+        <!-- Loader -->
+        <div id="loader" class="loader-container">
+          <div class="loader"></div>
         </div>
 
-        <div id="userProfile" style="display: none;">
-            
-        </div>
-        <div id="friendsList" style="display: none;"></div>
-        <div id="incomingRequestsList" style="display: none;"></div>
-        <div id="outgoingRequestsList" style="display: none;"></div>
-        <div id="blockedUsersList" style="display: none;"></div>
-        <div id="notificationsContainer"></div>
-    </div>
-
-
-    <script>
-        // Handling credentials-based login
-        const toggleToLogin = document.getElementById('toggleToLogin');
-        const toggleToRegister = document.getElementById('toggleToRegister');
-
-        // Toggle to Login Form
-        toggleToLogin.addEventListener('click', (event) => {
-            event.preventDefault();
-            registerForm.style.display = 'none';
-            loginForm.style.display = 'block';
-            document.getElementById('password-forgotten').style.display = 'block';
-        });
-
-        // Toggle to Register Form
-        toggleToRegister.addEventListener('click', (event) => {
-            event.preventDefault();
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            document.getElementById('password-forgotten').style.display = 'none';
-        });
-        
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const username = formData.get('username');
-            const password = formData.get('password');
-
-            // Make a POST request to log in
-            fetch('/auth/login/credentials/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                credentials:'include',
-                body: new URLSearchParams({
-                    username: username,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.redirect_to) {
-                    window.location.href = data.redirect_to;
-                } else {
-                    handleLoginResponse(data);
-                }
-            })
-            .catch(error => {
-                const errorDiv = document.getElementById('error-message');
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
-                console.error('Login Error:', error);
-            });
-        });
-
-        async function submitRegistration(formData) {
-            try {
-                const response = await fetch('/auth/register/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                    credentials: "include"
-                });
-
-                const errorDiv = document.getElementById('error-message');
-                errorDiv.textContent = ''; // Clear content
-
-                if (!response.ok) {
-                    const errors = await response.json();
-                    for (const [field, messages] of Object.entries(errors)) {
-                        errorDiv.textContent = messages[0]; // Show only the first general error
-                        errorDiv.style.display = 'block';
-                    }
-                } 
-                else {
-                    const data = await response.json();
-                    let countdown = 3;
-                    errorDiv.textContent = `${data.message} in ${countdown}...`;
-                    errorDiv.style.color = 'green';
-                    errorDiv.style.display = 'block';
-
-                    const interval = setInterval(() => {
-                        countdown--;
-                        if (countdown > 0) {
-                            errorDiv.textContent = `${data.message} in ${countdown}...`;
-                        } else {
-                            clearInterval(interval); // Stop the interval when countdown reaches 0
-                            errorDiv.style.color = 'red';
-                            errorDiv.style.display = 'none';
-                            registerForm.style.display = 'none';
-                            loginForm.style.display = 'block';
-                            document.getElementById('password-forgotten').style.display = 'block';
-                        }
-                    }, 1000); // Update every 1000 milliseconds (1 second)
-                }
-            } catch (err) {
-                console.error('An error occurred:', err);
-            }
-        }
-
-        document.getElementById('registerForm').addEventListener('submit', async function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            const formData = {
-                username: document.getElementById('registerUsername').value,
-                first_name: document.getElementById('firstname').value,
-                last_name: document.getElementById('lastname').value,
-                username: document.getElementById('registerUsername').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('registerPassword').value,
-                confirm_password: document.getElementById('registerConfirm_password').value,
-            };
-
-            submitRegistration(formData);
-        })
-
-        async function getAccessToken() {
-            try {
-                const response = await fetch('/auth/get-access-token/', {
-                    method: 'GET',
-                    credentials: 'include',
-                });
-
-                if (response.status === 204)
-                    return null; // Return null when no token is found
-
-                if (!response.ok) {
-                    // throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText}`);
-                    document.getElementById('userCard').style.display = 'none';
-                    document.getElementById('loginForm').style.display = 'block';
-                }
-
-                const data = await response.json();
-
-                if (data.access_token) {
-                    return data.access_token;
-                } else {
-                    // console.warn('Access token is not in the response payload.');
-                    return null; // Return null instead of throwing
-                }
-            } catch (error) {
-                // console.error('Error fetching access token:', error);
-                return null; // Return null to avoid breaking the flow
-            }
-        }
-
-        function enable2FA() {
-            // Fetch and display the QR code (you'll need to implement the API for this)
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/auth/enable-2fa/', {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`  // Set Authorization header
-                    }
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.qr_code) {
-                    // Show the QR code for the user to scan
-                    document.getElementById('qrCode').src = data.qr_code;
-                    document.getElementById('qrCodeContainer').style.display = 'block';
-                    document.getElementById('verify2FA').style.display = 'block';
-                    document.getElementById('userCard').style.display = 'none';
-                    document.getElementById('enable2FA').textContent = 'Disable 2FA';
-                    document.getElementById('enable2FA').style.display = 'none';
-                    window.temporaryToken = data.temporary_token;
-                } else {
-                    alert(data.error);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        function disable2FA() {
-            // Make an API call to disable 2FA for the user
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/auth/disable-2fa/', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            })})
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('2FA disabled successfully');
-                    // Change the button back to "Enable 2FA"
-                    document.getElementById('enable2FA').textContent = 'Enable 2FA';
-                    // document.getElementById('qrCodeContainer').style.display = 'none';
-                } else {
-                    alert('Failed to disable 2FA');
-                }
-            })
-            .catch(error => console.error('Error disabling 2FA:', error));
-        }
-
-        // async function fetchAndDisplayUserProfile() {
-        //     try {
-        //         // Fetch the access token once
-        //         const accessToken = await getAccessToken();
-
-        //         // Fetch 2FA status
-        //         const twoFAResponse = await fetch('/auth/check-2fa-status/', {
-        //             method: 'GET',
-        //             credentials: 'include',
-        //             headers: {
-        //                 'Authorization': `Bearer ${accessToken}`
-        //             }
-        //         });
-
-        //         if (!twoFAResponse.ok) {
-        //             return null;
-        //         }
-
-        //         const twoFAData = await twoFAResponse.json();
-                
-        //         // Update 2FA button based on the fetched status
-        //         const enable2FABtn = document.getElementById('enable2FA');
-        //         enable2FABtn.textContent = twoFAData.two_fa_enabled ? 'Disable 2FA' : 'Enable 2FA';
-
-        //         enable2FABtn.addEventListener('click', function () {
-        //             if (twoFAData.two_fa_enabled) {
-        //                 disable2FA();
-        //             } else {
-        //                 enable2FA();
-        //             }
-        //         });
-
-        //         // Fetch user profile
-        //         const profileResponse = await fetch('/user/profile/', {
-        //             method: 'GET',
-        //             credentials: 'include',
-        //             headers: {
-        //                 'Authorization': `Bearer ${accessToken}`
-        //             }
-        //         });
-
-        //         if (profileResponse.status === 401) {
-        //             throw new Error('Unauthorized');
-        //         }
-
-        //         if (!profileResponse.ok) {
-        //             throw new Error('Failed to fetch profile');
-        //         }
-
-        //         const profileData = await profileResponse.json();
-
-        //         // Update profile details on the page
-        //         localStorage.removeItem('alertShown');
-
-        //         document.getElementById('userName').textContent = profileData.username;
-        //         document.getElementById('userEmail').textContent = profileData.email;
-        //         document.getElementById('userImage').src = profileData.image;
-        //         document.getElementById('userImageUpdate').src = profileData.image;
-
-        //         document.getElementById('editUsername').value = profileData.username;
-        //         document.getElementById('editEmail').value = profileData.email;
-
-        //         // Show user card and hide login form
-        //         document.getElementById('userCard').style.display = 'block';
-        //         document.getElementById('loginForm').style.display = 'none';
-
-        //     } catch (error) {
-        //         console.error('Error:', error);
-
-        //         // Handle unauthorized error
-        //         if (error.message === 'Unauthorized') {
-        //             if (!localStorage.getItem('alertShown')) {
-        //                 alert('Your session has expired. Please log in again.');
-        //                 localStorage.setItem('alertShown', 'true');  // Mark alert as shown
-        //             }
-        //             document.getElementById('userCard').style.display = 'none';
-        //             document.getElementById('loginForm').style.display = 'block';
-        //             document.getElementById('password-forgotten').style.display = 'block';
-        //         } else {
-        //             // For other errors, show the login form
-        //             document.getElementById('userCard').style.display = 'none';
-        //             document.getElementById('loginForm').style.display = 'block';
-        //         }
-        //     }
-        // }
- 
-        async function fetchAndDisplayUserProfile() {
-            try {
-                const accessToken = await getAccessToken();
-
-                // Fetch 2FA status and update button
-                const twoFAStatus = await fetchTwoFAStatus(accessToken);
-                if(!twoFAStatus)
-                    return null;
-                updateTwoFAButton(twoFAStatus);
-
-                // Fetch user profile data
-                const profileData = await fetchUserProfile(accessToken);
-                updateUserProfileUI(profileData);
-
-            } catch (error) {
-                console.error('Error:', error);
-                handleAuthError(error);
-            }
-        }
-
-        // Fetch 2FA status
-        async function fetchTwoFAStatus(accessToken) {
-            const response = await fetch('/auth/check-2fa-status/', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            if (!response.ok) {
-                // throw new Error('Failed to fetch 2FA status');
-                return null;
-            }
-
-            return response.json();
-        }
-
-        // Update the 2FA button UI and functionality
-        function updateTwoFAButton(twoFAData) {
-            const enable2FABtn = document.getElementById('enable2FA');
-            let isTwoFAEnabled = twoFAData.two_fa_enabled;
-
-            // Set the initial button state
-            enable2FABtn.textContent = isTwoFAEnabled ? 'Disable 2FA' : 'Enable 2FA';
-
-            // Update button click handler dynamically
-            enable2FABtn.onclick = async () => {
-                try 
-                {
-                    if (isTwoFAEnabled) {
-                        await disable2FA();
-                        isTwoFAEnabled = false;
-                    } else {
-                        await enable2FA();
-                        isTwoFAEnabled = true;
-                    }
-                    enable2FABtn.textContent = isTwoFAEnabled ? 'Disable 2FA' : 'Enable 2FA';
-                }
-                catch (error) {
-                    console.error('Failed to toggle 2FA:', error);
-                    alert('An error occurred while toggling 2FA. Please try again.');
-                }
-            };
-        }
-
-        // Fetch user profile
-        async function fetchUserProfile(accessToken) {
-            const response = await fetch('/user/profile/', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            if (response.status === 401) {
-                throw new Error('Unauthorized');
-            }
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch profile');
-            }
-
-            return response.json();
-        }
-
-        // Update the UI with user profile data
-        function updateUserProfileUI(profileData) {
-            localStorage.removeItem('alertShown');
-
-            document.getElementById('userName').textContent = profileData.username;
-            document.getElementById('userEmail').textContent = profileData.email;
-            document.getElementById('userImage').src = profileData.image;
-            document.getElementById('userImageUpdate').src = profileData.image;
-
-            document.getElementById('editUsername').value = profileData.username;
-            document.getElementById('editEmail').value = profileData.email;
-
-            // Show user card and hide login form
-            document.getElementById('userCard').style.display = 'block';
-            document.getElementById('loginForm').style.display = 'none';
-        }
-
-        // Handle authentication or fetch errors
-        function handleAuthError(error) {
-            const userCard = document.getElementById('userCard');
-            const loginForm = document.getElementById('loginForm');
-            const forgotPassword = document.getElementById('password-forgotten');
-
-            userCard.style.display = 'none';
-            loginForm.style.display = 'block';
-
-            if (error.message === 'Unauthorized') {
-                if (!localStorage.getItem('alertShown')) {
-                    alert('Your session has expired. Please log in again.');
-                    localStorage.setItem('alertShown', 'true');
-                }
-                forgotPassword.style.display = 'block';
-            } else {
-                console.error('Unexpected error:', error);
-            }
-        }
-
-
-        document.getElementById('fetchProfileBtn').addEventListener('click', function() {
-            fetchAndDisplayUserProfile();
-        });
-        
-        document.getElementById('login42Btn').addEventListener('click', function() {
-            window.location.href = '/auth/login/42-intra';
-            localStorage.setItem('authFetchRequired', 'true');
-        });
-
-        function handleLoginResponse(data) 
-        {
-            if (data.error) {
-                const errorDiv = document.getElementById('error-message');
-                errorDiv.textContent = data.error;
-                errorDiv.style.display = 'block';
-            }
-            else if (data.temporary_token) {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('password-forgotten').style.display = 'none';
-                document.getElementById('2faUse').style.display = 'block';
-                document.getElementById('2faTokenAfterLogin').setAttribute('required', 'required');  // Add required attribute
-                window.temporaryToken = data.temporary_token;
-            } 
-            else
-            {
-                localStorage.removeItem('alertShown');
-                document.getElementById('userCard').style.display = 'block';
-                document.getElementById('userImage').src = data.image;
-                document.getElementById('userImageUpdate').src = data.image;
-                document.getElementById('userName').textContent = data.username;
-                document.getElementById('userEmail').textContent = data.email;
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('password-forgotten').style.display = 'none';
-            }
-
-        }
-
-        // Handle the logout button click
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/auth/logout/', {
-                method: 'POST',
-                credentials: 'include',  // Include cookies to clear tokens
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    document.getElementById('userCard').style.display = 'none';
-                    document.getElementById('loginForm').style.display = 'block';
-                } else {
-                    alert('Logout failed. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error during logout:', error);
-            });
-            });
-        })
-        // Convert fields to inputs for updating when "Update" is clicked
-        document.getElementById('update-btn').addEventListener('click', function() {
-
-            document.getElementById('userName').style.display = 'none';
-            document.getElementById('userEmail').style.display = 'none';
-            document.getElementById('userImage').style.display = 'none';
-
-            document.getElementById('editFields').style.display = 'block';
-
-            document.getElementById('saveChangesBtn').style.display = 'inline-block';
-        });
-
-        document.getElementById('editImage').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('userImageUpdate').src = e.target.result;  // Update profile picture preview
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-
-        // Submit updated profile data when "Save Changes" is clicked
-        document.getElementById('saveChangesBtn').addEventListener('click', function() {
-            const username = document.getElementById('editUsername').value;
-            const OldPassword = document.getElementById('OldPassword').value;
-            const password = document.getElementById('editPassword').value;
-            const confirm_password = document.getElementById('confirm_password').value;
-            const email = document.getElementById('editEmail').value;
-            const image = document.getElementById('editImage').files[0];
-
-            const formData = new FormData();
-            formData.append('username', username);
-            formData.append('email', email);
-            formData.append('OldPassword', OldPassword);
-            formData.append('password', password);
-            formData.append('confirm_password', confirm_password);
-            if (image) {
-                formData.append('image', image);
-            }
-
-            // Send the updated data to the server
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('/user/update-profile/', {
-                    method: 'PUT',
-                    credentials: 'include',  // Include cookies for authentication
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    },
-                    body: formData,
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    // Update the profile card with the new data
-                    if(data.username)
-                        document.getElementById('userName').textContent = data.username;
-                    if(data.email)
-                        document.getElementById('userEmail').textContent = data.email;
-                    if(data.image)
-                        document.getElementById('userImage').src = data.image;
-
-                    // Hide the input fields after saving
-                    document.getElementById('editFields').style.display = 'none';
-                    document.getElementById('saveChangesBtn').style.display = 'none';
-
-                    // Show the non-editable fields again
-                    document.getElementById('userName').style.display = 'block';
-                    document.getElementById('userEmail').style.display = 'block';
-                    document.getElementById('userImage').style.display = 'block';
-                }
-            })
-            .catch(error => {
-                console.error('Error updating profile:', error);
-            });
-        });
-
-        // Handle the delete account button click
-        document.getElementById('deleteAccountBtn').addEventListener('click', function() {
-            if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-                getAccessToken()
-                .then(accessToken => {
-                    // Make a DELETE request to delete the user account
-                    return fetch('/user/delete-account/', {
-                        method: 'DELETE',
-                        credentials: 'include',  // Include cookies (access token)
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${accessToken}`  // Use access token in the Authorization header
-                        }
-                    });
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Account deleted successfully.');
-                        window.location.href = '/';  // Redirect after account deletion
-                    } else {
-                        return response.json().then(data => {
-                            alert(data.error || 'Failed to delete account.');
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting account:', error);
-                });
-            }
-        });
-        
-        async function handle2fa_42API() {
-            try {
-                const response = await fetch('/auth/holder/', {
-                    method: 'GET',
-                    credentials: 'include',  // Ensure cookies are sent with the request
-                });
-
-                if (!response.ok) {
-                    // throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
-                    return;
-                }
-
-                const data = await response.json();
-                
-                if (data.is_42_logged_in) {
-                    if (data.message === "2FA is required") {
-                        handleLoginResponse(data);
-                    } else {
-                        fetchAndDisplayUserProfile();
-                    }
-                }
-                else {
-                    fetchAndDisplayUserProfile();
-                }
-            } 
-            catch (error) {
-                const errorDiv = document.getElementById('error-message');
-                errorDiv.textContent = `Error: ${error.message}`;
-                errorDiv.style.display = 'block';
-                console.error('Error in auth fetch:', error);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const is2faCompleted = localStorage.getItem('is2faCompleted');
-            
-            if (is2faCompleted === 'true') {
-                fetchAndDisplayUserProfile();  // Proceed with normal flow
-                localStorage.clear();
-                return;
-            }
-            handle2fa_42API();
-        });
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        function loadTemplate(url, callback) {
-            const appContainer = document.getElementById('app-container'); // Main SPA container
-
-            fetch(url, 
-            { 
-                method: 'GET', 
-                credentials: 'include' 
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load template');
-                }
-                return response.text(); // Get the HTML content
-            })
-            .then(html => {
-                appContainer.innerHTML = html;
-                document.getElementById("loginForm").style.display = 'none';
-                if (callback) 
-                    callback();
-            })
-            .catch(error => console.error('Error loading template:', error));
-        }
-
-        // Handle form submission for password reset
-        document.getElementById('passwordReset').addEventListener('click', function(e) {
-            loadTemplate('/user/password_reset/', () => {
-                const form = document.getElementById('passwordResetForm');
-                if (form) {
-                    form.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                        const email = document.getElementById('passwordResetEmail').value;
-                        if (!email) {
-                            alert("Please enter a valid email address.");
-                            return;
-                        }
-                        const csrfToken = getCookie('csrftoken');
-
-                        const formData = new URLSearchParams();
-                        formData.append('email', email);
-                        formData.append('csrfmiddlewaretoken', csrfToken);
-
-                        fetch('/user/password_reset/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'X-CSRFToken': csrfToken,
-                            },
-                            body: formData.toString(),
-                            credentials: 'include',
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                loadTemplate('/user/password_reset/done/');
-                            } else {
-                                alert('Failed to send reset link.');
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                    });
-                }
-            });
-        });
-
-        // Load password reset confirmation form
-        function loadPasswordResetConfirm(uidb64, token) {
-            loadTemplate(`/user/reset/${uidb64}/${token}/`, () => {
-                const form = document.getElementById('passwordResetConfirmForm');
-                if (form) {
-                    form.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                        const newPassword = document.getElementById('newPassword').value;
-                        const csrfToken = getCookie('csrftoken');
-
-                        const formData = new URLSearchParams();
-                        formData.append('new_password1', newPassword);
-                        formData.append('new_password2', newPassword);
-                        formData.append('csrfmiddlewaretoken', csrfToken);
-
-                        fetch(`/user/reset/${uidb64}/${token}/`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'X-CSRFToken': csrfToken,
-                            },
-                            body: formData.toString(),
-                            credentials: 'include',
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                loadTemplate('/user/reset/done/');
-                            } else {
-                                alert('Failed to reset password.');
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                    });
-                }
-            });
-        }
-
-        // function navigateToPasswordReset(uidb64 = null, token = null) {
-        //     if (!uidb64 || !token) {
-        //         loadTemplate('/password_reset/');
-        //     } else {
-        //         loadPasswordResetConfirm(uidb64, token);
-        //     }
-        // }
-
-        // handle the setup of the 2FA
-        document.getElementById('submit2FATokenSetup').addEventListener('click', function() {
-            const twoFaToken = document.getElementById('2faTokenInputSetup').value;
-            
-            // Send the 2FA token to the backend for verification
-            fetch('/auth/verify-2fa/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    temporary_token: window.temporaryToken,  // Use the stored temporary token
-                    two_fa_token: twoFaToken
-                }),
-                credentials: 'include' // Include cookies for authentication
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    // Hide the QR code and 2FA form after success
-                    document.getElementById('qrCodeContainer').style.display = 'none';
-                    document.getElementById('verify2FA').style.display = 'none';
-                    document.getElementById('2faUse').style.display = 'none';
-                    document.getElementById('enable2FA').style.display = 'block';
-                    document.getElementById('userCard').style.display = 'block';
-                    document.getElementById('password-forgotten').style.display = 'none';
-                    alert('2FA enabled successfully!');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    });
-    
-        document.getElementById('submit2FATokenAfterLogin').addEventListener('click', function() {
-            const twoFaToken = document.getElementById('2faTokenAfterLogin').value;
-
-            // Send the 2FA token to the backend for verification
-            fetch('/auth/verify-2fa-old/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    temporary_token: window.temporaryToken,  // Use the stored temporary token
-                    two_fa_token: twoFaToken
-                }),
-                credentials: 'include' // Include cookies for authentication
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    // Hide the QR code and 2FA form after success
-                    document.getElementById('qrCodeContainer').style.display = 'none';
-                    document.getElementById('verify2FA').style.display = 'none';
-                    document.getElementById('2faUse').style.display = 'none';
-                    fetchAndDisplayUserProfile();
-                    document.getElementById('userCard').style.display = 'block';
-                    document.getElementById('password-forgotten').style.display = 'none';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    
-        // handle search bar
-        document.getElementById('searchBtnInProfile').addEventListener('click', function(){
-
-            document.getElementById('searchBar').style.display = 'block';
-            
-            document.getElementById('searchBtn').addEventListener('click', function() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) {
-                alert('Please enter a search query.');
-                return;
-            }
-            getAccessToken()
-            .then(accessToken => {
-                return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                    credentials: 'include',
-                })
-            })
-            .then(response => {
-                // if (!response.ok) {
-                //     return response.json()
-                //     .then(err => { 
-                //         throw new Error(err.error || 'Search failed'); });
-                // }
-                return response.json();
-            })
-            .then(data => {
-                displaySearchResults(data);
-            })
-            .catch(error => {
-                return null;
-                // console.error('Error:', error);
-                // alert(`Error: ${error.message}`);
-            });
-        });
-
-            function fetchSearchedUserProfile(username) {
-                getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/user/${username}/profile/`, { 
-                    method: 'GET',
-                    credentials: 'include', // Send cookies with the request if needed
-                    headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        },
-                })})
-                .then(response => response.json())
-                .then(data => {
-                    // Hide the search results
-                    document.getElementById('searchResults').style.display = 'none';
-
-                    // Show the user's profile
-                    displayUserProfile(data);
-                })
-                .catch(error => {
-                    console.error('Error fetching user profile:', error);
-                });
-            }
-
-            function displayUserProfile(user) {
-                const profileContainer = document.getElementById('userProfile');
-                profileContainer.innerHTML = ''; // Clear previous content if any
-                
-                const userProfileCard = user.is_blocked_by_other ? `
-                    <div class="profile-card">
-                        <p>This user has blocked you. Profile information is unavailable.</p>
-                    </div>
-                ` : `
-                    <div class="profile-card">
-                        <img src="${user.image}" alt="${user.username}'s profile picture" class="profile-image">
-                        <h1>${user.username}</h1>
-                        <p>${user.email}</p>
-                        ${getActionButton(user)}
-                        ${getBlockButton(user)}
-                    </div>
-                `;
-
-                profileContainer.innerHTML = userProfileCard;
-                profileContainer.style.display = 'block';
-
-                // Add event listeners for buttons only if not blocked by the other user
-                if (!user.is_blocked_by_other && !user.is_friend) {
-                    document.querySelectorAll('.actionFriendBtn').forEach(button => {
-                        button.addEventListener('click', (event) => handleFriendAction(user));
-                    });
-
-                    const blockUserBtn = document.querySelector('.blockUserBtn');
-                    if (blockUserBtn) {
-                        blockUserBtn.addEventListener('click', () => toggleBlockUser(user.username, user.is_blocked_by_user));
-                    }
-                }
-            }
-
-            function getActionButton(user) {
-                if (user.is_blocked_by_user || user.is_blocked_by_other) {
-                    // If there's a blocking relationship, show no friend request buttons
-                    return '';
-                }
-
-                if (user.has_sent_request) {
-                    return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Cancel Friend Request</button>`;
-                }
-
-                if (user.has_received_request) {
-                    return `
-                        <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Accept Friend Request</button>
-                        <button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Reject Friend Request</button>
-                    `;
-                }
-
-                if (user.is_friend) {
-                    return `<button class="actionFriendBtn" data-friendship-id="${user.friendship_id}">Remove Friend</button>`;
-                }
-                // If no friendship exists and not blocked, show "Send Friend Request"
-                return `<button class="actionFriendBtn" data-username="${user.username}">Send Friend Request</button>`;
-            }
-            
-            function getBlockButton(user) {
-                // Always show the Block/Unblock button if the current user is not blocked by the other
-                if (!user.is_blocked_by_other) {
-                    return `
-                        <button class="blockUserBtn" data-username="${user.username}" data-is-blocked="${user.is_blocked_by_user}">
-                            ${user.is_blocked_by_user ? 'Unblock User' : 'Block User'}
+        <div id="app"></div>
+
+        <template id="login-template">
+            <div id="mobile-message">
+              <div class="content-message">
+                <h2>Sorry!</h2>
+                <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+              </div>
+            </div>
+            <div class="circle top-circle"></div>
+            <div class="container-login" >
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+                  <div class="login-form">
+                      <div id="error-message"></div>
+                      <h1>Login</h1>
+                      <form id="loginForm">
+                          <h2  class="email-h2">Username</h2>
+                          <input id="username" type="text" placeholder="username">
+                          <h2 class="password-h2">Password</h2>
+                          <input id="password" type="password" placeholder="**********">
+                          <div class="reset-link">
+                              <p>Forget your password?
+                                  <span data-navigate="resetpassword">Reset password</span>
+                              </p>
+                          </div>
+  
+                          <button class="login-button" type="submit">Log in</button>
+  
+                          <div class="separator">
+                              <span></span>
+                              <p>OR</p>
+                              <span></span>
+                          </div>
+  
+                          <button id="login42Btn" class="logo-button">
+                              <img class="logo-42" src="assests/42_Logo.png">
+                          </button>
+                          <div class="register-link">
+                              <p>Don't have an account yet? 
+                                  <span data-navigate="signup">Register</span></p>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+
+            </div>
+            <div class="circle bottom-circle"></div>
+        </template>
+
+        <template id="signup-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+
+            <div class="container-sign-up">
+
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-section">
+                  <div class="table-pong">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="sign-form">
+                    <div id="error-message"></div>
+                      <h1>Sign Up</h1>
+                      <form id="registerForm">
+                        <h2 class="username-h2">Username</h2>
+                        <input id="registerUsername" type="text" placeholder="Username" required>
+
+                        <h2 class="username-h2">Firstname</h2>
+                        <input id="firstname" type="text" placeholder="Firstname" required>
+
+                        <h2 class="username-h2">Lastname</h2>
+                        <input id="lastname" type="text" placeholder="Lastname" required>
+
+                        <h2 class="email-h2-2">Email</h2>
+                        <input id="email" type="email" placeholder="exemple@gmail.com" required>
+
+                        <h2 class="password-h2-2">Password</h2>
+                        <input id="registerPassword" type="password" placeholder="********" required>
+
+                        <h2 class="password-h2-3">Confirm password</h2>
+                        <input id="registerConfirm_password" type="password" placeholder="********" required>
+
+                        <button  class="sign-up-button" type="submit">
+                            Sign up
                         </button>
-                    `;
-                }
-                return ''; // No block button if current user is blocked by the searched user
-            }
 
-            function handleFriendAction(user) {
-                const actionBtnText = event.target.textContent.trim();
-                const friendshipId = event.target.dataset.friendshipId;
+                        <div class="login-link">
+                            <p>Have an account ? <span data-navigate="login">Login</span></p>
+                        </div>
+                    </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+  
+          </div>
+          <div class="circle bottom-circle"></div>
 
-                if (actionBtnText === 'Accept Friend Request') {
-                    acceptFriendRequest(friendshipId);
-                } else if (actionBtnText === 'Reject Friend Request') {
-                    rejectFriendRequest(friendshipId);
-                } else if (actionBtnText === 'Remove Friend') {
-                    removeFriend(friendshipId);
-                } else if (actionBtnText === 'Cancel Friend Request') {
-                    cancelFriendRequest(friendshipId);
-                } else {
-                    sendFriendRequest(user.username);
-                }
-            }
+            
+        </template>
 
-            function displaySearchResults(users) {
-                const resultsContainer = document.getElementById('searchResults');
-                resultsContainer.innerHTML = '';  // Clear previous results
+        <template id="resetpassword-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+            <div class="container-reset-password">
 
-                if (users.length === 0) {
-                    resultsContainer.innerHTML = '<p>No users found.</p>';
-                    return;
-                }
-
-                users.forEach(user => {
-                    const userItem = document.createElement('div');
-                    userItem.classList.add('user-item');
-                    
-                    const userImage = document.createElement('img');
-                    userImage.src = user.image;
-                    userImage.alt = `${user.username}'s profile picture`;
-                    
-                    const userInfo = document.createElement('div');
-                    userInfo.innerHTML = `<a href=""><strong>${user.username}</strong></a><br>${user.email}`;
-                    userItem.appendChild(userImage);
-                    userItem.appendChild(userInfo);
-                    resultsContainer.appendChild(userItem);
-
-                    userInfo.querySelector('a').addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const username = `${user.username}`;
-                        fetchSearchedUserProfile(username);
-                    });
-                });
-        }   
-        
-        })
-        
-        // document.getElementById('searchBtnInProfile').addEventListener('click', function(){
-        //     document.getElementById('searchBar').style.display = 'block';
-        //     let debounceTimeout; // Timeout for debounce
-        //     let cachedResults = {}; // Cache for previously searched queries
-
-        //     document.getElementById('searchInput').addEventListener('input', function (e) {
-        //     const query = e.target.value.trim();
-
-        //     // Clear the debounce timeout
-        //     clearTimeout(debounceTimeout);
-
-        //     // If the query is too short, clear results and stop
-        //     if (query.length < 1) {
-        //         clearSearchResults();
-        //         return;
-        //     }
-
-        //     // Set a new debounce timeout
-        //     debounceTimeout = setTimeout(() => {
-        //         // Check the cache before making a request
-        //         if (cachedResults[query]) {
-        //             displaySearchResults(cachedResults[query]);
-        //         } else {
-        //             performSearch(query);
-        //         }
-        //     }, 500); // Increased debounce delay to 500ms
-        //     });
-
-        //     function performSearch(query) {
-        //     getAccessToken()
-        //         .then(accessToken => {
-        //             return fetch(`/user/search/?q=${encodeURIComponent(query)}`, {
-        //                 method: 'GET',
-        //                 headers: {
-        //                     'Authorization': `Bearer ${accessToken}`,
-        //                 },
-        //                 credentials: 'include',
-        //             });
-        //         })
-        //         .then(response => {
-        //             if (!response.ok) {
-        //                 throw new Error('Failed to fetch search results');
-        //             }
-        //             return response.json();
-        //         })
-        //         .then(users => {
-        //             // Cache the results for this query
-        //             cachedResults[query] = users;
-
-        //             // Display the results
-        //             displaySearchResults(users);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             displaySearchError('Error fetching search results.');
-        //         });
-        //     }
-
-        //     // Clear search results
-        //     function clearSearchResults() {
-        //     const resultsContainer = document.getElementById('searchResults');
-        //     resultsContainer.innerHTML = '';
-        //     }
-
-        //     // Display search results dynamically
-        //     function displaySearchResults(users) {
-        //     const resultsContainer = document.getElementById('searchResults');
-        //     resultsContainer.innerHTML = ''; // Clear previous results
-
-        //     if (users.length === 0) {
-        //         resultsContainer.innerHTML = '<p>No users found.</p>';
-        //         return;
-        //     }
-
-        //     users.forEach(user => {
-        //         const userItem = document.createElement('div');
-        //         userItem.classList.add('user-item');
-
-        //         const userImage = document.createElement('img');
-        //         userImage.src = user.image;
-        //         userImage.alt = `${user.username}'s profile picture`;
-
-        //         const userInfo = document.createElement('div');
-        //         userInfo.innerHTML = `<a href="#"><strong>${user.username}</strong></a><br>${user.email}`;
-        //         userItem.appendChild(userImage);
-        //         userItem.appendChild(userInfo);
-        //         resultsContainer.appendChild(userItem);
-
-        //         // Attach event to open user profile
-        //         userInfo.querySelector('a').addEventListener('click', function (e) {
-        //             e.preventDefault();
-        //             // fetchSearchedUserProfile(user.username);
-        //         });
-        //     });
-        //     }
-
-        //     // Display an error message in the search results
-        //     function displaySearchError(message) {
-        //     const resultsContainer = document.getElementById('searchResults');
-        //     resultsContainer.innerHTML = `<p class="error-message">${message}</p>`;
-        //     }
-        // })
-
-        // Placeholder functions for friendship management actions
-        function displayFriendsList(friends) {
-            const friendsContainer = document.getElementById('friendsList');
-            friendsContainer.innerHTML = ''; // Clear previous content if any
-
-            if (friends.length === 0) {
-                friendsContainer.innerHTML = '<p>____________________________________________________________________</p><p>You have no friends yet.</p>';
-                return;
-            }
-
-            friends.forEach(friend => {
-                let actionButton = '';  // Declare the action button string to decide what to show
-
-                if (friend.is_friend) {
-                    // If they are already friends, show "Remove Friend"
-                    actionButton = `<button class="actionFriendBtn" data-friendship-id="${friend.friendship_id}">Remove Friend</button>`;
-                } else if (friend.has_received_request) {
-                    // If the current user received a friend request, show "Accept" and "Reject"
-                    actionButton = `
-                        <button class="actionFriendBtn" data-friendship-id="${friend.friendship_id}">Accept Friend Request</button>
-                        <button class="actionFriendBtn" data-friendship-id="${friend.friendship_id}">Reject Friend Request</button>
-                    `;
-                } else if (friend.has_sent_request) {
-                    // If the current user sent a request, show "Cancel Friend Request"
-                    actionButton = `<button class="actionFriendBtn" data-friendship-id="${friend.friendship_id}">Cancel Friend Request</button>`;
-                } else {
-                    // If no relationship exists, show "Send Friend Request"
-                    actionButton = `<button class="actionFriendBtn" data-username="${friend.username}">Send Friend Request</button>`;
-                }
-
-                const friendCard = `
-                    <p>____________________________________________________________________</p>
-                    <div class="friend-card">
-                        <img src="${friend.image}" alt="${friend.username}'s profile picture" class="friend-profile-image">
-                        <h1>${friend.username}</h1>
-                        <p>${friend.email}</p>
-                        ${actionButton}  <!-- Only render the relevant action button(s) here -->
-                        <button class="blockUserBtn" data-username="${friend.username}" data-is-blocked="${friend.is_blocked}">
-                            ${friend.is_blocked ? 'Unblock User' : 'Block User'}
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="reset-form">
+                      <h1>Reset Password</h1>
+  
+                      <form id="passwordResetForm">
+  
+                        <h2>Email</h2>
+                        <input id="passwordResetEmail" type="email" placeholder="exemple@gmail.com">
+                        <div class="separator-reset">
+                            <span></span>
+                        </div>
+                        <button type="submit">
+                            Send email
                         </button>
+                        <div class="login-link">
+                          <p>Back to login ? <span data-navigate="login">Login</span></p>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+          </div>
+          <div class="circle bottom-circle"></div>
+            
+        </template>
+
+        <template id="authentification-template">
+            <div id="mobile-message">
+              <div class="content-message">
+                <h2>Sorry!</h2>
+                <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+              </div>
+            </div>
+          <div class="circle top-circle"></div>
+
+            <div class="container-authentication">
+  
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="authentication-form">
+                      <h1>2FA token</h1>
+  
+                      <form id="2FAFormCheker">
+  
+                          <h2>Token</h2>
+                          <input id="2faTokenAfterLogin" type="text" placeholder="Enter the token">
+                          <div class="separator">
+                              <span></span>
+                          </div>
+                          <button type="submit">
+                              Check token
+                          </button>
+  
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+              
+          </div>
+          <div class="circle bottom-circle"></div>
+          
+        </template>
+
+        <template id="dashboard-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+
+            <header>
+              <div class="section-name">
+                Dashboard
+              </div>
+          
+              <div class="search-box">
+                <button class="button-search">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+          
+              <div class="header-left">
+                  <img id="NotfImage" src="assests/header/er (7).png">
+                  <div id="arrow" class="dropdown-arrow"></div>
+                <div id="dropdownNotf" class="dropdown-notifications">
+                  <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                  </div>
+
+                  <div class="sub-menu-link-notf">
+                    <img src="assests/header/clyamani.jpeg">
+                    <p>Smounafi send you a request</p>
+                </div>
+                <div class="sub-menu-link-notf">
+                  <img src="assests/header/clyamani.jpeg">
+                  <p>Smounafi send you a request</p>
+              </div>
+              <div class="sub-menu-link-notf">
+                <img src="assests/header/clyamani.jpeg">
+                <p>Smounafi send you a request</p>
+                </div>
+                <div class="sub-menu-link-notf">
+                  <img src="assests/header/clyamani.jpeg">
+                  <p>Smounafi send you a request</p>
+                  </div>
+                  <div class="sub-menu-link-notf">
+                    <img src="assests/header/clyamani.jpeg">
+                    <p>Smounafi send you a request</p>
                     </div>
-                `;
+                </div>
+                
+              </div>
+          
 
-                friendsContainer.innerHTML += friendCard; // Append each friend card
-            });
-
-            // Add event listeners to each "Remove Friend" or "Send Friend Request" button
-            document.querySelectorAll('.actionFriendBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-
-                    // Trim the text content to remove any extra spaces or line breaks
-                    const actionText = event.target.textContent.trim();
-
-                    const friendshipId = event.target.getAttribute('data-friendship-id');
-                    const isFriend = actionText === 'Remove Friend';
-
-                    if (isFriend) {
-                        removeFriend(friendshipId);
-                    } else {
-                        const username = event.target.closest('.friend-card').querySelector('h1').textContent;
-                        sendFriendRequest(username);
-                    }
-                });
-            });
-
-            // Add event listeners to each "Block" or "Unblock" button
-            document.querySelectorAll('.blockUserBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const username = event.target.getAttribute('data-username');
-                    const isBlocked = event.target.getAttribute('data-is-blocked') === 'true';
-                    
-                    toggleBlockUser(username, isBlocked);
-                });
-            });
-        }
-
-        /* Friendship */
-
-        document.getElementById('friendsListBtn').addEventListener('click', function(){
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to send friend request');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("friendsList").style.display = 'block';
-                    displayFriendsList(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });    
-        })
-
-        document.getElementById('incomingFriendRequestsBtn').addEventListener('click', function() {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/incoming-requests/`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to send friend request');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("incomingRequestsList").style.display = 'block';
-                    displayIncomingRequests(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        });
-
-        document.getElementById('outgoingFriendRequestsBtn').addEventListener('click', function() {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/outgoing-requests/`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to send friend request');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("outgoingRequestsList").style.display = 'block';
-                    displayOutgoingRequests(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        });
-
-        function sendFriendRequest(username) {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/send-request/`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify({ to_username: username }),
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to send friend request');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.message) {
-                        // alert('Friend request sent successfully.');
-                        alert(data.message);
-                        // fetchSearchedUserProfile(username);
-                    } else {
-                        alert(data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        }
-
-        function acceptFriendRequest(friendshipId) {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/accept-request/${friendshipId}/`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to remove friend'); 
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Friend request accepted');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        }
-
-        function rejectFriendRequest(friendshipId) {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/reject-request/${friendshipId}/`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to remove friend'); 
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Friend request rejected');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        }
-
-        function cancelFriendRequest(friendshipId) {
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/cancel-outgoing-request/${friendshipId}/`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to remove friend'); 
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Friend Request Canceled');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        }
-
-        function removeFriend(friendshipId) {
-            if (!confirm('Are you sure you want to remove this friend?')) {
-                return;
-            }
-            getAccessToken()
-                .then(accessToken => {
-                    return fetch(`/friends/remove/${friendshipId}/`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        },
-                        credentials: 'include',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { 
-                            throw new Error(err.error || 'Failed to remove friend'); 
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Friend removed successfully.');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(`Error: ${error.message}`);
-                });
-        }
-
-        function toggleBlockUser(username, isBlocked) {
-            const endpoint = isBlocked ? 'unblock' : 'block';
-            getAccessToken()
-            .then(accessToken => {
-                return fetch(`/friends/${encodeURIComponent(username)}/${endpoint}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                    credentials: 'include',
-                });
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { 
-                        throw new Error(err.error || `Failed to ${endpoint} user`); 
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(`User ${isBlocked ? 'unblocked' : 'blocked'} successfully.`);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert(`Error: ${error.message}`);
-            });
-        }
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+            </header>
         
-        function displayIncomingRequests(requests) {
-            const incomingRequestsContainer = document.getElementById('incomingRequestsList');
-            incomingRequestsContainer.innerHTML = ''; // Clear previous content
-
-            if (requests.length === 0) {
-                incomingRequestsContainer.innerHTML = '<p>____________________________________________________________________</p><p>No incoming friend requests.</p>';
-                return;
-            }
-
-            requests.forEach(request => {
-                const requestCard = `
-                    <div class="request-card">
-                        <img src="${request.image}" alt="${request.username}'s profile picture" class="profile-image">
-                        <h1>${request.username}</h1>
-                        <p>${request.email}</p>
-                        <button class="acceptRequestBtn" data-friendship-id="${request.friendship_id}">Accept</button>
-                        <button class="rejectRequestBtn" data-friendship-id="${request.friendship_id}">Reject</button>
+                <div class="side-bar">
+            
+                    <div class="logo">
+                        <img src="assests/side-bard/LOGO.png">
                     </div>
-                `;
-
-                incomingRequestsContainer.innerHTML += requestCard;
-            });
-
-            // Add event listeners to accept/reject friend requests
-            document.querySelectorAll('.acceptRequestBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const friendshipId = event.target.getAttribute('data-friendship-id');
-                    acceptFriendRequest(friendshipId);
-                });
-            });
-
-            document.querySelectorAll('.rejectRequestBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const friendshipId = event.target.getAttribute('data-friendship-id');
-                    rejectFriendRequest(friendshipId);
-                });
-            });
-        }
-
-        function displayOutgoingRequests(requests) {
-            const outgoingRequestsContainer = document.getElementById('outgoingRequestsList');
-            outgoingRequestsContainer.innerHTML = ''; // Clear previous content
-
-            if (requests.length === 0) {
-                outgoingRequestsContainer.innerHTML = '<p>____________________________________________________________________</p><p>No outgoing friend requests.</p>';
-                return;
-            }
-
-            requests.forEach(request => {
-                const requestCard = `
-                    <div class="request-card">
-                        <img src="${request.image}" alt="${request.username}'s profile picture" class="profile-image">
-                        <h1>${request.username}</h1>
-                        <p>${request.email}</p>
-                        <button class="cancelRequestBtn" data-friendship-id="${request.friendship_id}">Cancel Request</button>
+        
+                    <nav>
+                        <ul class="list">
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                              <img  data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                              <span class="nav-label">Dashboard</span>
+                            </div>
+                          </li>
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                              <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                              <span class="nav-label">Game</span>
+                            </div>
+                          </li>
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                                <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                              <span class="nav-label">Chat</span>
+                            </div>
+                              
+                          </li>
+            
+                          <li class="nav-element">
+                            <div  class="nav-item">
+                              <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                              <span class="nav-label">Settings</span>
+                            </div>
+                          </li>
+            
+                        </ul>
+                      </nav>
+        
+                      <ul class="list">
+                        <li  class="nav-element">
+                          <div  class="nav-item">
+                            <img id="logoutBtn" src="assests/side-bard/Logout-icon.png">
+                            <span class="nav-label">Logout</span>
+                          </div>
+                          </li>
+                      </ul>
+        
+                </div>
+        
+                <div id="content">
+                  <div class="row1">
+                    <div class="left-section">
+                      <img src="assests/Boy-dashboard.png">
                     </div>
-                `;
-
-                outgoingRequestsContainer.innerHTML += requestCard;
-            });
-
-            // Add event listeners to cancel friend requests
-            document.querySelectorAll('.cancelRequestBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const friendshipId = event.target.getAttribute('data-friendship-id');
-                    cancelFriendRequest(friendshipId);
-                });
-            });
-        }
-
-
-        // Blocked users list
-
-        document.getElementById('blockedList').addEventListener('click', function() {
-            fetchBlockedUsers();
-        })
-
-        function fetchBlockedUsers(acces) {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch('friends/blocked/', {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${accessToken}` },
-                    credentials: 'include'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("blockedUsersList").style.display = 'block';
-                displayBlockedUsers(data);
-            })
-            .catch(error => {
-                console.error('Error fetching blocked users:', error);
-            });
-        }
-
-        function displayBlockedUsers(blockedUsers) {
-            const blockedUsersContainer = document.getElementById('blockedUsersList');
-            blockedUsersContainer.innerHTML = ''; // Clear previous content
-
-            if (blockedUsers.length === 0) {
-                blockedUsersContainer.innerHTML = '<p>No blocked users.</p>';
-                return;
-            }
-
-            blockedUsers.forEach(user => {
-                // Define the unblock button
-                const unblockButton = `
-                    <button class="unblockUserBtn" data-username="${user.blocked_username}">
-                        Unblock User
-                    </button>
-                `;
-
-                // Define each blocked user card with the unblock button
-                const blockedUserCard = `
-                    <p>____________________________________________________________________</p>
-                    <div class="blocked-user-card">
-                        <img src="${user.blocked_image_url}" alt="${user.blocked_username}'s profile picture" class="blocked-user-image">
-                        <h1>${user.blocked_username}</h1>
-                        <p>${user.blocked_email}</p>
-                        ${unblockButton}  <!-- Render the unblock button here -->
+          
+                    <div class="middle-section">
+                      <h1>PLANET PONG</h1>
                     </div>
-                `;
+                    <div class="right-section">
+                      <img src="assests/Girl-dashboard.png">
+                    </div>
+                  </div>
 
-                blockedUsersContainer.innerHTML += blockedUserCard; // Append each blocked user card
-            });
+                  <div class="row2">
+                    <div class="div2"></div>
+                    <div class="div3"></div>
+                  </div>
+                </div>
+                <div class="circle bottom-circle"></div>
 
-            // Add event listeners to unblock buttons after rendering
-            document.querySelectorAll('.unblockUserBtn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const username = event.target.getAttribute('data-username');
-                    unblockUser(username); // Call unblockUser function to handle unblocking
-                });
-            });
-        }
+        </template>
 
-        function unblockUser(username) {
-            getAccessToken()
-            .then(accessToken => {
-                return fetch(`friends/${username}/unblock/`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${accessToken}` },
-                    credentials: 'include'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                fetchBlockedUsers();  // Refresh the blocked users list
-            })
-            .catch(error => {
-                console.error('Error unblocking user:', error);
-            });
-        }
+        <template id="chat-template">
+          <div class="circle top-circle"></div>
+          
+            <header>
+              <div class="section-name">
+                Chat
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
 
-        /*   NOTIFICATIONS */
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
 
-        let sendNotif = document.querySelector('#notif-button')
-        const notificationPopup = document.getElementById('notificationPopup');
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+    
+    
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+            <div class="circle bottom-circle"></div>
+          
+        </template>
 
-        function notifications() {
-        //alert('ahh');
-        getAccessToken()
-        .then(accessToken => {
-            notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
-            notif_socket.onmessage = ({data}) => {
-                const datap = JSON.parse(data);
-                console.log('Message Received is ', datap.type);
-                // if game response is received
-                // game matching logic
-                if (datap.type === 'game_resp') {
-                    alert('game_resp');
-                }
-                else {
-                    notificationPopup.addEventListener('click', () => {
-                        let jsonMessage = {'type': 'game_resp', 'receiver_id': '2'}
-                        notif_socket.send(JSON.stringify(jsonMessage));
-                        // logic game matching 
-                        // alert('game_resp');
-                    })
-                    notificationPopup.classList.add('show');
-                    setTimeout(() => {
-                        notificationPopup.classList.remove('show');
-                    }, 3000); // Hide after 3 seconds
-                }
-            }
-            notif_socket.onopen = () => {
-                sendNotif.addEventListener('click', () => {
-                    let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '3'}
-                    notif_socket.send(JSON.stringify(jsonMessage));
-                    console.log('Notification sent');
+        <template id="game-template">
+          <div class="circle top-circle"></div>
+          
+            <header>
 
-                })
-            }
-        })
-        .catch(error => console.error('Error fetching notifications:', error));
-        }
+              <div class="section-name">
+                Game
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
 
-        notifications();
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
 
-        // function sendGamerequest(){
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+    
+    
+    
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+            <div class="circle bottom-circle"></div>
+          
+        </template>
 
-        // }
-        // function displayNotifications(notifications) {
-        //     const notificationsContainer = document.getElementById('notificationsContainer');
-        //     notificationsContainer.innerHTML = ''; // Clear previous notifications
+        <template id="settings-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
 
-        //     if (notifications.length === 0) {
-        //         notificationsContainer.innerHTML = '<p>No new notifications.</p>';
-        //         return;
-        //     }
+            <header>
 
-        //     notifications.forEach(notification => {
-        //         const notificationItem = `
-        //             <div class="notification">
-        //                 <p>${notification.sender} ${notification.action}</p>
-        //                 <button onclick="markNotificationAsRead(${notification.id})">Mark as Read</button>
-        //             </div>
-        //         `;
-        //         notificationsContainer.innerHTML += notificationItem;
-        //     });
-        // }
+              <div class="section-name">
+                Settings
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
 
-        // function markNotificationAsRead(notificationId) {
-        //     getAccessToken()
-        //     .then(accessToken => {
-        //         return fetch(`/friends/notifications/read/${notificationId}/`, {
-        //             method: 'POST',
-        //             credentials: 'include', // Ensure cookies are sent
-        //             headers: { 'Authorization': `Bearer ${accessToken}` },
-        //         })
-        //         .then(response => {
-        //             if (response.ok) {
-        //                 alert('Notification marked as read.');
-        //                 fetchNotifications(); // Refresh notifications
-        //             }
-        //         })
-        //         .catch(error => console.error('Error marking notification as read:', error));
-        //     })
-        // }
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+  
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+    
+    
+            <div id="content">
+              <div class="guide-notifications">
+                <div id="generalButton" class="nav-button active">
+                  <span>General</span>
+                </div>
+                <div id="friendsListButton" class="nav-button">
+                  <span>Friends</span>
+                </div>
+                <div id="blockListButton" class="nav-button">
+                  <span>BlockList</span>
+                </div>
+              </div>
+
+              <div class="settings-container" id="settingsContainer">
+
+                <div id="generalSection" class="settings-section">
+                  <div class="profile-section">
+
+                    <div class="user-img">
+                      <img id="settingsImage" class="prfl" src="">
+                      <div class="upload-overlay" >
+                        <label for="fileInput">&#x1F4E4;</label>
+                      </div>
+                      <input type="file" id="fileInput" accept=".jpg, .jpeg, .png">
+    
+    
+                    </div>
+    
+                    <div class="separator-profile"></div>
+                    <div class="profile-info">
+                      <p>
+                        Use an image in .jpg , .jpeg, .png format.
+                      </p>
+                    </div>
+    
+                      <button id="saveChangesBtn" class="button-save">
+                        Save changes
+                      </button>
+    
+                      <button id="deleteAccountBtn" class="button-delete">
+                        Delete Account
+                      </button>
+                    
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+                  <!-- USER INFO SECTION -->
+    
+                  <div class="user-infos-section">
+                    <form action="">
+                        <div class="input-group">
+                            <div>
+                                <h3>First Name</h3>
+                                <input id="settingsFN" type="text" placeholder="First Name">
+                            </div>
+                            <div>
+                                <h3>Last Name</h3>
+                                <input id="settingsLN" type="text" placeholder="Last Name">
+                            </div>
+                            <div>
+                                <h3>Username</h3>
+                                <input id="settingsUN" type="text" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="input-group-email">
+                          <div>
+                            <h3>Email</h3>
+                            <input id="settingsEM" type="email" placeholder="Email">
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+    
+                  <!-- Section Mots de Passe -->
+                  <div class="password-section">
+    
+                    <div class="password-infos">
+                      <form action="">
+                        <h3>Old Password</h3>
+                        <input id="settingsOldP" type="password" placeholder="Old password" required>
+                        <h3>New Password</h3>
+                        <input  id="settingsNewP" type="password" placeholder="New password" required>
+                        <h3>Confirm New Password</h3>
+                        <input id="settingsNewConfirmP" type="password" placeholder="Confirm new password" required>
+                      </form>
+                    </div>
+    
+                    <div class="password-requierements">
+                      <h1>Password requierements</h1>
+                      <p>	To create a new password, you have to meet all of the following requirements:
+                      </p>
+                      <ul>
+                        <li>Minimum 8 character</li>
+                        <li>At least one special character</li>
+                        <li>At least one number</li>
+                        <li>Can’t be the same as a previous password</li>
+                    </ul>
+                    </div>
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+                  <div class="two-factor-section">
+    
+                    <div class="section-1">
+                      <h3>Two-factor authentication</h3>
+                      <p>Secure your account by enabling 2FA and adding an extra layer of security</p>
+                      <label class="switch">
+                        <input type="checkbox" id="toggleSwitch2FA">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+    
+                    <div class="separator-profile-password"></div>
+    
+                    <div class="section2">
+                      <h3>Anonymize my data</h3>
+                      <p>Add another layer of security by anonymizing your data</p>
+                      <label class="switch-settings">
+                        <input type="checkbox" id="toggleSwitchAnonym">
+                        <span class="slider-settings"></span>
+                      </label>
+                    </div>
+                    <div class="separator-profile-password"></div>
+    
+                    <div class="section3">
+                      <h3>Download my data</h3>
+                      <p>You want to download your data ? Go ahead!</p>
+                      <label class="switch-settings">
+                        <input type="checkbox" id="toggleSwitchDData">
+                        <span class="slider-settings"></span>
+                      </label>
+                    </div>
+    
+                  </div>
+    
+                  <!-- Section cachée pour le contenu supplémentaire -->
+                  <div class="extra-content" id="extraContent">
+                    <div class="qr-section">
+                      <h1>Scan this QR code with your authentication app</h1>
+                      <label class="code-qr">
+                        <img id="qrCodeImg" src="" alt="QR Code">
+                      </label>
+                      <p>Enter the 2FA token from your authentication app</p>
+                      <input id="2faTokenInputSetup" type="text" placeholder="Enter your 2FA token">
+                      <button id="submit2FATokenSetup" >Verify Token</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div id="friendsListSection" class="settings-section hidden">
+                  <div class="content-friends">
+                    <h2>Friends List</h2>
+                    <p>Content for Friends List...</p>
+                  </div>
+                </div>
+
+                <div id="blockListSection" class="settings-section hidden">
+                  <div class="content-blocklist">
+                    <h2>Block List</h2>
+                    <p>Content for Block List...</p>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+                  <div class="circle bottom-circle"></div>
+            
+        </template>
 
 
-    </script>
+        <script src="routing.js"></script>
+        <script src="components/login.js" type="module"></script>
+        <script src="components/signup.js" type="module"></script>
+        <script src="components/resetpassword.js" type="module"></script>
+        <script src="components/authentifications.js" type="module"></script>
+        <script src="components/dashboard.js" type="module"></script>
+        <script src="components/chat.js" type="module"></script>
+        <script src="components/game.js" type="module"></script>
+        <script src="components/settings.js" type="module"></script>
 
-</body>
+
+    </body>
 </html>

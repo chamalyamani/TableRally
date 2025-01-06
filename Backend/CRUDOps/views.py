@@ -31,6 +31,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
+import json
+
 
 User = get_user_model()
     
@@ -40,6 +43,8 @@ class UserProfileView(APIView):
     def get(self, request):
         user = request.user
         return Response({
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "username": user.username,
             "email": user.email,
             "image": user.image_url,
@@ -64,13 +69,16 @@ class UpdateProfileView(APIView):
     def put(self, request):
         user = request.user
         data = request.data
+
         try:
             # Update user profile fields
             anythingModified = False
 
             anythingModified |= self.update_username(user, data)
+            anythingModified |= self.update_first_name(user, data)
+            anythingModified |= self.update_last_name(user, data)
             anythingModified |= self.update_email(user, data)
-            anythingModified |= self.update_password(user, data)
+            anythingModified |= self.update_password(user, data) 
             anythingModified |= self.update_image(user, request)
 
             if anythingModified:
@@ -89,6 +97,20 @@ class UpdateProfileView(APIView):
         new_username = data.get('username', user.username)
         if new_username != user.username:
             user.username = new_username
+            return True 
+        return False 
+
+    def update_first_name(self, user, data):
+        new_first_name = data.get('first_name', user.first_name)
+        if new_first_name != user.first_name:
+            user.first_name = new_first_name
+            return True 
+        return False 
+
+    def update_last_name(self, user, data):
+        new_last_name = data.get('last_name', user.last_name)
+        if new_last_name != user.last_name:
+            user.last_name = new_last_name
             return True 
         return False 
 
@@ -128,10 +150,12 @@ class UpdateProfileView(APIView):
                 return True
         return False
 
-# def get_csrf_token(request):
-#     # This will return the CSRF token to the frontend
-#     csrf_token = get_token(request)
-#     return JsonResponse({'csrfToken': csrf_token})
+def get_csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})
+
+def get_temporary_token(request):
+    temporary_token = request.COOKIES.get('temporary_token')
+    return JsonResponse({'temporary_token': temporary_token})
 
 class UserSearchView(APIView):
     """
@@ -212,6 +236,62 @@ class SearchedProfileView(APIView):
         }
 
         return Response(user_data)
+
+class AnonymizeUserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        user.anonymize()
+        return Response({"message": "Your data has been anonymized."})
+
+class DownloadUserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        user_data = {
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "image": user.image_url,
+            "date_joined": user.date_joined.isoformat() if user.date_joined else None,
+            "last_login": user.last_login.isoformat() if user.last_login else None,
+            "is_active": user.is_active,
+        }
+
+        response_data = json.dumps(user_data, indent=4)
+
+        response = HttpResponse(
+            response_data,
+            content_type="application/json"
+        )
+
+        response['Content-Disposition'] = 'attachment; filename="user_data.json"'
+        return response
+
+# function downloadUserData() {
+#   fetch('/user/download-data/', {
+#     method: 'GET',
+#     headers: {
+#       'Authorization': `Bearer ${token}`,
+#     },
+#   })
+#     .then(response => response.blob())
+#     .then(blob => {
+#       const url = window.URL.createObjectURL(blob);
+#       const a = document.createElement('a');
+#       a.style.display = 'none';
+#       a.href = url;
+#       a.download = 'user_data.json'; // Filename
+#       document.body.appendChild(a);
+#       a.click();
+#       window.URL.revokeObjectURL(url);
+#     })
+#     .catch(error => console.error('Error downloading data:', error));
+# }
 
 def password_reset_template(request):
     return render(request, 'password_reset/password_reset_form.html')
