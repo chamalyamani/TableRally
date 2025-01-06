@@ -18,7 +18,7 @@ body {
 
 canvas {
     width: 70vw;
-    height: 35vw;
+    height: 700px;
     margin: auto;
     border: 4px solid black;
     border-radius: 20px;

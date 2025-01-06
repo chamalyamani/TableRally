@@ -104,6 +104,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		self.user = self.scope['user']
+		print(self.user.image_url)
 		if (self.user.id in acepted_users) == True:
 			await self.close()
 			return
@@ -156,6 +157,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({"TITLE": TITLE}))
 
 	
+	async def username_id(self, event):
+		print("senddddddddddddd")
+		await self.send(text_data=json.dumps({"TITLE": event['TITLE'],
+		"username" : event['username'], 
+		"image" : event["image"],
+		"id" : event["id"]}))
 
 	async def receive(self, text_data):
 		game = json.loads(text_data)
@@ -168,6 +175,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			if self.other == 0 :
 				self.index = self.serch_in_sublist(groups, self.me)
 				self.other = main_player[self.index]
+			await self.channel_layer.group_send(
+				self.group_name,
+				{
+					"type" : "username_id",
+					"group" : self.group_name,
+					"TITLE" : "username_id",
+					"id" : self.user.id,
+					"image" : self.user.image_url,
+					"username" : self.user.username
+				}
+			)
 			self.task = asyncio.create_task(self.GameLoop())
 		if game["TITLE"] == "move_player":
 			if game["player_direction"] == "up":

@@ -32,3 +32,21 @@ h1 {
     font-family: serif;
 }
 
+.player-box {
+    width: 20vw;
+    height: 200px;
+    border: 4px black solid;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 50vw;
+    height: 500px;
+}
