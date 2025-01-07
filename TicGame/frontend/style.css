@@ -453,37 +453,6 @@ body {
 }
 
 
-
-
-
-
-#gameTimer {
-    width: 50%;
-    height: 10%;
-    background-color: #00766A;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-#gameTimer h1 {
-    width: 50%;
-    z-index: 1;
-    /* background-color: #fff; */
-}
-.loaderTimer {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    position: absolute;
-    margin-right: 200%;
-    transition: margin-right 0.5s ease-in-out;
-}
-
-#gameTimer:hover .loaderTimer {
-    margin-right: 0%;
-}
 .fp img,.sp img {
     width: 7em;
     height: 7em;

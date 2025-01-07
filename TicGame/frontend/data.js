@@ -113,7 +113,7 @@ let principal_html = `<div id="id_dynamic" class="dynamic">
       </div>
       <div class="latestGames">
         <h2>Latest Tic-Tac-Toe Games</h2>
-        <div class="listOfLG">
+        <div class="listOfLG" id="listOfLGID">
             
         </div>
       </div>
@@ -166,10 +166,6 @@ function generateHtmlBoard(ina_game){
     <div class="turnShowDiv df_fdc_jcc_aic">
         <h1 class="turnShow df_jcc_aic" id="turnShow">
         </h1>
-    </div>
-    <div class="" id="gameTimer">
-    <h1 class="df_jcc_aic">30s</h1>
-    <div class="loaderTimer"></div>
     </div>
     <div class="board_head">
     <div class="fp df_fdc_jcsa_aic">
@@ -286,9 +282,9 @@ function gameUnit(unit, list){
   oneUnit.classList.add('unitLG','df_jcc_aic');
   // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ : ', unit.winner_or_looser)
   if (unit.winner_or_loser === 'L')
-    oneUnit.style.backgroundColor = 'red';
+    oneUnit.style.backgroundColor = 'rgba(200, 50, 50, 0.5)';
   else
-    oneUnit.style.backgroundColor = 'green';
+    oneUnit.style.backgroundColor = 'rgba(1, 140, 90, 0.5)';
   let p1 = create_player(unit.l_image, unit.l_username, unit.l_score, "player-left");
   let p2 = create_player(unit.w_image, unit.w_username, unit.game_type_db[1], "player-right");
   let gameInfos = create_board(unit.game_type_db[0], unit.winner_boards);
@@ -298,23 +294,3 @@ function gameUnit(unit, list){
   list.appendChild(oneUnit);
 }
 
-// location /gamesByWinId/ {
-//   proxy_pass http://ticgame;
-//   proxy_set_header Host $host;
-//   proxy_set_header X-Real-IP $remote_addr;
-//   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-//   proxy_set_header X-Forwarded-Proto $scheme;
-
-//   # CORS Headers (optional, generally not needed for SPA routes)
-//   add_header 'Access-Control-Allow-Origin' 'http://localhost' always;
-//   add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
-//   add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization' always;
-
-//   # Handle preflight OPTIONS requests
-//   if ($request_method = 'OPTIONS') {
-//       add_header 'Access-Control-Max-Age' 1728000;
-//       add_header 'Content-Type' 'text/plain; charset=utf-8';
-//       add_header 'Content-Length' 0;
-//       return 204;
-//   }
-// }
