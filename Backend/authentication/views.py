@@ -30,6 +30,7 @@ from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
 from django.views.generic.base import RedirectView
+from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 
 class Initiate42LoginView(RedirectView):
     permanent = False  # Indicates this is a temporary redirect
@@ -157,31 +158,32 @@ class UserAuthenticationView(APIView):
                 'exp': datetime.utcnow() + timedelta(minutes=5)  # Temporary expiration time
             }
             temporary_token = jwt.encode(temp_payload, settings.SECRET_KEY, algorithm='HS256')
-
+            
+            response = redirect('https://localhost:4443/authentification')
+            response.set_cookie(key='temporary_token', value=temporary_token, httponly=True, secure=True, samesite='Lax')
+            return response
+            # return Response({
+            #     "message": "2FA is required.",
+            #     "temporary_token": temporary_token,
+            # }, status=status.HTTP_200_OK)
+        
             # Store the data in the session
-            request.session['auth_data'] = {
-                'temporary_token': temporary_token,
-                'message': "2FA is required",
-            }
+            # request.session['auth_data'] = {
+            #     'temporary_token': temporary_token,
+            #     'message': "2FA is required",
+            # }
 
-            request.session['is_42_logged_in'] = True
+            # request.session['is_42_logged_in'] = True
 
-            return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
-        request.session['is_42_logged_in'] = True
+            # return HttpResponseRedirect('https://localhost:4443/authentification')
+        
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-        image_url = request.build_absolute_uri(user.image_url)
-        response = JsonResponse({
-            'username': user.username,
-            'email': user.email,
-            'image': image_url,
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        })
 
+        response = redirect('https://localhost:4443/dashboard')
         response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='Lax' )# Set to True in production
         response.set_cookie( key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax') # Set to True in production
-
+        
         return response
 
 class tokenHolderFor2faWith_42API(APIView):
@@ -252,7 +254,6 @@ class GetAccessTokenView(APIView):
             return Response({"access_token": access_token}, status=status.HTTP_200_OK)
         return Response({"access_token": None}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 # Authenticaion using JWT concept with credentials
 class RegisterView(APIView):
     def post(self, request):
@@ -274,7 +275,7 @@ class LoginView(APIView):
         # Validate input
         if not username or not password:
             return Response(
-                {"error": "Username and password are required."},
+                {"error": "Username OR password are required."},
                 status=status.HTTP_400_BAD_REQUEST  # Changed to 400 as it's a bad request
             )
 
@@ -302,11 +303,24 @@ class LoginView(APIView):
                 'exp': datetime.utcnow() + timedelta(minutes=10)  # Temporary expiration time
             }
             temporary_token = jwt.encode(temp_payload, settings.SECRET_KEY, algorithm='HS256')
-
-            return Response({
+            
+            response = Response({
                 "message": "2FA is required.",
                 "temporary_token": temporary_token,
             }, status=status.HTTP_200_OK)
+            
+            # Setting the cookie with the temporary_token
+            response.set_cookie(
+                'temporary_token',  # Name of the cookie
+                temporary_token,    # Value of the cookie
+                max_age=3600,       # The cookie will expire in 1 hour (in seconds)
+                secure=True,        # Only sent over HTTPS
+                httponly=True,      # Cannot be accessed via JavaScript
+                samesite='Lax'      # Helps prevent CSRF attacks
+            )
+            
+            # Return the response with the set cookie
+            return response
 
         # Issue tokens
         refresh = RefreshToken.for_user(user)
@@ -349,6 +363,9 @@ class LogoutAndBlacklistView(APIView):
             response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
             response.delete_cookie('access_token')
             response.delete_cookie('refresh_token')
+            response.delete_cookie('temporary_token')
+            response.delete_cookie('csrftoken')
+            response.delete_cookie('sessionid')
 
             return response
 
@@ -523,5 +540,25 @@ class TwoFactorVerifyViewForOldUser(APIView):
 
         return JsonResponse({"error": "Invalid 2FA token"}, status=status.HTTP_400_BAD_REQUEST)
 
+class checkAuthStatus(APIView):
+    permission_classes = [AllowAny] 
+
+    def get(self, request):
+
+        response_data = {
+            'authenticated': False,
+        }
+
+        jwt_authenticator = JWTAuthentication()
+        try:
+            jwt_authenticator.get_validated_token(request.headers.get('Authorization', '').split(' ')[1])
+            response_data['authenticated'] = True
+        except (InvalidToken, AuthenticationFailed, IndexError):
+            pass
+
+        return Response(response_data)
+
+
 def health_checker(request):
     return HttpResponse("Service ready", status=status.HTTP_200_OK)
+
