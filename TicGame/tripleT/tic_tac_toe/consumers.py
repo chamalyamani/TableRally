@@ -54,7 +54,7 @@ class test(AsyncWebsocketConsumer):
                 await self.close(code=4001)
                 return
             await self.accept()
-            print("ACCEPTED CNX FOR USER ID : ",self.user.is_authenticated, 
+            print("ACCEPTED CNX FOR USER ID : ",self.user.id, 
                   "userName : ", self.user.username)
         except Exception as e:
             print("EXCEPTION : in connect", e)

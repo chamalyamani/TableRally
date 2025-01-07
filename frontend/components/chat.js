@@ -14,7 +14,6 @@ class ChatPage extends HTMLElement
 
       const template = document.getElementById("chat-template");
       const content = template.content.cloneNode(true);
-  
       shadow.appendChild(content);
   
       const link = document.createElement("link");
@@ -60,7 +59,17 @@ class ChatPage extends HTMLElement
       this.logoutListener();
     }
 
+
+
+
+
+
+    
 }
   
 customElements.define("chat-page", ChatPage);
-  
+
+
+
+
+

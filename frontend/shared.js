@@ -296,3 +296,6 @@ export async function logoutProcess()
     globalNotifPopup("Error", 'Error during logout:' + error);
   });
 }
+
+
+// for exported function :  export and add the this.shadowRoot as a parameter

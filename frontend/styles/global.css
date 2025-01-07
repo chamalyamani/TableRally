@@ -126,6 +126,37 @@ body.body-dashboard {
   transform: translateX(0%);
 }
 
+/* this class will be for the invite pop up, accept or deni */
+.invtPopup{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.invtPopup .acceptBtn{
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #00766a;
+}
+.invtPopup .rejectBtn{
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #b46c00;
+}
+/* end */
+
+
+
+
+
+
 .toast .toast-content {
   display: flex;
   align-items: center;
