@@ -341,7 +341,6 @@ async function realTime(conv, singleConv) {
     if (!socket || socket.readyState !== WebSocket.OPEN)
         socket = new WebSocket(`/ws/chat/${conv.id}/?Token=${token}`);
     socket.onmessage = ({ data }) => {
-        chats.textContent = 'Salam';
         let receivedMessage = JSON.parse(data);
         // console.log('mmmmm');
         // console.log(receivedMessage);

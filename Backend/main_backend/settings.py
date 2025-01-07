@@ -70,18 +70,18 @@ CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'main_backend.urls'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://chat:9000",  # Backend
+    "http://localhost",
+    "http://chat:9000",
     "http://backend:8000",
-    "https://localhost",
+    "https://localhost:4443",
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost',
+    "http://localhost",
+    'https://localhost:4443',
     'http://chat:9000',
 ]
-
-# CSRF_COOKIE_SECURE = True
 
 SITE_ID = 1
 
@@ -105,12 +105,6 @@ TEMPLATES = [
     },
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOWED_ORIGINS = (
-#     'https://localhost',
-#     'http://localhost:9000',
-# )
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -118,7 +112,7 @@ JWT_SECRET = os.getenv('JWT_SECRET')
 
 CLIENT_ID = "u-s4t2ud-df24075c9d97fed259c622b3aa765f96533f74d81832e99b18d9effebc345574"
 CLIENT_SECRET = "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"
-REDIRECT_URI = "https://localhost/auth/callback/"
+REDIRECT_URI = "https://localhost:4443/auth/callback/"
 STATE = "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"
 
 REST_FRAMEWORK = {
@@ -131,7 +125,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': False, #make it false so that no new refresh token is issued after an acces one gets issued
     'BLACKLIST_AFTER_ROTATION': True,
@@ -232,7 +226,10 @@ LOGIN_URL = '/auth/login/credentials'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 
-
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # For development, print emails to the console
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
