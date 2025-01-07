@@ -8,6 +8,7 @@ from asgiref.sync import sync_to_async
 from authentication.models import CustomUser as User
 from channels.db import database_sync_to_async
 import time
+import math
 
 woiting_list = []
 groups = []
@@ -19,74 +20,83 @@ games_map = {}
 x = 0
 
 def CreateGameName():
-    global second_player, x
-    if second_player == False :
-        name =  "pair" + str(x)
-        GamePlay.append(name)
-        second_player = True
-        return GamePlay[x]
-    else :
-        second_player = False
-        x += 1
-        return GamePlay[x - 1]
+	global second_player, x
+	if second_player == False :
+		name =  "pair" + str(x)
+		GamePlay.append(name)
+		second_player = True
+		return GamePlay[x]
+	else :
+		second_player = False
+		x += 1
+		return GamePlay[x - 1]
 
 
 class Player:
-    def __init__(self):
-        self.y = 150
-        self.speed = 5
-    def Up(self):
-        if self.y > 0:
-            self.y -= self.speed
+	def __init__(self):
+		self.y = 150
+		self.speed = 5
+	def Up(self):
+		if self.y > 0:
+			self.y -= self.speed
 
-    def Down(self):
-        if self.y < 280:
-            self.y += self.speed
+	def Down(self):
+		if self.y < 280:
+			self.y += self.speed
 
 class Ball:
-    def __init__(self):
-        self.x = 350
-        self.y = 150
-        self.speed = 5
-    def IncrementX(self, stepx):
-        self.x +=  stepx * self.speed
-    def IncrementY(self,stepy):
-        self.y += stepy * self.speed
+	def __init__(self):
+		self.x = 350
+		self.y = 150
+		self.speed = 6
+		self.angel = math.pi
+	def IncrementX(self, stepx):
+		self.x +=  stepx * math.cos(self.angel) * self.speed
+	def IncrementY(self,stepy):
+		self.y += stepy * math.sin(self.angel) * self.speed
 
 class LiveGame:
-    def __init__(self):
-        self.player1 = Player()
-        self.player2 = Player()
-        self.ball = Ball()
-        self.score1 = 0
-        self.score2 = 0
-        self.stepx = 1
-        self.stepy = 1
-    def RunGame(self):
-        if self.ball.x >= 680 and self.ball.y > self.player2.y  and self.ball.y < self.player2.y + 65:
-            self.stepx *= -1
-        elif self.ball.x  > 680 : 
-            self.score1 += 1 
-            self.ball.x = 350
-            self.ball.y = 175
-            self.player1.y = 150 
-            self.player2.y = 150 
-            return
-        if self.ball.y > 350:
-            self.stepy *= - 1
-        if self.ball.x <= 15 and self.ball.y > self.player1.y - 5 and self.ball.y < self.player1.y + 65:
-            self.stepx *= -1
-        elif self.ball.x < 15:
-            self.score2 += 1
-            self.ball.x = 350
-            self.ball.y = 175
-            self.player1.y = 150 
-            self.player2.y = 150 
-            return
-        if self.ball.y < 0:
-            self.stepy *= - 1
-        self.ball.IncrementX(self.stepx)
-        self.ball.IncrementY(self.stepy)
+	def __init__(self):
+		self.player1 = Player()
+		self.player2 = Player()
+		self.ball = Ball()
+		self.score1 = 0
+		self.score2 = 0
+		self.stepx = 1
+		self.stepy = 1
+	def RunGame(self):
+		if self.ball.x >= 680 and self.ball.y > self.player2.y  and self.ball.y < self.player2.y + 65:
+			if self.ball.y > self.player2.y / 2:
+				self.ball.angel -= math.pi/12
+			else:
+				self.ball.angel += math.pi/12
+			self.stepx *= -1
+		elif self.ball.x  > 680 : 
+			self.score1 += 1 
+			self.ball.x = 350
+			self.ball.y = 175
+			self.player1.y = 150 
+			self.player2.y = 150 
+			return
+		if self.ball.y > 350:
+			self.stepy *= - 1
+		if self.ball.x <= 15 and self.ball.y > self.player1.y - 5 and self.ball.y < self.player1.y + 65:
+			if self.ball.y > self.player1.y / 2:
+				self.ball.angel -= math.pi/12
+			else:
+				self.ball.angel += math.pi/12
+			self.stepx *= -1
+		elif self.ball.x < 15:
+			self.score2 += 1
+			self.ball.x = 350
+			self.ball.y = 175
+			self.player1.y = 150 
+			self.player2.y = 150 
+			return
+		if self.ball.y < 0:
+			self.stepy *= - 1
+		self.ball.IncrementX(self.stepx)
+		self.ball.IncrementY(self.stepy)
 
 
 
@@ -104,7 +114,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		self.user = self.scope['user']
-		print(self.user.image_url)
 		if (self.user.id in acepted_users) == True:
 			await self.close()
 			return
@@ -158,7 +167,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	
 	async def username_id(self, event):
-		print("senddddddddddddd")
 		await self.send(text_data=json.dumps({"TITLE": event['TITLE'],
 		"username" : event['username'], 
 		"image" : event["image"],

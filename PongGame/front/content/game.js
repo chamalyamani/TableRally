@@ -34,7 +34,7 @@ function attachEventListeners() {
         const player = { x: 0, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, color: '#FFF' };
         const ai = { x: canvas.width - paddleWidth, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, color: '#FFF' };
     
-        const ball = { x: canvas.width / 2, y: canvas.height / 2, radius: 8, speed: 6, velocityX: 4, velocityY: 4, color: 'withe' };
+        const ball = { x: canvas.width / 2, y: canvas.height / 2, radius: 8,angle : Math.PI, speed: 6, velocityX: 4, velocityY: 4, color: 'withe' };
         xmove = 0;
         ymove = 0;
     
@@ -84,10 +84,15 @@ function attachEventListeners() {
         function MoveBall() {
             if (xmove + ball.x >= canvas.width - paddleWidth - 2 - 10)
             {
+                if(ymove + ball.y > ai.y / 2)
+                    ball.angle -= Math.PI / 12
+                else 
+                    ball.angle += Math.PI / 12
                 if(ymove + ball.y > ai.y + aiy && ymove + ball.y < ai.y + aiy + paddleHeight)
                     step *= -1;
                 else
                 {
+                    ball.angle = Math.PI
                     step = 1;
                     xmove = 0;
                     ymove = 0;
@@ -103,9 +108,14 @@ function attachEventListeners() {
             }
             if (xmove + ball.x <= 0 + paddleWidth + 2 + 10 )
             {
+                if(ymove + ball.y > player.y / 2)
+                    ball.angle += Math.PI / 12
+                else 
+                    ball.angle -= Math.PI / 12
                 if(ymove + ball.y > player.y + py && ymove + ball.y < player.y + py + paddleHeight)
                     step *= -1;
                 else{
+                    ball.angle = Math.PI
                     step = 1;
                     xmove = 0;
                     ymove = 0;
@@ -122,8 +132,8 @@ function attachEventListeners() {
                 step2 *= -1;
             if (ymove + ball.y <= 0)
                 step2 *= -1;
-            xmove += step * ball.speed;
-            ymove += step2 * ball.speed;
+            xmove += step * Math.cos(ball.angle) * ball.speed;
+            ymove += step2 * Math.sin(ball.angle) * ball.speed;
                 
         }
     
@@ -411,7 +421,6 @@ function attachEventListeners() {
         
         chatSocket.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            console.log(data.TITLE)
             if (data.TITLE == "start") {
                 
                 console.log("[[[[",data.TITLE,"]]]]]]]")
@@ -713,7 +722,8 @@ function attachEventListeners() {
 			x: canvas.width / 2,
 			y: canvas.height / 2,
 			radius: 8,
-			speed: 10,
+            angle: Math.PI,
+			speed: 6,
 			velocityX: 4,
 			velocityY: 4,
 			color: "withe",
@@ -771,6 +781,10 @@ function attachEventListeners() {
 		
 		  function MoveBall() {
 			if (xmove + ball.x >= canvas.width - paddleWidth - 2 - 10) {
+                if(ymove + ball.y > ai.y / 2)
+                    ball.angle -= Math.PI / 12
+                else 
+                    ball.angle += Math.PI / 12
 			  if (
 				ymove + ball.y > ai.y + aiy &&
 				ymove + ball.y < ai.y + aiy + paddleHeight
@@ -789,6 +803,11 @@ function attachEventListeners() {
 			  }
 			}
 			if (xmove + ball.x <= 0 + paddleWidth + 2 + 10) {
+                if(ymove + ball.y > player.y / 2)
+                    ball.angle += Math.PI / 12
+                else 
+                    ball.angle -= Math.PI / 12
+                
 			  if (
 				ymove + ball.y > player.y + py &&
 				ymove + ball.y < player.y + py + paddleHeight
@@ -808,31 +827,19 @@ function attachEventListeners() {
 			}
 			if (ymove + ball.y >= canvas.height) step2 *= -1;
 			if (ymove + ball.y <= 0) step2 *= -1;
-			xmove += step * ball.speed;
-			ymove += step2 * ball.speed;
+            xmove += step * Math.cos(ball.angle) * ball.speed;
+            ymove += step2 * Math.sin(ball.angle) * ball.speed;
 		  }
 		
 		  function MovePlayer() {
-			if (
-			  keys.up == true &&
-			  player.y + py > player.y - canvas.height / 2 + paddleHeight / 2
-			)
-			  py -= 5;
-			if (
-			  keys.down == true &&
-			  player.y + py < player.y + canvas.height / 2 - paddleHeight / 2
-			)
-			  py += 5;
-			if (
-			  keys.w == true &&
-			  ai.y + aiy < ai.y + canvas.height / 2 - paddleHeight / 2
-			)
-			  aiy += 5;
-			if (
-			  keys.s == true &&
-			  ai.y + aiy > ai.y - canvas.height / 2 + paddleHeight / 2
-			)
-			  aiy -= 5;
+            if (keys.up == true && player.y + aiy > player.y - (canvas.height / 2) + paddleHeight / 2)
+                aiy -= 5;
+            if (keys.down == true && player.y + aiy < player.y + (canvas.height / 2) - paddleHeight / 2)
+                aiy += 5
+            if (keys.w == true && ai.y + py < ai.y + (canvas.height / 2) - paddleHeight / 2)
+                py += 5;
+            if (keys.s == true && ai.y + py > ai.y - (canvas.height / 2) + paddleHeight / 2)
+                py -= 5;
 		  }
 		
 		  const keys = {
