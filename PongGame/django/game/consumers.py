@@ -48,12 +48,13 @@ class Ball:
 	def __init__(self):
 		self.x = 350
 		self.y = 150
-		self.speed = 6
-		self.angel = math.pi
+		self.speed = 1
+		self.angelx = 8
+		self.angely = 4
 	def IncrementX(self, stepx):
-		self.x +=  stepx * math.cos(self.angel) * self.speed
+		self.x +=  stepx * self.speed * self.angelx
 	def IncrementY(self,stepy):
-		self.y += stepy * math.sin(self.angel) * self.speed
+		self.y += stepy * self.speed * self.angely
 
 class LiveGame:
 	def __init__(self):
@@ -67,9 +68,11 @@ class LiveGame:
 	def RunGame(self):
 		if self.ball.x >= 680 and self.ball.y > self.player2.y  and self.ball.y < self.player2.y + 65:
 			if self.ball.y > self.player2.y / 2:
-				self.ball.angel -= math.pi/12
+				self.ball.angelx -= 0.2
+				self.ball.angely += 0.2
 			else:
-				self.ball.angel += math.pi/12
+				self.ball.angelx += 0.2
+				self.ball.angely -= 0.2
 			self.stepx *= -1
 		elif self.ball.x  > 680 : 
 			self.score1 += 1 
@@ -82,9 +85,11 @@ class LiveGame:
 			self.stepy *= - 1
 		if self.ball.x <= 15 and self.ball.y > self.player1.y - 5 and self.ball.y < self.player1.y + 65:
 			if self.ball.y > self.player1.y / 2:
-				self.ball.angel -= math.pi/12
+				self.ball.angelx -= 0.2
+				self.ball.angely += 0.2
 			else:
-				self.ball.angel += math.pi/12
+				self.ball.angelx += 0.2
+				self.ball.angely -= 0.2
 			self.stepx *= -1
 		elif self.ball.x < 15:
 			self.score2 += 1
