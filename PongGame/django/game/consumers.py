@@ -81,9 +81,9 @@ class LiveGame:
 			self.player1.y = 150 
 			self.player2.y = 150 
 			return
-		if self.ball.y > 350:
+		if self.ball.y > 340:
 			self.stepy *= - 1
-		if self.ball.x <= 15 and self.ball.y > self.player1.y - 5 and self.ball.y < self.player1.y + 65:
+		if self.ball.x <= 20 and self.ball.y > self.player1.y - 5 and self.ball.y < self.player1.y + 65:
 			if self.ball.y > self.player1.y / 2:
 				self.ball.angelx -= 0.2
 				self.ball.angely += 0.2
@@ -98,7 +98,7 @@ class LiveGame:
 			self.player1.y = 150 
 			self.player2.y = 150 
 			return
-		if self.ball.y < 0:
+		if self.ball.y < 10:
 			self.stepy *= - 1
 		self.ball.IncrementX(self.stepx)
 		self.ball.IncrementY(self.stepy)
