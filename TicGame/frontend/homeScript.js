@@ -95,9 +95,6 @@ class t3 {
         this.functionMap.set("error_handle", this.err_msg.bind(this))
         this.functionMap.set("opponentLeft", this.oppLeftGame.bind(this))
 
-        // this.functionMap.set("inform", this.inform.bind(this))
-        // this.functionMap.set("loose", this.loose.bind(this))
-        // this.functionMap.set("draw", this.loose.bind(this))
         // this.setupDataBoard.bind(this)
         // this.updateDataBoard.bind(this)
         // this.playAgain.bind(this)
@@ -359,22 +356,9 @@ class t3 {
     }
 
     updateDataBoard(){
-        
-        // let thisPlayerTurn = document.getElementById("turnToggleZis")
-
-        
-        // let opponentTurn = document.getElementById("turnToggleThat")
-
-
-        // thisPlayerTurn.style.backgroundColor = this.currMsg["turn"] ? "green" : "red"
-        // opponentTurn.style.backgroundColor = this.currMsg["turn"] ? "red" : "green"
         this.zhisP.updatePlayerTurn(this.currMsg["turn"])
         this.thatP.updatePlayerTurn(!this.currMsg["turn"])
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "100%"
         this.turnShow.textContent = this.currMsg["turn"] ? "Your Turn" : "Opponent's Turn"
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "0%"
     }
 
     async in_game(){
@@ -412,77 +396,6 @@ function getAccessToken() {
 // we said here i will take a string to define the type of request 
 // if it comes from friend invite 
 // or from the play button random
-
-// async function playgame(gameType) {
-//     if (matchingSocket && matchingSocket.readyState === WebSocket.OPEN) {
-//         console.warn("A game is already in progress.");
-//         return;
-//     }
-
-//     let token;
-//     try {
-//         token = await getAccessToken();
-//     } catch (error) {
-//         console.error("Error getting access token:", error);
-//         return;
-//     }
-
-//     const firstTo = document.querySelector('input[name="game-choice"]:checked')?.value;
-//     if (!firstTo) {
-//         console.error("No game choice selected.");
-//         return;
-//     }
-
-//     try {
-//         matchingSocket = new WebSocket(`/ws/play/?Token=${token}`);
-//     } catch (error) {
-//         console.error("Error creating WebSocket connection:", error);
-//         return;
-//     }
-
-//     matchingSocket.onopen = () => {
-//         try {
-//             const message = { type: gameType, first_to: firstTo };
-//             matchingSocket.send(JSON.stringify(message));
-//             console.log("Connection established and message sent:", message);
-
-//             gg = new t3(); // Initialize your game object
-//         } catch (error) {
-//             console.error("Error sending initial message:", error);
-//         }
-//     };
-
-//     matchingSocket.onmessage = async (event) => {
-//         try {
-//             const message = JSON.parse(event.data);
-//             console.log("Received message:", message);
-
-//             if (gg.functionMap?.has(message.type)) {
-//                 await gg.functionMap.get(message.type)();
-//             } else {
-//                 console.warn("Unhandled message type:", message.type);
-//             }
-//         } catch (error) {
-//             console.error("Error handling message:", error);
-//         }
-//     };
-
-//     matchingSocket.onerror = (event) => {
-//         console.error("WebSocket error:", event);
-//         matchingSocket = null;
-//     };
-
-//     matchingSocket.onclose = (event) => {
-//         if (event.code !== 4010)
-//             back_to_home();
-
-//         matchingSocket = null;
-
-//         const cleanClose = event.wasClean ? "Clean" : "Not clean";
-//         console.log(`Connection closed: ${cleanClose}`);
-//     };
-// }
-
 async function playgame (gameType) {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
