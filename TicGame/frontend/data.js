@@ -113,7 +113,7 @@ let principal_html = `<div id="id_dynamic" class="dynamic">
       </div>
       <div class="latestGames">
         <h2>Latest Tic-Tac-Toe Games</h2>
-        <div class="listOfLG">
+        <div class="listOfLG" id="listOfLGID">
             
         </div>
       </div>
@@ -166,10 +166,6 @@ function generateHtmlBoard(ina_game){
     <div class="turnShowDiv df_fdc_jcc_aic">
         <h1 class="turnShow df_jcc_aic" id="turnShow">
         </h1>
-    </div>
-    <div class="" id="gameTimer">
-    <h1 class="df_jcc_aic">30s</h1>
-    <div class="loaderTimer"></div>
     </div>
     <div class="board_head">
     <div class="fp df_fdc_jcsa_aic">
@@ -227,3 +223,74 @@ function generateHtmlBoard(ina_game){
     </div>`
     return htmlBoard
 }
+
+function create_board(gType, boards){
+  let gameInfos = document.createElement('div');
+  gameInfos.classList.add('game-info');
+  gameInfos.id = 'winBoards';
+
+  boards.forEach((board, index) => {
+    const boardiv = document.createElement("div");
+  if (gType === "ft4")
+      boardiv.className = "ff_hold_board";
+  else
+      boardiv.className = "tt_hold_board";
+    board.split("").forEach(cell => {
+      const divChar = document.createElement("div");
+      if (cell === ".") {
+          divChar.textContent = "";
+      } else if (cell === cell.toUpperCase() && cell !== ".") {
+          divChar.textContent = cell; // Keep uppercase if it's a winning combo
+          divChar.className = "win-combo"; // Highlight winning combo
+          divChar.style.backgroundColor = "green" // Do not add anything for empty cells
+        } else {
+          divChar.textContent = cell.toLowerCase(); // Convert to lowercase otherwise
+        }
+        boardiv.appendChild(divChar);
+    });
+    gameInfos.appendChild(boardiv);
+  });
+  return gameInfos
+}
+
+function create_player(img, name, score, l_r){
+  let a = document.createElement('div');
+  a.classList.add('player',`${l_r}`);
+  if (l_r === 'player-left'){
+    a.innerHTML = `
+    <div class="df_fdc_jcc_aic">
+      <img src="${img}" alt="" class="player-pic">
+      <span class="player-name">${name}</span>
+    </div>
+    <h1 class="player-score">${score}</h1>
+    `
+  }
+  else {
+    a.innerHTML = `
+      <h1 class="player-score">${score}</h1>
+      <div class="df_fdc_jcc_aic">
+        <img src="${img}" alt="" class="player-pic">
+        <span class="player-name">${name}</span>
+      </div>
+    `
+  }
+  return a
+}
+
+function gameUnit(unit, list){
+  let oneUnit = document.createElement('div');
+  oneUnit.classList.add('unitLG','df_jcc_aic');
+  // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ : ', unit.winner_or_looser)
+  if (unit.winner_or_loser === 'L')
+    oneUnit.style.backgroundColor = 'rgba(200, 50, 50, 0.5)';
+  else
+    oneUnit.style.backgroundColor = 'rgba(1, 140, 90, 0.5)';
+  let p1 = create_player(unit.l_image, unit.l_username, unit.l_score, "player-left");
+  let p2 = create_player(unit.w_image, unit.w_username, unit.game_type_db[1], "player-right");
+  let gameInfos = create_board(unit.game_type_db[0], unit.winner_boards);
+  oneUnit.appendChild(p1);
+  oneUnit.appendChild(gameInfos);
+  oneUnit.appendChild(p2);
+  list.appendChild(oneUnit);
+}
+

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 let body = document.querySelector("body");
 let plusIcon = document.querySelector(".add-message img");
 let sendButton = document.querySelector(".sending img");
@@ -33,6 +34,48 @@ let mainChat = document.querySelector(".main-chat");
 let sending = document.querySelector(".sending");
 let rightMessage = document.querySelector(".right-message");
 let leftMessage = document.querySelector(".left-message");
+=======
+
+
+// export default (function(){
+
+
+let body = document.querySelector('body')
+let plusIcon = document.querySelector('.add-message img');
+let sendButton = document.querySelector('.sending img');
+let messageInput = document.querySelector('.message-bar');
+let div1 = document.querySelector('.div1');
+let div2 = document.querySelector('.div2');
+let div3 = document.querySelector('.div3');
+let div4 = document.querySelector('.div4');
+let modal = document.querySelector('.modal');
+let modalUser = document.querySelector('.modal-user')
+let modalContent = document.querySelector('.modal-content');
+let modalContent2 = document.querySelector('.modal-content2');
+let modalInput = document.querySelector('.modal-input')
+let userField = document.querySelector('.user-field')
+let chatBar = document.querySelector('.chat-bar');
+let chatContent = document.querySelector('.chat-content');
+let deleteButton = document.querySelector('.delete-button');
+let blockButton = document.querySelector('.block-button');
+let modalButton = document.querySelector('.modal-button');
+let modalButton2 = document.querySelector('.modal-button2');
+let modalButton3 = document.querySelector('.modal-button3');
+let modalButton4 = document.querySelector('.modal-button4');
+let modalCancelButton = document.querySelector('.modal-cancel-button');
+let modalCancelButton3 = document.querySelector('.modal-cancel-button3');
+let modalCancelButton4 = document.querySelector('.modal-cancel-button4');
+let messageBar = document.querySelector('.message-bar');
+let newChatPageButton = document.querySelector('.new-chat-page button');
+let conversations = document.querySelector('.conversations');
+let singleConversation = document.querySelector('.single-conversation');
+let newChatPage = document.querySelector('.new-chat-page');
+let conversationTopBar = document.querySelector('.conversation-top-bar');
+let mainChat = document.querySelector('.main-chat');
+let sending = document.querySelector('.sending');
+let rightMessage = document.querySelector('.right-message');
+let leftMessage = document.querySelector('.left-message');
+>>>>>>> main
 let currentConversation = null;
 let sideSearchBar = document.querySelector(".search-message input");
 let singleConversationList = [];

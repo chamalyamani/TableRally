@@ -6,7 +6,7 @@ body {
     height: 100vh;
     width: 100vw;
     flex-direction: row;
-    overflow: hidden; /* Prevents the outer body from scrolling */
+    overflow: hidden;
 }
 
 .chat-bar {

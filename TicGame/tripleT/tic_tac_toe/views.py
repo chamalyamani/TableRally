@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import games
 from .serializers import gamesSerializer
-
+from django.db.models import Q
 import json
 
 def index(request):
@@ -24,10 +24,12 @@ def home(request):
         return HttpResponse(temp.render({}, request))
     
 class gamesByWinId(APIView):
-    def get(self, request, user_win_id):
-        game_records = games.objects.filter(win_id=user_win_id)
-        if not game_records.exists():
-            return Response({"message": "No games found for this user ID"}, status=404)
-        
-        serializer = gamesSerializer(game_records, many=True)
+    def get(self, request):
+            # user_id = request.user
+            # print("________________",user_id)
+        game_records = games.objects.filter(
+            Q(p1id=request.user.id) | Q(p2id=request.user.id)
+        )
+        serializer = gamesSerializer(game_records, many=True, context={'request': request})
         return Response(serializer.data)
+        

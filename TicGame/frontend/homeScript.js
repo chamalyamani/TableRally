@@ -3,7 +3,7 @@
 let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
 let gg = null
-let first_to = document.querySelector('input[name="game-choice"]:checked').value;
+
 
 function back_to_home() {
     
@@ -12,6 +12,7 @@ function back_to_home() {
     changeable_div.innerHTML = ""
     changeable_div.innerHTML = principal_html
     gg = null
+    fetchGameData();
     // location.reload()
     // matchingSocket = null
     // gg = null
@@ -94,9 +95,6 @@ class t3 {
         this.functionMap.set("error_handle", this.err_msg.bind(this))
         this.functionMap.set("opponentLeft", this.oppLeftGame.bind(this))
 
-        // this.functionMap.set("inform", this.inform.bind(this))
-        // this.functionMap.set("loose", this.loose.bind(this))
-        // this.functionMap.set("draw", this.loose.bind(this))
         // this.setupDataBoard.bind(this)
         // this.updateDataBoard.bind(this)
         // this.playAgain.bind(this)
@@ -226,7 +224,8 @@ class t3 {
         this.cont.innerHTML = gOver_html;
 
         // document.querySelector('.winloss').firstChild.textContent = this.currMsg["msg"]
-        document.querySelector('.winloss').style.display = 'flex';
+        let winDiv = document.querySelector('.winloss')
+        winDiv.style.display = 'flex';
         // document.getElementById("turnShow").innerText = this.currMsg["msg"]
         // let playAgainBtn = document.getElementById('playAgainBtn')
         let quitGameBtn = document.getElementById('quitBtn')
@@ -237,9 +236,9 @@ class t3 {
         // console.log("Ha ch9amto : ",this.currMsg["wins"])
         msgRes.textContent = this.currMsg["msg"]
         if ( this.currMsg["message"] )
-            msgRes.style.color = "green"
+            winDiv.style.background = "rgba(1, 140, 90, 0.5)"
         else
-            msgRes.style.color = "red"
+            winDiv.style.background = "rgba(200, 50, 50, 0.5)"
         winScore.textContent = this.currMsg["wins"]
         nb_games.textContent = this.currMsg["nbGames"]
         hescore.textContent = this.currMsg["opwins"]
@@ -357,22 +356,9 @@ class t3 {
     }
 
     updateDataBoard(){
-        
-        // let thisPlayerTurn = document.getElementById("turnToggleZis")
-
-        
-        // let opponentTurn = document.getElementById("turnToggleThat")
-
-
-        // thisPlayerTurn.style.backgroundColor = this.currMsg["turn"] ? "green" : "red"
-        // opponentTurn.style.backgroundColor = this.currMsg["turn"] ? "red" : "green"
         this.zhisP.updatePlayerTurn(this.currMsg["turn"])
         this.thatP.updatePlayerTurn(!this.currMsg["turn"])
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "100%"
         this.turnShow.textContent = this.currMsg["turn"] ? "Your Turn" : "Opponent's Turn"
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "0%"
     }
 
     async in_game(){
@@ -407,6 +393,9 @@ function getAccessToken() {
     });
 }
 
+// we said here i will take a string to define the type of request 
+// if it comes from friend invite 
+// or from the play button random
 async function playgame (gameType) {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
@@ -420,7 +409,17 @@ async function playgame (gameType) {
             // alert('Error getting access token', error.message);
         }); 
     
-    matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`)
+    let first_to = document.querySelector('input[name="game-choice"]:checked').value;
+    if (!first_to) {
+        console.error("No game choice selected.");
+        return;
+    }
+    try {
+        matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`);
+    } catch (error) {
+        console.error("Error creating WebSocket connection:", error);
+        return;
+    }
     // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
     // and the tail size etc ....
     matchingSocket.onopen = async function () {
@@ -434,46 +433,29 @@ async function playgame (gameType) {
         matchingSocket.send(JSON.stringify(msg));
         
         gg = new t3()
-        matchingSocket.onmessage = async function(event)
-        {
-            // console.log("ON MESSAGE")
-            gg.currMsg = JSON.parse(event.data)
-            console.log("what i got : ", gg.currMsg.type)
-            console.log("all : ", gg.currMsg)
-            if (gg.functionMap.has(gg.currMsg.type)){
-                // console.log("in IF WINDRaw")
-                await gg.functionMap.get(gg.currMsg.type)()
-            }
-            else
-            {
-                console.log("wayliiiiii  else ??")
-            }
-        }
-        matchingSocket.onerror = async function(event)
-        {
-            console.log('this is matchingsocket.onerror function')
-            // location.reload()
-            // console.log("by by : ",gg.cont)
-            matchingSocket = null
-            // gg = null
-        }
-        matchingSocket.onclose = async function(event)
-        {
-            if (event.code != 4010)
-            {
-                back_to_home()
-            }
-            // else
-            // {
-
-            // }
-            
-            matchingSocket = null
-            // should not be null because there is the button OK to quit the gameover there will call the 
-            // back home and free gg
-            // gg = null
-            event.wasClean = true ? console.log("clean") : console.log("not clean")
-        }
+    }
+    matchingSocket.onmessage = async function(event){
+        gg.currMsg = JSON.parse(event.data)
+        console.log("what i got : ", gg.currMsg.type)
+        console.log("all : ", gg.currMsg)
+        if (gg.functionMap.has(gg.currMsg.type))
+            await gg.functionMap.get(gg.currMsg.type)()
+    }
+    matchingSocket.onerror = (event) => {
+        console.log('this is matchingsocket.onerror function')
+        matchingSocket = null
+        // gg = null
+    }
+    matchingSocket.onclose = (event) => {
+        // 4010 is the end of game close, not back to home but to the gameover
+        // then he must click [OK] to go back to home
+        if (event.code != 4010)
+            back_to_home()   
+        matchingSocket = null
+        // should not be null because there is the button OK to quit the gameover there will call the 
+        // back home and free gg
+        // gg = null
+        event.wasClean = true ? console.log("clean") : console.log("not clean")
     }
     // console.log("WHAT ?")
 }
@@ -551,14 +533,30 @@ t3.prototype.updateBoard = function () {
 }
 
 // -----------------------> must fetch data here using token JWT instead of ID
-// getAccessToken()
-//         .then(accessToken => {
-//             return fetch('gamesByWinId/', {
-//                 method: 'GET',
-//                 headers: { 'Authorization': `Bearer ${accessToken}`}
-//             })
-//         })
-//         .then(response => response.json())
-//         .then(data => { console.log(data); })
-//         .catch(error => console.error('Error:', error));
+function fetchGameData(){
+
+    let list = document.getElementById("listOfLGID")
+    getAccessToken()
+            .then(accessToken => {
+                console.log("hhhhhhhhhhhhhhhhhhhhhhhh :", accessToken)
+                return fetch('/gamesByWinId/', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}`}
+                })
+            })
+            .then(response => response.json())
+            .then(data => { console.log(data); 
+                data.forEach( game => {
+                    // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ before : ', game)
+                    gameUnit(game, list)
+                })
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                list.textContent = "Error fetching data ! Please try to refresh the page !"
+                // re-call the fetchGameData
+            });
+}
+
+fetchGameData()
 // window.location.host

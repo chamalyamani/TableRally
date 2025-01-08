@@ -29,6 +29,22 @@ class GamePage extends HTMLElement
       };
   
       shadow.appendChild(link);
+      /********************************TICTACTOE GAME JAVASCRIPT************************************** */
+      /********************************TICTACTOE GAME JAVASCRIPT************************************** */
+      /********************************TICTACTOE GAME JAVASCRIPT************************************** */
+      /********************************TICTACTOE GAME JAVASCRIPT************************************** */
+      /********************************TICTACTOE GAME JAVASCRIPT************************************** */
+
+
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
+      /********************************END OF CONTRUCTOR************************************** */
     }
     connectedCallback() 
     {
@@ -45,22 +61,22 @@ class GamePage extends HTMLElement
         });
       });
       this.gameProcess();
-      window.addEventListener("resize", this.handleResize.bind(this));
-      this.handleResize();
+      // window.addEventListener("resize", this.handleResize.bind(this));
+      // this.handleResize();
     }
     
-    handleResize() 
-    {
-      const mobileMessage = this.shadowRoot.querySelector("#mobile-message");
-      if (window.innerWidth < 1550) 
-      {
-        mobileMessage.style.display = "flex";
-      } 
-      else 
-      {
-        mobileMessage.style.display = "none";
-      }
-    }
+    // handleResize() 
+    // {
+    //   const mobileMessage = this.shadowRoot.querySelector("#mobile-message");
+    //   if (window.innerWidth < 1550) 
+    //   {
+    //     mobileMessage.style.display = "flex";
+    //   } 
+    //   else 
+    //   {
+    //     mobileMessage.style.display = "none";
+    //   }
+    // }
 
     disconnectedCallback() {
       // Nettoyage de l'écouteur d'événement lors de la suppression du composant
