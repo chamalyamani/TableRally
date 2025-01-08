@@ -1,3 +1,8 @@
+
+
+// export default (function(){
+
+
 let body = document.querySelector('body')
 let plusIcon = document.querySelector('.add-message img');
 let sendButton = document.querySelector('.sending img');
@@ -499,3 +504,7 @@ function getAccessToken() {
 }
 
 listConversations();
+
+
+
+// })();
