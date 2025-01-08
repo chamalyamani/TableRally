@@ -501,11 +501,9 @@ header
 /*****************************************************************************/
 
 
-/* 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+/* * {
+   
 } */
 
 
@@ -979,7 +977,7 @@ header
 
 /** Mother Div and its childs should be handled here - boxing - sizes ... **/
 
-  .motherDiv {
+  /* .motherDiv {
     width: calc(100vw - 4.5vw);
     height: calc(100vh - 8vh);
     margin-left: 4.5vw !important;
@@ -987,7 +985,7 @@ header
       display: flex;
       align-items: center;
       justify-content: space-evenly;
-    }
+    } */
       
   .dynamic {
       width: 100%;
@@ -1006,11 +1004,17 @@ header
     }
     
     
-    
+    .all * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
     
     .all {
-        width: 100%;
-        height: 100%;
+        width: calc(100vw - 4.5vw);
+        height: calc(100vh - 8vh);
+        margin-left: 4.5vw !important;
+        margin-top: 8vh !important;
         background: rgb(1,63,56);
         background: var(--my-gradient);
         display: flex;

@@ -1,6 +1,5 @@
 
 
-let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
 let gg = null
 

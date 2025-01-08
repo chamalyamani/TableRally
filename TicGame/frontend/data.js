@@ -161,7 +161,6 @@ function generateHtmlBoard(ina_game){
         boardCells += `<div class="cell disabled" id="cell-${i}"></div>`;
     }
     let htmlBoard = `
-    <div id="contIdx" class="container df_fdc_jcc_aic">
     <div id="board_holder_id" class="board_holder df_fdc_jcsa_aic">
     <div class="turnShowDiv df_fdc_jcc_aic">
         <h1 class="turnShow df_jcc_aic" id="turnShow">
@@ -219,7 +218,6 @@ function generateHtmlBoard(ina_game){
     </div>
     
     <button id="restart-button" onclick="leaveGame()">Quit</button>
-    </div>
     </div>`
     return htmlBoard
 }
