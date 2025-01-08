@@ -483,7 +483,7 @@ async realTime(conv, singleConv) {
             console.log(receivedMessage);
             console.log(this.currentUser);
             this.blockList.push(conv.id);
-            disableMessageBar();
+            this.disableMessageBar();
             this.removeBlur();
             if (this.currentUser == receivedMessage.blocked)
                 this.blockButton.disabled = true;
