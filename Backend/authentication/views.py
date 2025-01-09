@@ -30,6 +30,7 @@ from django.db import IntegrityError
 import base64
 from datetime import datetime, timedelta
 from django.views.generic.base import RedirectView
+from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 
 class Initiate42LoginView(RedirectView):
     permanent = False  # Indicates this is a temporary redirect
@@ -88,9 +89,6 @@ class FortyTwoOAuthService:
             return None
 
 class UserAuthenticationView(APIView):
-    """ 
-    Handles user authentication via the 42 API and integrates 2FA checks.
-    """
     def get(self, request):
         authorization_code = request.GET.get("code")
         
@@ -112,8 +110,9 @@ class UserAuthenticationView(APIView):
      
         if not user_info:
             return Response({"error": "Failed to fetch user information"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         specific_user_infos = {
+            "external_id": user_info.get("id"),
             "external_image_url": user_info.get("image", {}).get("versions", {}).get("large", ""),
             "username":  user_info.get("login"),
             "email": user_info.get("email"),
@@ -123,29 +122,44 @@ class UserAuthenticationView(APIView):
         
         email = specific_user_infos['email']
         username = specific_user_infos['username']
+        external_id = specific_user_infos['external_id']
 
-        # Step 1: Check if username already exists and is not associated with the same email
+        #Check if username already exists and is not associated with the same email
         if CustomUser.objects.filter(username=username).exclude(email=email).exists():
             return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
         
         # Check if the user exists by email
-        try:
-            user, created = CustomUser.objects.get_or_create(
-                email=email,
-                defaults={
-                    'username': username,
-                    'external_image_url': specific_user_infos['external_image_url'],
-                    'first_name': specific_user_infos['first_name'],
-                    'last_name': specific_user_infos['last_name']
-                } 
-            )
-        except IntegrityError as e:
-            return Response({'error': 'Failed to create user due to a database error.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # try:
+        #     user, created = CustomUser.objects.get_or_create(
+        #         email=email,
+        #         defaults={
+        #             'username': username,
+        #             'external_image_url': specific_user_infos['external_image_url'],
+        #             'first_name': specific_user_infos['first_name'],
+        #             'last_name': specific_user_infos['last_name']
+        #         }
+        #     )
+        if CustomUser.objects.filter(external_id=external_id).exists():
+            user = CustomUser.objects.get(external_id=external_id)
+            created = False
+            
+        else:
+            try:
+                user = CustomUser.objects.create(
+                    external_id=external_id,
+                    email=email,
+                    username=username,
+                    external_image_url=specific_user_infos['external_image_url'],
+                    first_name=specific_user_infos['first_name'],
+                    last_name=specific_user_infos['last_name']
+                )
+                created = True
+            except IntegrityError as e:
+                return Response({'error': 'Failed to create user due to a database error.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
-        # Update `external_image_url` if the user already exists and doesn't have a `local_image`
         if not created:
             if not user.image:
+                # Update `external_image_url` if the user already exists and doesn't have a `local_image`
                 user.external_image_url = specific_user_infos['external_image_url']
                 user.save()
 
@@ -157,28 +171,15 @@ class UserAuthenticationView(APIView):
                 'exp': datetime.utcnow() + timedelta(minutes=5)  # Temporary expiration time
             }
             temporary_token = jwt.encode(temp_payload, settings.SECRET_KEY, algorithm='HS256')
-
-            # Store the data in the session
-            request.session['auth_data'] = {
-                'temporary_token': temporary_token,
-                'message': "2FA is required",
-            }
-
-            request.session['is_42_logged_in'] = True
-
-            return HttpResponseRedirect(os.getenv('DOMAIN_NAME'))
-        request.session['is_42_logged_in'] = True
+            
+            response = redirect('https://localhost:4443/authentification')
+            response.set_cookie(key='temporary_token', value=temporary_token, httponly=True, secure=True, samesite='Lax')
+            return response
+        
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-        image_url = request.build_absolute_uri(user.image_url)
-        response = JsonResponse({
-            'username': user.username,
-            'email': user.email,
-            'image': image_url,
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        })
 
+        response = redirect('https://localhost:4443/dashboard')
         response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='Lax' )# Set to True in production
         response.set_cookie( key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax') # Set to True in production
 
@@ -250,10 +251,8 @@ class GetAccessTokenView(APIView):
 
         if access_token:
             return Response({"access_token": access_token}, status=status.HTTP_200_OK)
-        return Response({"access_token": None}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"access_token": None}, status=status.HTTP_204_NO_CONTENT)
 
-
-# Authenticaion using JWT concept with credentials
 class RegisterView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
@@ -274,7 +273,7 @@ class LoginView(APIView):
         # Validate input
         if not username or not password:
             return Response(
-                {"error": "Username and password are required."},
+                {"error": "Username OR password are required."},
                 status=status.HTTP_400_BAD_REQUEST  # Changed to 400 as it's a bad request
             )
 
@@ -302,11 +301,24 @@ class LoginView(APIView):
                 'exp': datetime.utcnow() + timedelta(minutes=10)  # Temporary expiration time
             }
             temporary_token = jwt.encode(temp_payload, settings.SECRET_KEY, algorithm='HS256')
-
-            return Response({
+            
+            response = Response({
                 "message": "2FA is required.",
                 "temporary_token": temporary_token,
             }, status=status.HTTP_200_OK)
+            
+            # Setting the cookie with the temporary_token
+            response.set_cookie(
+                'temporary_token',  # Name of the cookie
+                temporary_token,    # Value of the cookie
+                max_age=3600,       # The cookie will expire in 1 hour (in seconds)
+                secure=True,        # Only sent over HTTPS
+                httponly=True,      # Cannot be accessed via JavaScript
+                samesite='Lax'      # Helps prevent CSRF attacks
+            )
+            
+            # Return the response with the set cookie
+            return response
 
         # Issue tokens
         refresh = RefreshToken.for_user(user)
@@ -349,6 +361,9 @@ class LogoutAndBlacklistView(APIView):
             response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
             response.delete_cookie('access_token')
             response.delete_cookie('refresh_token')
+            response.delete_cookie('temporary_token')
+            response.delete_cookie('csrftoken')
+            response.delete_cookie('sessionid')
 
             return response
 
@@ -523,5 +538,25 @@ class TwoFactorVerifyViewForOldUser(APIView):
 
         return JsonResponse({"error": "Invalid 2FA token"}, status=status.HTTP_400_BAD_REQUEST)
 
+class checkAuthStatus(APIView):
+    permission_classes = [AllowAny] 
+
+    def get(self, request):
+
+        response_data = {
+            'authenticated': False,
+        }
+
+        jwt_authenticator = JWTAuthentication()
+        try:
+            jwt_authenticator.get_validated_token(request.headers.get('Authorization', '').split(' ')[1])
+            response_data['authenticated'] = True
+        except (InvalidToken, AuthenticationFailed, IndexError):
+            pass
+
+        return Response(response_data)
+
+
 def health_checker(request):
     return HttpResponse("Service ready", status=status.HTTP_200_OK)
+
