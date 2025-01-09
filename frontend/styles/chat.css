@@ -593,7 +593,8 @@ header
     display: flex;
     overflow: hidden;
     margin: 0;
-    /* z-index: 65165165; */
+    position:relative;
+    z-index:2 ;
 }
 
   
