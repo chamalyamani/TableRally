@@ -199,7 +199,6 @@ document.getElementById('remote_button').addEventListener('click', function() {
 				<img src="boy.png"/>
 				<p>${winner}</p>
 			</div>
-			<button id="go_back">Go back</button>
 			
 		</body>
 		</html>
