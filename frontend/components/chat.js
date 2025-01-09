@@ -8,7 +8,7 @@ class ChatPage extends HTMLElement
 {
     constructor() 
     {
-
+        console.log("dkheeeeeeeeeeeeeeeeeeeeeeeeeeeeeelllllll")
       super();
   
 
@@ -207,6 +207,15 @@ class ChatPage extends HTMLElement
       this.chatProcess();
     }
 
+    disconnectedCallback() {
+        console.log("dekhle l disco callback in chat  ")
+        this.socket.close()
+        // matchingSocket = null
+        // game_obj = null
+      // Nettoyage de l'écouteur d'événement lors de la suppression du composant
+    //   window.removeEventListener("resize", this.handleResize.bind(this));
+    }
+
     logoutListener()
     {
       this.shadowRoot.getElementById('logoutBtn').addEventListener('click', (e) => {
@@ -372,6 +381,7 @@ convClickAction(conv, singleConv) {
     // console.log('--88--');
     // console.log(singleConv);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        
         this.socket.close(); // Close the current WebSocket
     }
     if (this.currentConversation)

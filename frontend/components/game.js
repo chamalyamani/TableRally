@@ -344,7 +344,7 @@ class t3 {
   }
 
   err_msg(){
-      let pop = this.shadowRoot.getElementById("err_pop")
+      let pop = this.shadowRoot.querySelector(".toast")
       const closeCode = this.currMsg["code"];
       const closeReason = this.currMsg["msg"];
       console.log("hna f err_msg handler : ", closeCode, "  :  ", closeReason)
@@ -352,18 +352,19 @@ class t3 {
       pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
   
       // Make the popup visible with animation
-      pop.style.transition = "top 0.5s ease";
-      pop.style.top = "0vh";
+    //   pop.style.transition = "top 0.5s ease";
+    //   pop.style.top = "0vh";
   
       // Hide the popup after a delay
       setTimeout(() => {
-          pop.style.top = "-15vh";
-  
+          pop.classList.add("active");
+          
           // Clear the text after hiding for a cleaner reset
           setTimeout(() => {
               pop.textContent = "";
-          }, 500); // Matches the transition time
-      }, 2000); // Keep the popup visible for 3 seconds
+              pop.classList.remove("active");
+          }, 2000); // Matches the transition time
+      }, 50); // Keep the popup visible for 3 seconds
       // console.log('onclose : ', event.code, "  :  ", event.reason)
   }
 
@@ -991,8 +992,12 @@ class GamePage extends HTMLElement
     // }
 
     disconnectedCallback() {
+        console.log("dekhle l disco callback ")
+        matchingSocket.close()
+        // matchingSocket = null
+        game_obj = null
       // Nettoyage de l'écouteur d'événement lors de la suppression du composant
-      window.removeEventListener("resize", this.handleResize.bind(this));
+    //   window.removeEventListener("resize", this.handleResize.bind(this));
     }
 
     logoutListener()

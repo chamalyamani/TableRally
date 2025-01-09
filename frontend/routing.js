@@ -1,5 +1,5 @@
 // import { getAccessToken } from "./shared.js";
-
+console.log("--------------------------------------------------")
 const routes = 
 {
     login: "login-page",
@@ -12,7 +12,13 @@ const routes =
     game: "game-page" ,
     settings: "settings-page",
 };
-  
+// const pageInstances = new Map();
+// function save_me (element) {
+//     if (element) {
+//         pageInstances.set(element.tagName.toLowerCase(), element);
+//         console.log("pageINSTANCE in SAVER : ",pageInstances)
+//     }
+// }
 function navigateTo(page) 
 {
   // console.log("Navigating to:", page);
@@ -23,11 +29,37 @@ function navigateTo(page)
 
   if (routes[page])
   {
+    // console.log("first child dyal APP : ", app.firstChild);
+    // console.log("current page ", page);
+    // save_me(app.firstChild);
+    // app.innerHTML = "";
+
+    // history.pushState({ page }, "", `/${page}`);
+    // document.body.className = `body-${page}`;
+
+    // Check if an instance already exists
+    // let pageElement = pageInstances.get(page + '-page');
+    // console.log("pageElement :::: ", pageElement);
+    // if (!pageElement) 
+    // {
+        // Create a new instance and store it
+        // pageElement = document.createElement(routes[page]);
+        // app.innerHTML = `<${routes[page]}></${routes[page]}>`;
+        // pageInstances.set(page, app.innerHTML);
+        
+        // console.log("ma l9aaaaaahch", page);
+    // }
+    // else{
+    //     console.log("hna l9aaaaaah o appendaaaah")
+    //     // app.innerHTML = pageElement;
+    //     app.appendChild(pageElement);
+    // }
+
+    // Append the element to the app
     app.innerHTML = "";
 
     history.pushState({ page }, "", `/${page}`);
     app.innerHTML = `<${routes[page]}></${routes[page]}>`;
-
     document.body.className = `body-${page}`;
 
     const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
