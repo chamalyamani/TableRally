@@ -44,8 +44,8 @@ class SignUpPage extends HTMLElement
     });
     // Ajouter des listeners pour la navigation
     this.signupProcess();
-    window.addEventListener("resize", this.handleResize.bind(this));
-    this.handleResize();
+    // window.addEventListener("resize", this.handleResize.bind(this));
+    // this.handleResize();
   }
   handleResize() 
   {
@@ -62,7 +62,7 @@ class SignUpPage extends HTMLElement
 
   disconnectedCallback() {
     // Nettoyage de l'écouteur d'événement lors de la suppression du composant
-    window.removeEventListener("resize", this.handleResize.bind(this));
+    // window.removeEventListener("resize", this.handleResize.bind(this));
   }
 
   signupProcess() {
@@ -113,6 +113,4 @@ class SignUpPage extends HTMLElement
 // Déclarer le Web Component globalement
 customElements.define("signup-page", SignUpPage);
 
-
-  
   

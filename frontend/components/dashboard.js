@@ -4,6 +4,8 @@ import { getUserInfos } from "../shared.js";
 import { logoutProcess } from "../shared.js";
 
 
+
+
 class DashboardPage extends HTMLElement 
 {
     constructor() 

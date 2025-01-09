@@ -3,7 +3,7 @@ import { initializeCommonScripts } from "../shared.js";
 import { getUserInfos } from "../shared.js";
 import { logoutProcess } from "../shared.js";
 
-class GamePage extends HTMLElement 
+class PingpongPage extends HTMLElement 
 {
     constructor() 
     {
@@ -12,14 +12,14 @@ class GamePage extends HTMLElement
       const shadow = this.attachShadow({ mode: "open" });
   
 
-      const template = document.getElementById("game-template");
+      const template = document.getElementById("pingpong-template");
       const content = template.content.cloneNode(true);
   
       shadow.appendChild(content);
   
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "styles/game.css";
+      link.href = "styles/pingpong.css";
   
       this.style.display = "none";
   
@@ -32,10 +32,9 @@ class GamePage extends HTMLElement
     }
     connectedCallback() 
     {
-      updateActiveNav("game", this.shadowRoot);
+      updateActiveNav("pingpong", this.shadowRoot);
       initializeCommonScripts(this.shadowRoot);
-      this.shadowRoot.querySelectorAll("[data-navigate]").forEach((element) => 
-      {
+      this.shadowRoot.querySelectorAll("[data-navigate]").forEach((element) => {
         element.addEventListener("click", (e) => {
           const page = e.target.dataset.navigate;
           if (page) 
@@ -44,27 +43,7 @@ class GamePage extends HTMLElement
           }
         });
       });
-      this.gameProcess();
-      // window.addEventListener("resize", this.handleResize.bind(this));
-      // this.handleResize();
-    }
-    
-    // handleResize() 
-    // {
-    //   const mobileMessage = this.shadowRoot.querySelector("#mobile-message");
-    //   if (window.innerWidth < 1550) 
-    //   {
-    //     mobileMessage.style.display = "flex";
-    //   } 
-    //   else 
-    //   {
-    //     mobileMessage.style.display = "none";
-    //   }
-    // }
-
-    disconnectedCallback() {
-      // Nettoyage de l'écouteur d'événement lors de la suppression du composant
-      // window.removeEventListener("resize", this.handleResize.bind(this));
+      this.PingpongProcess();
     }
 
     logoutListener()
@@ -75,7 +54,7 @@ class GamePage extends HTMLElement
       })
     }
 
-    async gameProcess() 
+    async PingpongProcess() 
     {
       getUserInfos(this.shadowRoot);
       this.logoutListener();
@@ -83,5 +62,4 @@ class GamePage extends HTMLElement
 
 }
   
-customElements.define("game-page", GamePage);
-  
+customElements.define("pingpong-page", PingpongPage);

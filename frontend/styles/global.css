@@ -1,4 +1,5 @@
-.color-overlay {
+.color-overlay 
+{
   position: absolute;
   top: 0;
   left: 0;
@@ -15,7 +16,8 @@ body.body-newpassword,
 body.body-authentification,
 body.body-chat,
 body.body-game,
-body.body-settings {
+body.body-settings,
+body.body-pingpong {
   font-family: Poppins;
   margin: 0;
   padding: 0;

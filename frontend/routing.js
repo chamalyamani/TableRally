@@ -9,11 +9,11 @@ const routes =
     chat: "chat-page",
     game: "game-page" ,
     settings: "settings-page",
+    pingpong : "pingpong-page",
 };
   
 function navigateTo(page) 
 {
-  // console.log("Navigating to:", page);
   const app = document.getElementById("app");
   const loader = document.getElementById("loader");
 

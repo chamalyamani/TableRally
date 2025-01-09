@@ -5,7 +5,7 @@ import { getAccessToken } from "../shared.js";
 import { logoutProcess } from "../shared.js";
 
 
-class SettingsPage extends HTMLElement 
+class SettingsPage extends HTMLElement
 {
   constructor() 
   {
@@ -53,6 +53,269 @@ class SettingsPage extends HTMLElement
     window.addEventListener("resize", this.handleResize.bind(this));
     this.handleResize();
     this.setupSectionNavigation();
+    this.initializeFriendList();
+    this.initializeBlockedList();
+  }
+
+  async loadFriendsList() {
+    const friendsListSection = this.shadowRoot.querySelector('#friendsListSection');
+    const friendsGrid = friendsListSection.querySelector('.friends-grid');
+
+    // Clear existing friends
+    friendsGrid.innerHTML = '';
+
+    try {
+      const token = await getAccessToken();
+      const response = await fetch('/friends/', { // Ensure this URL matches your backend routing
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const friends = data.friends;
+        if (friends.length === 0) {
+          // Display centered message when no friends are present
+          const noFriendsMsg = document.createElement('p');
+          noFriendsMsg.textContent = 'No user have been added as friend yet.';
+          noFriendsMsg.classList.add('centered-message');
+          friendsGrid.appendChild(noFriendsMsg);
+        } else {
+          friends.forEach(friend => {
+            // Create a new friend-card-settings element
+            const friendCard = document.createElement('div');
+            friendCard.classList.add('friend-card-settings');
+
+            // Friend Avatar
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('friend-avatar-settings');
+            const avatarImg = document.createElement('img');
+            avatarImg.src = friend.image_url;
+            avatarImg.classList.add('friend-image-settings');
+            avatarImg.alt = `${friend.username}'s avatar`;
+            avatarDiv.appendChild(avatarImg);
+
+            // Friend Name
+            const nameDiv = document.createElement('div');
+            nameDiv.classList.add('friend-name-settings');
+            nameDiv.textContent = friend.username;
+
+            // Friend Actions
+            const actionsDiv = document.createElement('div');
+            actionsDiv.classList.add('friend-actions-settings');
+
+            // Remove Button
+            const removeBtn = document.createElement('button');
+            removeBtn.classList.add('friend-action-settings', 'remove-btn');
+            removeBtn.textContent = 'Remove';
+            removeBtn.dataset.username = friend.username; // Store username for reference
+            removeBtn.addEventListener('click', () => this.handleRemoveFriend(friend.username));
+
+            // Block Button
+            const blockBtn = document.createElement('button');
+            blockBtn.classList.add('friend-action-settings', 'block-btn-friendLst');
+            blockBtn.textContent = 'Block';
+            blockBtn.dataset.username = friend.username; // Store username for reference
+            blockBtn.addEventListener('click', () => this.handleBlockFriend(friend.username));
+
+            actionsDiv.appendChild(removeBtn);
+            actionsDiv.appendChild(blockBtn);
+
+            // Assemble the friend card
+            friendCard.appendChild(avatarDiv);
+            friendCard.appendChild(nameDiv);
+            friendCard.appendChild(actionsDiv);
+
+            // Add the friend card to the grid
+            friendsGrid.appendChild(friendCard);
+          });
+        }
+      } else {
+        globalNotifPopup('Error', data.error || 'Failed to load friends list');
+      }
+    } catch (error) {
+      globalNotifPopup('Error', error.message);
+    }
+  }
+
+  async handleRemoveFriend(username) {
+    const confirmRemove = confirm(`Are you sure you want to remove ${username} as a friend?`);
+    if (!confirmRemove) return;
+
+    try {
+      const token = await getAccessToken();
+      const response = await fetch(`friends/remove/${username}/`, { // Ensure this URL matches your backend routing
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        globalNotifPopup('Success', data.message || 'Friend removed successfully');
+        // Reload the friends list to reflect changes
+        await this.loadFriendsList();
+      } else {
+        globalNotifPopup('Error', data.error || 'Failed to remove friend');
+      }
+    } catch (error) {
+      globalNotifPopup('Error', error.message);
+    }
+  }
+
+  async handleBlockFriend(username) {
+    const confirmBlock = confirm(`Are you sure you want to block ${username}? This will remove them from your friends list.`);
+    if (!confirmBlock) return;
+
+    try {
+      const token = await getAccessToken();
+      const response = await fetch(`friends/${username}/block/`, { // Ensure this URL matches your backend routing
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        globalNotifPopup('Success', data.message || 'User blocked successfully');
+        // Reload the friends list to reflect changes
+        await this.loadFriendsList();
+      } else {
+        globalNotifPopup('Error', data.error || 'Failed to block user');
+      }
+    } catch (error) {
+      globalNotifPopup('Error', error.message);
+    }
+  }
+
+  initializeFriendList() {
+    const friendsListButton = this.shadowRoot.querySelector('#friendsListButton');
+  
+    friendsListButton.addEventListener('click', async () => {
+      await this.loadFriendsList(this.shadowRoot);
+    });
+  }
+
+  async loadBlockedUsersList() {
+    const blockListSection = this.shadowRoot.querySelector('#blockListSection');
+    const blockedGrid = blockListSection.querySelector('.blocked-grid');
+  
+    // Clear existing blocked users
+    blockedGrid.innerHTML = '';
+  
+    try {
+      const token = await getAccessToken();
+      const response = await fetch('friends/blocked/', { // Ensure this URL matches your backend routing
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        const blockedUsers = data.blocked_users;
+        if (blockedUsers.length === 0) {
+          const noBlockedMsg = document.createElement('p');
+          noBlockedMsg.textContent = 'No users have been blocked.';
+          noBlockedMsg.classList.add('centered-message');
+          blockedGrid.appendChild(noBlockedMsg);
+        } else {
+          blockedUsers.forEach(user => {
+            // Create a new blocked-card element
+            const blockedCard = document.createElement('div');
+            blockedCard.classList.add('blocked-card');
+  
+            // Blocked Avatar
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('blocked-avatar');
+            const avatarImg = document.createElement('img');
+            avatarImg.src = user.image_url || '/default-avatar.png';
+            avatarImg.classList.add('blocked-image');
+            avatarImg.alt = `${user.username}'s avatar`;
+            avatarDiv.appendChild(avatarImg);
+  
+            // Blocked Name
+            const nameDiv = document.createElement('div');
+            nameDiv.classList.add('blocked-name');
+            nameDiv.textContent = user.username;
+  
+            // Blocked Actions
+            const actionsDiv = document.createElement('div');
+            actionsDiv.classList.add('blocked-actions');
+  
+            // Unblock Button
+            const unblockBtn = document.createElement('button');
+            unblockBtn.classList.add('blocked-action', 'unb-btn');
+            unblockBtn.textContent = 'Unblock';
+            unblockBtn.dataset.username = user.username; // Store username for reference
+            unblockBtn.addEventListener('click', () => this.handleUnblockUser(user.username));
+  
+            actionsDiv.appendChild(unblockBtn);
+  
+            // Assemble the blocked card
+            blockedCard.appendChild(avatarDiv);
+            blockedCard.appendChild(nameDiv);
+            blockedCard.appendChild(actionsDiv);
+  
+            // Add the blocked card to the grid
+            blockedGrid.appendChild(blockedCard);
+          });
+        }
+  
+        // Show the blocked list section
+      } else {
+        globalNotifPopup('Error', data.error || 'Failed to load blocked users list');
+      }
+    } catch (error) {
+      globalNotifPopup('Error', error.message);
+    }
+  }
+
+  async handleUnblockUser(username) {
+    const confirmUnblock = confirm(`Are you sure you want to unblock ${username}?`);
+    if (!confirmUnblock) return;
+  
+    try {
+      const token = await getAccessToken();
+      const response = await fetch(`friends/${username}/unblock/`, { // Ensure this URL matches your backend routing
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        globalNotifPopup('Success', data.message || 'User unblocked successfully');
+        // Reload the blocked users list to reflect changes
+        await this.loadBlockedUsersList(this.shadowRoot);
+      } else {
+        globalNotifPopup('Error', data.error || 'Failed to unblock user');
+      }
+    } catch (error) {
+      globalNotifPopup('Error', error.message);
+    }
+  }
+
+  initializeBlockedList() {
+    const blockListButton = this.shadowRoot.querySelector('#blockListButton');
+  
+    blockListButton.addEventListener('click', async () => {
+      const blockListSection = this.shadowRoot.querySelector('#blockListSection');
+      await this.loadBlockedUsersList(this.shadowRoot);
+    });
   }
 
   setupSectionNavigation() 
@@ -116,6 +379,7 @@ class SettingsPage extends HTMLElement
     this.updateData(this.shadowRoot);
     this.logoutListener();
     this.anonymizationProcess();
+    this.downloadDataProcess();
   }
 
   async fetch2FAStatus() {
@@ -456,7 +720,6 @@ class SettingsPage extends HTMLElement
     let isAnonymizeEnabled = await this.anonymizationStatus(tok);
     if (toggleSwitch) {
       if (isAnonymizeEnabled) {
-        console.log("-->", isAnonymizeEnabled);
         toggleSwitch.checked = true;
       }
       else {
@@ -470,6 +733,45 @@ class SettingsPage extends HTMLElement
       });
     }
   }
+
+  downloadUserData(token) {
+    fetch('/user/download-data/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'user_data.json'; // Filename
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        globalNotifPopup('Success', "Data downloaded successfully!")
+      })
+      .catch(error => globalNotifPopup('Error', error));
+  }
+
+  async downloadDataProcess()
+  {
+    const toggleSwitch = this.shadowRoot.querySelector("#toggleSwitchDData");
+    const tok = await getAccessToken(); 
+    if (toggleSwitch) 
+    {
+      toggleSwitch.addEventListener("change", () => {
+        if(toggleSwitch.checked)
+            this.downloadUserData(tok);
+        else
+          toggleSwitch.checked = false;
+      });
+    }
+  }
 }
 
 customElements.define("settings-page", SettingsPage);
+
+

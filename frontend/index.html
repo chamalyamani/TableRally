@@ -177,9 +177,10 @@
               <p> This application is designed for larger screens and is not optimized for small viewports.</p>
             </div>
           </div>
-          <div class="circle top-circle"></div>
-            <div class="container-reset-password">
 
+          <div class="circle top-circle"></div>
+          
+            <div class="container-reset-password">
               <div class="left-content">
                   <img src="assests/boy.png">
               </div>
@@ -265,6 +266,22 @@
         </template>
 
         <template id="dashboard-template">
+          <div class="overlay"></div>
+
+          <!-- Friend Card -->
+          <div class="friend-card">
+            <button class="close-btn">X</button>
+          
+            <div class="friend-avatar">
+              <img src="" class="friend-image">
+            </div>
+            <div class="friend-name"></div>
+            <button id="actionFriend-btn" class="add-btn">Add Friend</button>
+            <button id="rejectRequest-btn" class="add-btn" style="display: none;">Reject Request</button>
+            <button id="blockFriend-btn" class="block-btn">Block Friend</button>
+
+          </div>
+
           <div id="mobile-message">
             <div class="content-message">
               <h2>Sorry!</h2>
@@ -283,6 +300,10 @@
                   <img src="assests/header/er (9).png">
                 </button>
                 <input type="text" class="input-search" placeholder="Type to search ...">
+                <div class="dropdown-search">
+                  <ul class="dropdown-results">
+                  </ul>
+                </div>
               </div>
           
               <div class="header-left">
@@ -290,30 +311,7 @@
                   <div id="arrow" class="dropdown-arrow"></div>
                 <div id="dropdownNotf" class="dropdown-notifications">
                   <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
                   </div>
-
-                  <div class="sub-menu-link-notf">
-                    <img src="assests/header/clyamani.jpeg">
-                    <p>Smounafi send you a request</p>
-                </div>
-                <div class="sub-menu-link-notf">
-                  <img src="assests/header/clyamani.jpeg">
-                  <p>Smounafi send you a request</p>
-              </div>
-              <div class="sub-menu-link-notf">
-                <img src="assests/header/clyamani.jpeg">
-                <p>Smounafi send you a request</p>
-                </div>
-                <div class="sub-menu-link-notf">
-                  <img src="assests/header/clyamani.jpeg">
-                  <p>Smounafi send you a request</p>
-                  </div>
-                  <div class="sub-menu-link-notf">
-                    <img src="assests/header/clyamani.jpeg">
-                    <p>Smounafi send you a request</p>
-                    </div>
                 </div>
                 
               </div>
@@ -362,6 +360,13 @@
                             <div class="nav-item">
                               <img data-navigate="game" src="assests/side-bard/Game-icon.png">
                               <span class="nav-label">Game</span>
+                            </div>
+                          </li>
+
+                          <li class="nav-element">
+                            <div class="nav-item">
+                              <img data-navigate="pingpong" src="assests/side-bard/pong-icon.png">
+                              <span class="nav-label">Ping Pong</span>
                             </div>
                           </li>
             
@@ -418,6 +423,21 @@
         </template>
 
         <template id="chat-template">
+          <div class="overlay"></div>
+
+          <!-- Friend Card -->
+          <div class="friend-card">
+            <button class="close-btn">X</button>
+          
+            <div class="friend-avatar">
+              <img src="" class="friend-image">
+            </div>
+            <div class="friend-name"></div>
+            <button id="actionFriend-btn" class="add-btn">Add Friend</button>
+            <button id="rejectRequest-btn" class="add-btn" style="display: none;">Reject Request</button>
+            <button id="blockFriend-btn" class="block-btn">Block Friend</button>
+
+          </div>
           <div class="circle top-circle"></div>
           
             <header>
@@ -430,6 +450,10 @@
                   <img src="assests/header/er (9).png">
                 </button>
                 <input type="text" class="input-search" placeholder="Type to search ...">
+                <div class="dropdown-search">
+                  <ul class="dropdown-results">
+                  </ul>
+              </div>
               </div>
     
     
@@ -440,28 +464,6 @@
                 <div id="dropdownNotf" class="dropdown-notifications">
     
                     <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                  
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
                     </div>
                 </div>
               </div>
@@ -514,6 +516,13 @@
                           <span class="nav-label">Game</span>
                         </div>
                       </li>
+
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="pingpong" src="assests/side-bard/pong-icon.png">
+                          <span class="nav-label">Pingpong</span>
+                        </div>
+                      </li>
         
                       <li class="nav-element">
                         <div class="nav-item">
@@ -543,13 +552,26 @@
                   </ul>
     
             </div>
+
             <div class="circle bottom-circle"></div>
           
         </template>
 
         <template id="game-template">
+          <div class="overlay"></div>
+          <div class="friend-card">
+            <button class="close-btn">X</button>
+            <div class="friend-avatar">
+              <img src="" class="friend-image">
+            </div>
+            <div class="friend-name"></div>
+            <button id="actionFriend-btn" class="add-btn">Add Friend</button>
+            <button id="rejectRequest-btn" class="add-btn" style="display: none;">Reject Request</button>
+            <button id="blockFriend-btn" class="block-btn">Block Friend</button>
+
+          </div>
           <div class="circle top-circle"></div>
-          
+
             <header>
 
               <div class="section-name">
@@ -561,6 +583,14 @@
                   <img src="assests/header/er (9).png">
                 </button>
                 <input type="text" class="input-search" placeholder="Type to search ...">
+                <div class="dropdown-search">
+                  <ul class="dropdown-results">
+                      <li class="dropdown-item">
+                          <img src="assests/header/clyamani.jpeg"  class="dropdown-item-img">
+                          <span class="dropdown-item-text"></span>
+                      </li>
+                  </ul>
+              </div>
               </div>
     
     
@@ -571,29 +601,6 @@
                 <div id="dropdownNotf" class="dropdown-notifications">
     
                     <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                  
-    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
                     </div>
                 </div>
               </div>
@@ -647,6 +654,13 @@
                           <span class="nav-label">Game</span>
                         </div>
                       </li>
+
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="pingpong" src="assests/side-bard/pong-icon.png">
+                          <span class="nav-label">Pingpong</span>
+                        </div>
+                      </li>
         
                       <li class="nav-element">
                         <div class="nav-item">
@@ -680,7 +694,156 @@
           
         </template>
 
+        <template id="pingpong-template">
+          <div class="overlay"></div>
+          <div class="friend-card">
+            <button class="close-btn">X</button>
+            <div class="friend-avatar">
+              <img src="" class="friend-image">
+            </div>
+            <div class="friend-name"></div>
+            <button id="actionFriend-btn" class="add-btn">Add Friend</button>
+            <button id="rejectRequest-btn" class="add-btn" style="display: none;">Reject Request</button>
+            <button id="blockFriend-btn" class="block-btn">Block Friend</button>
+
+          </div>
+          <div class="circle top-circle"></div>
+
+            <header>
+
+              <div class="section-name">
+                Ping pong
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+                <div class="dropdown-search">
+                  <ul class="dropdown-results">
+                      <li class="dropdown-item">
+                          <img src="assests/header/clyamani.jpeg"  class="dropdown-item-img">
+                          <span class="dropdown-item-text"></span>
+                      </li>
+                  </ul>
+              </div>
+              </div>
+    
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                    </div>
+                </div>
+              </div>
+    
+    
+    
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="pingpong" src="assests/side-bard/pong-icon.png">
+                          <span class="nav-label">Pingpong</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+            <div class="circle bottom-circle"></div>
+        </template>
+
         <template id="settings-template">
+          <div class="overlay"></div>
+          <div class="friend-card">
+            <button class="close-btn">X</button>
+          
+            <div class="friend-avatar">
+              <img src="" class="friend-image">
+            </div>
+            <div class="friend-name"></div>
+            <button id="actionFriend-btn" class="add-btn">Add Friend</button>
+            <button id="rejectRequest-btn" class="add-btn" style="display: none;">Reject Request</button>
+            <button id="blockFriend-btn" class="block-btn">Block Friend</button>
+
+          </div>
           <div id="mobile-message">
             <div class="content-message">
               <h2>Sorry!</h2>
@@ -700,6 +863,17 @@
                   <img src="assests/header/er (9).png">
                 </button>
                 <input type="text" class="input-search" placeholder="Type to search ...">
+
+                <!-- DROP DOWN SEARCH -->
+                <div class="dropdown-search">
+                  <ul class="dropdown-results">
+                      <li class="dropdown-item">
+                          <img src="assests/header/clyamani.jpeg"  class="dropdown-item-img">
+                          <span class="dropdown-item-text"></span>
+                      </li>
+                  </ul>
+              </div>
+
               </div>
     
               <div class="header-left">
@@ -707,32 +881,6 @@
                 <div id="arrow" class="dropdown-arrow"></div>
     
                 <div id="dropdownNotf" class="dropdown-notifications">
-    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                  
-    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-                    
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
-
-                    <div class="sub-menu-link-notf">
-                      <img src="assests/header/clyamani.jpeg">
-                      <p>Smounafi send you a request</p>
-                    </div>
                 </div>
               </div>
   
@@ -782,6 +930,13 @@
                           <span class="nav-label">Game</span>
                         </div>
                       </li>
+
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/pong-icon.png">
+                          <span class="nav-label">Pingpong</span>
+                        </div>
+                      </li>
         
                       <li class="nav-element">
                         <div class="nav-item">
@@ -811,7 +966,6 @@
                   </ul>
     
             </div>
-    
     
             <div id="content">
               <div class="guide-notifications">
@@ -972,21 +1126,26 @@
                 
                 <div id="friendsListSection" class="settings-section hidden">
                   <div class="content-friends">
-                    <h2>Friends List</h2>
-                    <p>Content for Friends List...</p>
+                      <div class="friends-grid">
+                      </div>
                   </div>
                 </div>
 
                 <div id="blockListSection" class="settings-section hidden">
                   <div class="content-blocklist">
-                    <h2>Block List</h2>
-                    <p>Content for Block List...</p>
+                    <div class="blocked-grid">
+                      
+                  </div>
                   </div>
                 </div>
+
+              </div>
+
               
               </div>
             </div>
-                  <div class="circle bottom-circle"></div>
+                  
+            <div class="circle bottom-circle"></div>
             
         </template>
 
@@ -1000,8 +1159,7 @@
         <script src="components/dashboard.js" type="module"></script>
         <script src="components/chat.js" type="module"></script>
         <script src="components/game.js" type="module"></script>
+        <script src="components/pingpong.js" type="module"></script>
         <script src="components/settings.js" type="module"></script>
-
-
     </body>
 </html>

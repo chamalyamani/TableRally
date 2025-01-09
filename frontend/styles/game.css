@@ -15,6 +15,78 @@
     left: 50%;
     transform: translateX(-50%);
 }
+/* Dropdown container */
+.dropdown-search 
+{
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%; 
+    max-height: 200px;
+    border-style: solid;
+    border-width: 0.3px;
+    border-color: rgba(255, 255, 255, 0.582);
+    overflow-y: auto;
+    background-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+
+    border-radius: 8px;
+    z-index: 1000;
+    scrollbar-width: none;
+    display: none;
+}
+.dropdown-search::-webkit-scrollbar 
+{
+    display: none;
+}
+
+.dropdown-results 
+{
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+
+.dropdown-item 
+{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    border-bottom: 1px solid gray;
+    border-radius: 7px;
+    transition: background-color 0.3s ease;
+    gap: 10px;
+}
+
+.dropdown-item:hover 
+{
+    background-color: #ffffffa9;
+
+}
+
+/* Image dans l'élément */
+.dropdown-item-img 
+{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Rendre les images rondes */
+    object-fit: cover; /* Gérer le contenu de l'image */
+}
+
+/* Texte dans l'élément */
+.dropdown-item-text 
+{
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
   
 .bottom-circle 
 {
@@ -85,8 +157,10 @@ header
 
 .prfl
 {
-    width:2.4vw;
+    width:50px;
+    height: 50px;
     border-radius: 50%;
+    object-fit: cover;
     cursor: pointer;
 }
 
@@ -204,10 +278,12 @@ header
 
 .user-info img
 {
-    width: 20%;
+    object-fit: cover;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     margin-right: 8%;
-    margin-left: 12%; 
+    margin-left:-4%;
 }
 
 
@@ -321,23 +397,26 @@ header
     display: none;
     position: absolute;
     top: 50%;
-    left: 94%;
+    left: 93.8%;
     width: 0;
     height: 0;
     border: 15px solid;
     border-color: transparent transparent rgba(187, 230, 224, 1) transparent;
     transform: translateX(-50%);
 }
-.dropdown-arrow.active {
+.dropdown-arrow.active 
+{
     display: block; /* Visible quand active */
 }
 
 .sub-menu-link-notf img
 {
-    width:15%;
+    object-fit: cover;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
-    margin-left: 5%;
-    margin-right: 1%;
+    margin-left: 12px;
+    margin-right:2px;
 }
 
 .sub-menu-link-notf
@@ -345,7 +424,6 @@ header
     display: flex;
     align-items: center;
     color:black;
-    white-space: nowrap;
     padding-top: 2%;
     padding-bottom: 2%;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -389,7 +467,7 @@ header
 .side-bar
 {
     position:fixed;
-    width: 4.5vw;
+    width: 3.8vw;
 
     top: 0;
     left:0;
@@ -489,3 +567,177 @@ header
 }
 
   
+/* Overlay for background blur */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    display: none; /* Hidden by default */
+  }
+  
+  /* Friend Card */
+  .friend-card 
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url(../assests/usercard-backg.jpg);
+    border: 3px solid #ddddddab;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    height: 400px;
+    text-align: center;
+}
+  
+  /* Friend Avatar */
+.friend-avatar img 
+{
+    border: 3px solid #ddddddab;
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    margin-top:60px;
+}
+  
+  /* Friend Name */
+.friend-name 
+{
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: white;
+}
+  
+  
+.add-btn 
+{
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right:5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    outline: none;
+    outline: 0;
+    text-align: center;
+    transform: translateY(0);
+    transition: transform 150ms, box-shadow 150ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.add-btn:hover
+{
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+    transform: translateY(-2px);
+}
+
+.add-btn:active
+{
+    background-color: #044406;
+    transform: scale(0.96);
+}
+
+.block-btn:hover
+{
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+    transform: translateY(-2px);
+}
+
+.block-btn:active
+{
+    background-color: #580707;
+    transform: scale(0.96);
+
+}
+
+.unblock-btn:hover
+{
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+    transform: translateY(-2px);
+}
+
+.unblock-btn:active
+{
+    background-color: #580707;
+    transform: scale(0.96);
+
+}
+
+.unblock-btn
+{
+    background-color: #ff9901;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    outline: none;
+    outline: 0;
+    text-align: center;
+    transform: translateY(0);
+    transition: transform 150ms, box-shadow 150ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.block-btn
+{
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    outline: none;
+    outline: 0;
+    text-align: center;
+    transform: translateY(0);
+    transition: transform 150ms, box-shadow 150ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.close-btn 
+{
+    position: absolute;
+    top: 10px; /* Distance depuis le haut */
+    right: 10px; /* Distance depuis la droite */
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #333;
+}
