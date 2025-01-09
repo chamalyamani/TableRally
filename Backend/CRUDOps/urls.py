@@ -24,6 +24,8 @@ urlpatterns = [
     path('search/', UserSearchView.as_view(), name='user_search'),
     path('password-reset-template/', password_reset_template, name='password_reset_template'),
     path('anonymize/', AnonymizeUserDataView.as_view(), name='anonymize-user'),
+    path('unanonymize/', UnanonymizeUserDataView.as_view(), name='unanonymize-user'),
+    path('anonymization-status/', CheckAnonymizationStatusView.as_view(), name='anonymization-status-user'),
     path('download-data/', DownloadUserDataView.as_view(), name='download-user-data'),
 
 ]

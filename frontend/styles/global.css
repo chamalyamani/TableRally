@@ -1,5 +1,29 @@
-.color-overlay 
-{
+
+:root {
+  --primary-color: #013F38;
+  --secondary-color: #027267;
+  --accent-color: #00766A;
+  --background-color: #3DBDA7;
+  --text-color: #3D6975;
+  --border-color: #044D46;
+  --shadow-color: #2C8C87;
+  /* --my-gradient: linear-gradient(60deg, rgba(1,63,56,1) 0%, rgba(2,114,103,1) 16%, rgba(0,118,106,1) 25%, rgba(61,189,167,1) 40%, rgba(4,77,70,1) 73%); */
+  --si-bar: linear-gradient(212deg, rgba(61,105,117,1) 67%, rgba(91,140,153,1) 78%, rgba(61,105,117,1) 89%);    
+  --win-lose-lcl: linear-gradient(212deg, rgba(61,105,117,1) 67%, rgba(91,140,153,1) 78%, rgba(61,105,117,1) 89%);    
+  
+  /*vars for fonts and text*/
+  --font-family-primary: 'Poppins', sans-serif;
+  --font-size-base-big: 3vw;
+  --font-size-base-large: 2.5vw;
+  --font-size-base-small: 1vw;
+  --font-size-base-medium: 1.5vw;
+  /* clamp(1.4em , 12vw, 1.5em) */
+  --font-weight-semibold: 600;
+  --line-height-base: 21px;
+  --text-align-default: left;
+}
+
+.color-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -127,6 +151,37 @@ body.body-dashboard {
 .toast.active {
   transform: translateX(0%);
 }
+
+/* this class will be for the invite pop up, accept or deni */
+.invtPopup{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.invtPopup .acceptBtn{
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #00766a;
+}
+.invtPopup .rejectBtn{
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #b46c00;
+}
+/* end */
+
+
+
+
+
 
 .toast .toast-content {
   display: flex;

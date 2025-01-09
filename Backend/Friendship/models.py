@@ -5,42 +5,28 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Friendship(models.Model):
-    REQUEST_STATUS_CHOICES = [
-        ('P', 'Pending'),
+    STATUS_CHOICES = [
         ('A', 'Accepted'),
-        ('R', 'Rejected'),
+        ('P', 'Pending'),
+        ('B', 'Blocked'),
+        ('R', 'Rejected'),  # For rejected requests
     ]
-    
-    from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=REQUEST_STATUS_CHOICES, default='P')
-    created_at = models.DateTimeField(default=timezone.now)
-    
-    class Meta:
-        unique_together = ('from_user', 'to_user')  # Prevent duplicate requests
 
-    def __str__(self):
-        return f"{self.from_user} -> {self.to_user} ({self.status})"
-
-
-class Block(models.Model):
-    blocker = models.ForeignKey(User, related_name='blocker', on_delete=models.CASCADE)
-    blocked = models.ForeignKey(User, related_name='blocked', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
+    from_user = models.ForeignKey(User, related_name='friendship_requests_sent', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='friendship_requests_received', on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('blocker', 'blocked')
+        unique_together = ('from_user', 'to_user')
 
     def __str__(self):
-        return f"{self.blocker} blocked {self.blocked}"
+        return f"{self.from_user} -> {self.to_user} : {self.get_status_display()}"
 
 class Notification(models.Model):
     RECIPIENT_ACTIONS = [
         ('FRIEND_REQUEST_SENT', 'sent you a friend request'),
         ('FRIEND_REQUEST_ACCEPTED', 'accepted your friend request'),
-        # ('FRIEND_REQUEST_REJECTED', 'Reject your friend request'),
-        # ('FRIEND_REMOVED', 'Removed your friend request'),
-        # ('FRIEND_REQUEST_CANCELED', 'Friend Request Canceled'),
     ]
 
     recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)

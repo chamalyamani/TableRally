@@ -8,14 +8,26 @@ from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
 from channels.security.websocket import AllowedHostsOriginValidator
 from tic_tac_toe.routing import tic_websocket_patterns
 
+from tic_tac_toe.tokauth import TokenAuthMiddlewareStack
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tripleT.settings')
 
 # application = get_asgi_application()
 
 
-application = ProtocolTypeRouter({
-    "http" : get_asgi_application(),
-    "websocket" : URLRouter(
-        tic_websocket_patterns
-    )
-})
+application = ProtocolTypeRouter(
+    {
+        "http": get_asgi_application(),
+        "websocket": AllowedHostsOriginValidator(
+            TokenAuthMiddlewareStack(URLRouter(tic_websocket_patterns)),
+        )
+        
+    }
+)
+
+# application = ProtocolTypeRouter({
+#     "http" : get_asgi_application(),
+#     "websocket" : URLRouter(
+#         tic_websocket_patterns
+#     )
+# })

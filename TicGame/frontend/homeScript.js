@@ -1,14 +1,40 @@
 
 
-let btn_play = `<button class="play_btn" onclick="playgame()">PLAY</button>`
 let matchingSocket = null
+let gg = null
+
+
+function back_to_home() {
+    
+    // console.log(principal_html)
+    let changeable_div = document.getElementById('contIdx')
+    changeable_div.innerHTML = ""
+    changeable_div.innerHTML = principal_html
+    gg = null
+    fetchGameData();
+    // location.reload()
+    // matchingSocket = null
+    // gg = null
+    // Update the DOM with the fetched HTML content
+    // document.open()
+    // document.write(html)
+    // document.close()
+}
 
 class Player {
-    constructor(scoreElementId, armElementId, charElementId, turnElementId) {
+    constructor(scoreElementId, armElementId, charElementId, turnElementId, nameElementId, imgElementId) {
         this.scoreElement = document.getElementById(scoreElementId);
         this.armElement = document.getElementById(armElementId);
         this.charElement = document.getElementById(charElementId);
         this.turnElement = document.getElementById(turnElementId);
+        this.nameElement = document.getElementById(nameElementId);
+        this.imgElement = document.getElementById(imgElementId);
+    }
+    setPlayerName(n) {
+        this.nameElement.textContent = n;
+    }
+    setPlayerImg(i) {
+        this.imgElement.src = i;
     }
     updatePlayerTurn(t) {
         
@@ -40,22 +66,9 @@ class Player {
     }
 }
 
-
 class t3 {
     constructor() {
         
-      this.gameOver = `
-      <div id="contIdx" class="container df_fdc_jcc_aic">
-        <div class="winloss" id="losswin">
-            <h1 id="msg"></h1>
-            <h2>Number of Games Played: <span id="nbofgames"></span></h1>
-            <h3>You Scored : <span id="winScore"></span></h1>
-            <h3>He Scored : <span id="hescore"></span></h1>
-            <button class="button" id="quitBtn">OK</button>
-        </div>
-        </div>
-      `
-        // this.matchingSocket = null;
         this.currMsg = null;
         this.zhisP = null
         this.thatP = null
@@ -66,7 +79,7 @@ class t3 {
         this.cont = document.getElementById("contIdx")
         this.winloss = document.getElementById("losswin")
         this.turnShow = document.getElementById("turnShow")
-        this.first_to = document.querySelector('input[name="game-choice"]:checked').value;
+        
         // this.wins = 0;
         this.board = ""
         this.gType = 0
@@ -78,118 +91,55 @@ class t3 {
         // this.functionMap.set("start_game", this.start_game.bind(this))
         this.functionMap.set("in_game", this.in_game.bind(this))
         this.functionMap.set("windrawloose", this.windrawloose.bind(this))
-        this.functionMap.set("partyResult", this.partyRes.bind(this))
-        // this.functionMap.set("inform", this.inform.bind(this))
-        // this.functionMap.set("loose", this.loose.bind(this))
-        // this.functionMap.set("draw", this.loose.bind(this))
+        this.functionMap.set("error_handle", this.err_msg.bind(this))
+        this.functionMap.set("opponentLeft", this.oppLeftGame.bind(this))
+
         // this.setupDataBoard.bind(this)
         // this.updateDataBoard.bind(this)
         // this.playAgain.bind(this)
         this.quit.bind(this)
         this.lmClickHandler = this.lmClick.bind(this);
     }
-  
-    generateHtmlBoard(ina_game){
-        const cellPercentage = (ina_game === 3) ? '30%' : '15%';
-        const totalCells = ina_game * ina_game;
-        let boardCells = "";
-        for (let i = 0; i < totalCells; i++) {
-            boardCells += `<div class="cell disabled" id="cell-${i}"></div>`;
-        }
-        let htmlBoard = `
-        <div id="contIdx" class="container df_fdc_jcc_aic">
-      <div id="board_holder_id" class="board_holder df_fdc_jcsa_aic">
-      <div class="turnShowDiv df_fdc_jcc_aic">
-          <h1 class="turnShow df_jcc_aic" id="turnShow">
-          </h1>
-      </div>
-      <div class="" id="gameTimer">
-        <h1 class="df_jcc_aic">30s</h1>
-        <div class="loaderTimer"></div>
-      </div>
-      <div class="board_head">
-      <div class="fp df_fdc_jcsa_aic">
-        <div class="pl_profil df_fdc_jcc_aic" id="fp_profil">
-          <img src="" alt="" id="thisPlayer_img">
-          <h5 id="thisPlayer_name">abbass</h5>
-        </div>
-        <div class="turnToggle df_jcc_aic" id="turnToggleZis">
-            <div class="inTurnTog">
-                <div class="fron">✔</div>
-                <div class="bac">✘</div>
-            </div>
-        </div>  
-        <div class="score_win df_fdc_jcc_aic">
-          <h1>LOT</h1>
-          <h3 id="thisPlayer_score">0</h3>
-        </div>
-        <div class="sla7 df_fdc_jcc_aic" id="fpArm">
-          <h1 id="thisPlayer_arm"></h1>
-          <h2 id="thisPlayer_char"></h2>
-        </div>
-      </div>
-      <div class="board" style="
-      grid-template-columns: repeat(${ina_game}, ${cellPercentage});
-      grid-template-rows: repeat(${ina_game}, ${cellPercentage});
-      ">
-      ${boardCells}
-      </div>
-      <div id="popup" class="">
-      </div>
-      <div class="sp df_fdc_jcsa_aic">
-        <div class="pl_profil df_fdc_jcc_aic" id="sp_profil">
-          <img src="" alt="" id="opponent_img">
-          <h5 id="opponent_name">hmida</h5>
-        </div>
-        <div class="turnToggle df_jcc_aic" id="turnToggleThat">
-            <div class="inTurnTog">
-                <div class="fron">✔</div>
-                <div class="bac">✘</div>
-            </div>
-        </div>    
-        <div class="score_win df_fdc_jcc_aic">
-          <h1>LOT</h1>
-          <h3 id="opponent_score">0</h3>
-        </div>
-          <div class="sla7 df_fdc_jcc_aic" id="spArm">
-            <h1 id="opponent_arm"></h1>
-            <h2 id="opponent_char"></h2>
-          </div>
-        </div>
-      </div>
-      
-      <button id="restart-button" onclick="reset()">Quit</button>
-      </div>
-      </div>`
-        return htmlBoard
-    }
-    // inform(){
-    //     // this.winloss = document.getElementById("losswin")
-    //     let announce = document.getElementById("msg")
-    //     announce.innerHTML = ""
-    //     announce.innerHTML = this.currMsg["msg"]
-    //     console.log("inform : ", announce)
-    // }
 
-    async partyRes(){
-        let pop = document.getElementById("popup")
-        if ( this.currMsg["msg"] )
-        {
-            this.turnShow.innerHTML = "You Won !"
-            await this.showWinMessage("You Won !")
-        }
-        else
-        {
-            this.turnShow.innerHTML = "You Lost !"
-            await this.showWinMessage("You Lost !")
-        }
-        // this.zhisP.updatePlayerScore(this.currMsg["myscore"])
-        // this.thatP.updatePlayerScore(this.currMsg["hiscore"])
-        // let score = this.currMsg["score"]
-        // this.wins+= score
-        // update score players
-        // switch to display Who won 
-        // 
+    oppLeftGame(){
+        // this.winloss = document.getElementById("losswin")
+        // let announce = document.getElementById("msg")
+        const winMsg = document.getElementById("popup");
+        winMsg.textContent = ""
+        winMsg.textContent = this.currMsg["message"]
+        winMsg.style.color = "red"
+        winMsg.style.display = "flex"; 
+        setTimeout(() => {
+            this.removeClick()
+            // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+            //     matchingSocket.close(1000)
+            // location.reload()
+        }, 1000);
+        // console.log("inform : ", announce)
+    }
+
+    err_msg(){
+        let pop = document.getElementById("err_pop")
+        const closeCode = this.currMsg["code"];
+        const closeReason = this.currMsg["msg"];
+        console.log("hna f err_msg handler : ", closeCode, "  :  ", closeReason)
+        // Update the content of the popup
+        pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
+    
+        // Make the popup visible with animation
+        pop.style.transition = "top 0.5s ease";
+        pop.style.top = "0vh";
+    
+        // Hide the popup after a delay
+        setTimeout(() => {
+            pop.style.top = "-15vh";
+    
+            // Clear the text after hiding for a cleaner reset
+            setTimeout(() => {
+                pop.textContent = "";
+            }, 500); // Matches the transition time
+        }, 2000); // Keep the popup visible for 3 seconds
+        // console.log('onclose : ', event.code, "  :  ", event.reason)
     }
 
     async showWinMessage(mesg) {
@@ -235,102 +185,24 @@ class t3 {
                 resolve(); // Resolve the promise after the animation completes
             }, 2000); // Match the animation duration
         });
-    
-        // setTimeout(() => {
-        //     console.log("give the none back")
-        //     this.currMsg["combo"].forEach(index => {
-        //         const cell = this.cells[index];
-        //         cell.classList.remove("win-highlight");
-        //     });
-        //     winMsg.style.display = "none";
-        //     winMsg.classList.remove("win", "lose", "draw")
-        // }, 2000);
     }
     waiting(){
         let counter = 1
         document.getElementById("id_dynamic").style.opacity = "0"
         setTimeout(() => {
-            this.cont.innerHTML = `
-            <div class="wait" id="id_wait">
-                <div class="cube-container df_jcc_aic">
-                    <div class="cube">
-                        <div class="face front">
-                            <div class="boardAnim">
-                                <div>X</div><div>O</div><div>X</div>
-                                <div>O</div><div>X</div><div>O</div>
-                                <div>X</div><div>X</div><div>X</div>
-                            </div>
-                        </div>
-                        <div class="face back">
-                            <div class="boardAnim">
-                                <div>O</div><div>O</div><div>O</div>
-                                <div>X</div><div>O</div><div>X</div>
-                                <div>X</div><div>O</div><div>X</div>
-                            </div>
-                        </div>
-                        <div class="face left">
-                            <div class="boardAnim">
-                                <div>X</div><div>X</div><div>O</div>
-                                <div>O</div><div>O</div><div>O</div>
-                                <div>X</div><div>X</div><div>O</div>
-                            </div>
-                        </div>
-                        <div class="face right">
-                            <div class="boardAnim">
-                                <div>O</div><div>X</div><div>O</div>
-                                <div>X</div><div>X</div><div>X</div>
-                                <div>O</div><div>O</div><div>O</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h1>Matching with a random player</h1>
-            </div>
-        `
+            this.cont.innerHTML = wait_html
             setTimeout(() => {
             document.getElementById("id_wait").style.marginLeft = "0%"
             }, 10)
         }, 50)
 
-        
-
-        // const intervalId = setInterval(() => {
-        //     counter++; // Increment the counter
-            
-        //     if (counter > 30) { // Check if the counter has reached 20
-        //         clearInterval(intervalId); // Stop the timer && must re
-        //         // location.reload()
-        //         // matchingSocket = null
-        //         // gg = null
-        //     }
-        // }, 1000);
     }
-
-    // playAgain()
-    // {
-    //     console.log("gg you click on play again")
-    //     playAgainBtn.style.backgroundColor = 'green'
-    //     const msg = {
-    //         type : "playAgain",
-    //         // player : this.pSign,
-    //         // theBoard : this.board
-    //     }
-    //     matchingSocket.send(JSON.stringify(msg))
-    // }
-    
-    quit()
+ 
+    async quit()
     {
-        // console.log(this)
-        // quitGameBtn.style.backgroundColor = 'red'
-        const msg = {
-            type : "quitGame",
-            // player : this.pSign,
-            // theBoard : this.board
-        }
-        matchingSocket.send(JSON.stringify(msg))
-
-
-        // console.log("hello world")
+        // change it with fetch + animation
+        back_to_home()
+        // location.reload()
     }
     
     async windrawloose(){
@@ -348,10 +220,11 @@ class t3 {
         await this.showWinMessage(this.currMsg["message"])
         // this.zhisP.updatePlayerScore(this.currMsg["wins"])
         this.cont = document.getElementById("contIdx")
-        this.cont.outerHTML = this.gameOver;
+        this.cont.innerHTML = gOver_html;
 
         // document.querySelector('.winloss').firstChild.textContent = this.currMsg["msg"]
-        document.querySelector('.winloss').style.display = 'flex';
+        let winDiv = document.querySelector('.winloss')
+        winDiv.style.display = 'flex';
         // document.getElementById("turnShow").innerText = this.currMsg["msg"]
         // let playAgainBtn = document.getElementById('playAgainBtn')
         let quitGameBtn = document.getElementById('quitBtn')
@@ -362,9 +235,9 @@ class t3 {
         // console.log("Ha ch9amto : ",this.currMsg["wins"])
         msgRes.textContent = this.currMsg["msg"]
         if ( this.currMsg["message"] )
-            msgRes.style.color = "green"
+            winDiv.style.background = "rgba(1, 140, 90, 0.5)"
         else
-            msgRes.style.color = "red"
+            winDiv.style.background = "rgba(200, 50, 50, 0.5)"
         winScore.textContent = this.currMsg["wins"]
         nb_games.textContent = this.currMsg["nbGames"]
         hescore.textContent = this.currMsg["opwins"]
@@ -406,9 +279,13 @@ class t3 {
     /** problem after re_setup f ft4 3la wed had update board ma khdamch o hta reset dl board */
     async re_setup(){
         this.board = this.currMsg["board"]
-        await this.removeClick()
+        // alert(".")
+        console.log("getting daba inside re_setup : ")
         this.updateBoard()
+        await this.removeClick()
+        // setTimeout(() => {
         await this.showWinMessage(this.currMsg["reslt"])
+        // }, 1000)
         this.board = Array(this.gType**2).fill('.');
         this.formatCells()
         this.setupDataBoard(this.currMsg["wins"],this.currMsg["opwins"])
@@ -431,7 +308,7 @@ class t3 {
         this.gType = this.currMsg["ina_game"]
         // console.log(this.generateHtmlBoard(this.gType))
         // return
-        this.cont.outerHTML = this.generateHtmlBoard(this.gType);
+        this.cont.outerHTML = generateHtmlBoard(this.gType);
         let bHolderShow = document.getElementById("board_holder_id")
         setTimeout(() => {
             bHolderShow.style.marginRight = "0%"
@@ -445,9 +322,14 @@ class t3 {
         this.turnShow = document.getElementById("turnShow")
         // this.turnShow.style.marginTop = "0%"
   
-        this.zhisP = new Player("thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis");
-        this.thatP = new Player("opponent_score", "opponent_arm", "opponent_char", "turnToggleThat");
+        this.zhisP = new Player("thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis", "thisPlayer_name", "thisPlayer_img");
+        this.thatP = new Player("opponent_score", "opponent_arm", "opponent_char", "turnToggleThat", "opponent_name", "opponent_img");
         
+        this.zhisP.setPlayerName(this.currMsg["me"]["fname"])
+        this.zhisP.setPlayerImg(this.currMsg["me"]["pic"])
+        this.thatP.setPlayerName(this.currMsg["him"]["fname"])
+        this.thatP.setPlayerImg(this.currMsg["him"]["pic"])
+
         this.setupDataBoard(0,0)
         // this.turnShow.style.marginTop = "100%"
         this.turnShow.textContent = this.zhisP.turn ? "Your Turn" : "Opponent's Turn"
@@ -473,22 +355,9 @@ class t3 {
     }
 
     updateDataBoard(){
-        
-        // let thisPlayerTurn = document.getElementById("turnToggleZis")
-
-        
-        // let opponentTurn = document.getElementById("turnToggleThat")
-
-
-        // thisPlayerTurn.style.backgroundColor = this.currMsg["turn"] ? "green" : "red"
-        // opponentTurn.style.backgroundColor = this.currMsg["turn"] ? "red" : "green"
         this.zhisP.updatePlayerTurn(this.currMsg["turn"])
         this.thatP.updatePlayerTurn(!this.currMsg["turn"])
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "100%"
         this.turnShow.textContent = this.currMsg["turn"] ? "Your Turn" : "Opponent's Turn"
-        // this.turnShow.classList.toggle("tshowanim")
-        // this.turnShow.style.marginTop = "0%"
     }
 
     async in_game(){
@@ -504,94 +373,108 @@ class t3 {
     }
 }
 
-function playgame () {
-    if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-        return
-    matchingSocket = new WebSocket('/ws/play/')
-    // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
-    // and the tail size etc ....
-    let gg = new t3()
-    matchingSocket.onopen = async function () {
-        alert('tconnecctaa');
-        const msg = {
-            "type" : "ft_classic",
-            "first_to": gg.first_to
+function getAccessToken() {
+    return fetch('/auth/get-access-token/', {
+        method: 'GET',
+        credentials: 'include'  // Include cookies in the request
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access_token) {
+            return data.access_token;
+        } else {
+            throw new Error('Access token not found');
         }
-        matchingSocket.send(JSON.stringify(msg));
-    }
-    // console.log("WHAT ?")
-    matchingSocket.onmessage = async function(event)
-    {
-        // console.log("ON MESSAGE")
-        gg.currMsg = JSON.parse(event.data)
-        console.log("what i got : ", gg.currMsg.type)
-        console.log("all : ", gg.currMsg)
-        if (gg.functionMap.has(gg.currMsg.type)){
-            // console.log("in IF WINDRaw")
-            await gg.functionMap.get(gg.currMsg.type)()
-        }
-        else
-        {
-            console.log("wayliiiiii  else ??")
-        }
-    }
-    matchingSocket.onclose = async function(event)
-    {
-        // let contIDX = document.getElementById("contIdx")
-        // contIDX.innerHTML = ""
-        // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
-        // console.log("by by : ",gg.cont)
-        alert('gggggg')
-        // location.reload()
-        matchingSocket = null
-        gg = null
-
-        // console.log("by by : ",gg)
-    }
+    })
+    .catch(error => {
+        console.error('Error fetching access token:', error);
+        throw error;
+    });
 }
 
-function playFt4 () {
+// we said here i will take a string to define the type of request 
+// if it comes from friend invite 
+// or from the play button random
+async function playgame (gameType) {
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
-    matchingSocket = new WebSocket('/ws/play/')
+    let tok;
+    await getAccessToken()
+        .then(accessToken => {
+            tok = accessToken;
+        })
+        .catch(error => {
+            console.error('Error getting access token:', error);
+            // alert('Error getting access token', error.message);
+        }); 
+    
+    let first_to = document.querySelector('input[name="game-choice"]:checked').value;
+    if (!first_to) {
+        console.error("No game choice selected.");
+        return;
+    }
+    try {
+        matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`);
+    } catch (error) {
+        console.error("Error creating WebSocket connection:", error);
+        return;
+    }
     // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
     // and the tail size etc ....
-    let gg = new t3()
     matchingSocket.onopen = async function () {
+        // alert('tconnecctaa');
+        // this on open msg sent is for the default, but for the friend game
+        // it must be another msg that will hold the username of the friend
         const msg = {
-            "type" : "ft4",
-            "first_to": gg.first_to
+            "type" : gameType,
+            "first_to": first_to
         }
         matchingSocket.send(JSON.stringify(msg));
+        
+        gg = new t3()
     }
-    // console.log("WHAT ?")
-    matchingSocket.onmessage = async function(event)
-    {
-        // console.log("ON MESSAGE")
+    matchingSocket.onmessage = async function(event){
         gg.currMsg = JSON.parse(event.data)
         console.log("what i got : ", gg.currMsg.type)
         console.log("all : ", gg.currMsg)
-        if (gg.functionMap.has(gg.currMsg.type)){
-            // console.log("in IF WINDRaw")
+        if (gg.functionMap.has(gg.currMsg.type))
             await gg.functionMap.get(gg.currMsg.type)()
-        }
-        else
-        {
-            console.log("wayliiiiii  else ??")
-        }
     }
-    matchingSocket.onclose = async function(event)
-    {
-        // let contIDX = document.getElementById("contIdx")
-        // contIDX.innerHTML = ""
-        // contIDX.innerHTML = `<button class="play_btn" onclick="playgame()">PLAY</button>`
-        // console.log("by by : ",gg.cont)
-        location.reload()
+    matchingSocket.onerror = (event) => {
+        console.log('this is matchingsocket.onerror function')
         matchingSocket = null
-        gg = null
-
-        // console.log("by by : ",gg)
+        // gg = null
     }
+    matchingSocket.onclose = (event) => {
+        // 4010 is the end of game close, not back to home but to the gameover
+        // then he must click [OK] to go back to home
+        if (event.code != 4010)
+            back_to_home()   
+        matchingSocket = null
+        // should not be null because there is the button OK to quit the gameover there will call the 
+        // back home and free gg
+        // gg = null
+        event.wasClean = true ? console.log("clean") : console.log("not clean")
+    }
+    // console.log("WHAT ?")
+}
+
+async function playClassic () {
+    await playgame("ft_classic")
+}
+
+async function playFt4 () {
+    await playgame("ft4")
+}
+
+function leaveGame() {
+    const msg = { type : "leaveGame" }
+    matchingSocket.send(JSON.stringify(msg))
+
+    // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+    //     matchingSocket.close(1000)
+    // console.log("hello world")
+    // location.reload();
 }
 
 
@@ -634,7 +517,9 @@ t3.prototype.lmClick = function (ev) {
 }
 
 t3.prototype.updateBoard = function () {
+    console.log("rah dkheeeeeelt hna ")
     this.cells.forEach( (lm, i) => {
+        console.log("o hta hnaaaaaaaaaaaaaa")
         if( lm && this.board[i] != "." && lm.innerHTML.trim() === ""){
             let g = this.board[i]
             let p = document.createElement("p")
@@ -646,4 +531,31 @@ t3.prototype.updateBoard = function () {
     })
 }
 
+// -----------------------> must fetch data here using token JWT instead of ID
+function fetchGameData(){
+
+    let list = document.getElementById("listOfLGID")
+    getAccessToken()
+            .then(accessToken => {
+                console.log("hhhhhhhhhhhhhhhhhhhhhhhh :", accessToken)
+                return fetch('/gamesByWinId/', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}`}
+                })
+            })
+            .then(response => response.json())
+            .then(data => { console.log(data); 
+                data.forEach( game => {
+                    // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ before : ', game)
+                    gameUnit(game, list)
+                })
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                list.textContent = "Error fetching data ! Please try to refresh the page !"
+                // re-call the fetchGameData
+            });
+}
+
+fetchGameData()
 // window.location.host

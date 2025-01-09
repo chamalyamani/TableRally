@@ -12,6 +12,7 @@
     <!-- <link rel="stylesheet" href="bootstrap-icons.css"> -->
 </head>
 <body>
+    <div id="err_pop">gg</div>
     <div class="motherDiv">
         <!-- <div class="sideBar" id="sideBar">
 
@@ -51,37 +52,15 @@
                             </div>
                         </div>
                         <div class="btnsPlay">
-                          <button class="play_btn" onclick="playgame()">PLAY 3/3 Classic</button>
+                          <button class="play_btn" onclick="playClassic()">PLAY 3/3 Classic</button>
                           <button class="play_btn" onclick="playFt4()">PLAY 5/5 FT4</button>
                         </div>
-                          <!-- <button>3</button>
-                          <button>5</button>
-                          <button>7</button> -->
                       </div>
                     </div>
-                    <!-- <div id="invFriend">
-                      <h3>Invite Friend</h3>
-                      <div class="friendList">
-                        <div class="unitFriend">
-                          <div class="picUF"></div>
-                          <h4 class="nameUF">Reda</h4>
-                        </div>
-                        <div class="unitFriend">
-                          <div class="picUF"></div>
-                          <h4 class="nameUF">Reda</h4>
-                        </div>
-                        <div class="unitFriend">
-                          <div class="picUF"></div>
-                          <h4 class="nameUF">Reda</h4>
-                        </div>
-                        
-                       
-                      </div>
-                    </div> -->
                   </div>
                   <div class="latestGames">
                     <h2>Latest Tic-Tac-Toe Games</h2>
-                    <div class="listOfLG">
+                    <div class="listOfLG" id="listOfLGID">
                         
                     </div>
                   </div>
@@ -122,9 +101,9 @@
         </div>
     </div>
 
+    <script src="data.js"></script>
     <script src="homeScript.js"></script>
     <script src="lclScript.js"></script>
-    <!-- <script src="data.js"></script> -->
     <!-- <script src="script.js"></script> -->
     <div id="myscripts">
 

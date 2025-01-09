@@ -103,14 +103,14 @@ function MoveBall() {
 
 function MovePlayer() {
 
-    if (keys.up == true && player.y + py > player.y - (canvas.height / 2) + paddleHeight / 2)
-        py -= 5;
-    if (keys.down == true && player.y + py < player.y + (canvas.height / 2) - paddleHeight / 2)
-        py += 5
-    if (keys.w == true && ai.y + aiy < ai.y + (canvas.height / 2) - paddleHeight / 2)
-        aiy += 5;
-    if (keys.s == true && ai.y + aiy > ai.y - (canvas.height / 2) + paddleHeight / 2)
+    if (keys.up == true && player.y + aiy > player.y - (canvas.height / 2) + paddleHeight / 2)
         aiy -= 5;
+    if (keys.down == true && player.y + aiy < player.y + (canvas.height / 2) - paddleHeight / 2)
+        aiy += 5
+    if (keys.w == true && ai.y + py < ai.y + (canvas.height / 2) - paddleHeight / 2)
+        py += 5;
+    if (keys.s == true && ai.y + py > ai.y - (canvas.height / 2) + paddleHeight / 2)
+        py -= 5;
 }
 
 

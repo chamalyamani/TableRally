@@ -61,6 +61,13 @@
     border-bottom: 1px solid gray;
     transition: background-color 0.3s ease;
     gap: 10px;
+    pointer-events: auto;
+}
+
+.dropdown-item:focus,
+.dropdown-item:active {
+    outline: none;
+    pointer-events: auto;
 }
 
 .dropdown-item:hover 

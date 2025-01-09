@@ -9,8 +9,9 @@ in_gaming   = "in_game"
 game_reslt  = "windrawloose"
 wait4Match  = "waiting"
 rePlay_req  = "inform"
-party_reslt = "partyResult"
+# party_reslt = "partyResult"
 re_setup = "re_setup"
+err_handle = "error_handle"
 T_ON    = True
 A_ON    = True
 T_OFF   = False
@@ -19,16 +20,12 @@ A_OFF   = False
 X_CHAR = 'x'
 O_CHAR = 'o'
 
-# win_combo = [
-#     [0, 1, 2],  # Row 1
-#     [3, 4, 5],  # Row 2
-#     [6, 7, 8],  # Row 3
-#     [0, 3, 6],  # Column 1
-#     [1, 4, 7],  # Column 2
-#     [2, 5, 8],  # Column 3
-#     [0, 4, 8],  # Diagonal 1
-#     [2, 4, 6]   # Diagonal 2
-# ]
+expected_types = ["ft_classic", "ft4", "leaveGame", "in_game"]
+# codeToMsg = {
+#     4001 : "You are not athenticated !",
+#     4002 : "Parse error !",
+#     4003 : "You are already in waiting list !",
+# }
 
 # game mode groups
 grp_m = deque()
@@ -42,11 +39,13 @@ ft4_m3 = deque()
 ft4_m5 = deque()
 ft4_m7 = deque()
 
+friends_grp = deque()
+
 game_box = {}
-ft4_game_box = {}
+# ft4_game_box = {}
 
 player_game_map = {} # map the player to the game
-ft4_player_game_map = {} # map the player to the game
+# ft4_player_game_map = {} # map the player to the game
 # grp_m2 = deque()
 # grp_m3 = deque()
 msgsDic = {
@@ -60,11 +59,13 @@ msgsDic = {
         "him": {
             "fname": "abbass",
             "lname": "lamba",
+            "pic"  : "",
             "lvl"  : 0,
         },
         "me": {
             "fname": "hmida",
             "lname": "lourim",
+            "pic"  : "",
             "lvl"  : 0,
         }
     },
@@ -96,16 +97,12 @@ msgsDic = {
         "board"     : [],
         "combo"     : []
     },
-    party_reslt :   {
-        "type"      : "partyResult",
-        "player"    : "",
-        "msg"       : ""
-    },
-    # rePlay_req        :   {
-    #     "type"  : "inform",
-    #     "msg"   : "Let's Play again !"
-    # }
-    # ,
+    err_handle        :   {
+        "type"  : "error_handle",
+        "code"   : 0,
+        "msg"   : ""
+    }
+    ,
     wait4Match       :   {
         "type": "waiting",
         "message": "en couuuurs. ."
@@ -114,9 +111,10 @@ msgsDic = {
 
 class player:
     def __init__(self, name, bSize):
-        self.channel_name = name
+        self.channel_name = name[1]
         self.ina_game = ["",1]
         self.game_id = ''
+        self.user_id = name[0]
         self.is_inGame = False
         self._char = ''
         self._turn = T_OFF
@@ -125,30 +123,33 @@ class player:
         self.lvl = 0.55
         self.nbGames = 0
         self._wins = 0
-        # self.again = A_OFF
+        # self.again = A_OFF 
         self._res = 'Draw Match !'
         self.winBoards = []
-        self.board_type = bSize
+        self.board_type = bSize[0]
         self._board = copy.deepcopy(self.init_board())
 
         self.setup  = copy.deepcopy(msgsDic[game_setup])
+        self.err  = copy.deepcopy(msgsDic[err_handle])
         self.re_setup  = copy.deepcopy(msgsDic[re_setup])
         self.inGame = copy.deepcopy(msgsDic[in_gaming])
         self.gameResult = copy.deepcopy(msgsDic[game_reslt])
-        self.partyResult = copy.deepcopy(msgsDic[party_reslt])
+        # self.partyResult = copy.deepcopy(msgsDic[party_reslt])
         # self.playAgainMsg   = copy.deepcopy(msgsDic[rePlay_req])
         self.waitingMsg = copy.deepcopy(msgsDic[wait4Match])
     
     # Update board for all message dictionaries
 
-
-        if bSize == "ft4":
+        if bSize[0] == "ft4":
             self.setup["ina_game"] = 5
+            # print("bSize ::: ",bSize)
         else:
             self.setup["ina_game"] = 3
+        # print("khrejt b hadi  ",self.setup["ina_game"])
             
 
         self.setup["board"] = copy.deepcopy(self.init_board())
+        # print("setup board inside class : ",self.setup["board"])
         self.re_setup["board"] = copy.deepcopy(self.init_board())
         self.inGame["board"] = copy.deepcopy(self.init_board())
         self.gameResult["board"] = copy.deepcopy(self.init_board())
@@ -164,7 +165,7 @@ class player:
     @wins.setter
     def wins(self, value):
         self._wins = value
-        self.partyResult["myscore"] = value
+        # self.partyResult["myscore"] = value
         self.inGame["wins"] = value
         self.re_setup["wins"] = value
         # self.setup["wins"] = value
@@ -216,3 +217,6 @@ class player:
         # -----------------------------------------------------------------------------------------
         # -----------------------------------------------------------------------------------------
 
+        # import export js for sending wherever the user is
+        # new general socket
+        # new js static file that manages the notifications

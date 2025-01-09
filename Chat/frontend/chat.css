@@ -6,7 +6,7 @@ body {
     height: 100vh;
     width: 100vw;
     flex-direction: row;
-    overflow: hidden; /* Prevents the outer body from scrolling */
+    overflow: hidden;
 }
 
 .chat-bar {
@@ -506,6 +506,10 @@ body {
     display: none;
 }
 
+.div4 {
+    display: none;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -641,7 +645,7 @@ body {
     font-size: 20px;
 }
 
-.modal-content2, .modal-content3 {
+.modal-content2, .modal-content3, .modal-content4{
     position: fixed;
     top: 50%; 
     left: 50%;
@@ -658,7 +662,7 @@ body {
     /* display: none; */
 }
 
-.modal-button2, .modal-button3 {
+.modal-button2, .modal-button3, .modal-button4 {
     position: absolute;
     cursor: pointer;
     right: 0;
@@ -670,13 +674,13 @@ body {
     color: grey;
 }
 
-.modal-delete-message, .modal-delete-message3 {
+.modal-delete-message, .modal-delete-message3, .modal-delete-message4 {
     font-family: 'Baloo Bhai', cursive;
     font-size: 19.5px;
     text-align: center;
 }
 
-.answer-field, .answer-field3 {
+.answer-field, .answer-field3, .answer-field4 {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
@@ -689,7 +693,7 @@ body {
     align-items: center;
 }
 
-.modal-cancel-button, .modal-cancel-button3 {
+.modal-cancel-button, .modal-cancel-button3, .modal-cancel-button4 {
     margin: 30px;
     font-size: 24px;
     color: white;
@@ -706,12 +710,12 @@ body {
     transition: transform 0.2s ease;
 }
 
-.modal-cancel-button:active, .modal-cancel-button3:active {
+.modal-cancel-button:active, .modal-cancel-button3:active,  .modal-cancel-button4:active{
     transform: translateY(4px);
     border: none;
 }
 
-.modal-delete-button, .modal-block-button {
+.modal-delete-button, .modal-block-button, .modal-pong-button {
     margin: 30px;
     font-size: 24px;
     color: white;
@@ -728,7 +732,7 @@ body {
     transition: transform 0.2s ease;
 }
 
-.modal-delete-button:active, .modal-block-button:active {
+.modal-delete-button:active, .modal-block-button:active, .modal-pong-button:active {
     transform: translateY(4px);
     border: none;
 }
@@ -752,6 +756,30 @@ body {
 }
 
 .modal-unblock-button:active {
+    transform: translateY(4px);
+    border: none;
+}
+
+.modal-tic-button {
+    display: flex;
+    margin: 30px;
+    font-size: 24px;
+    color: white;
+    width: 128px; /* You can keep this or change it to match the other button */
+    height: 40px;
+    background-color: red;
+    font-family: 'Baloo Bhai', cursive;
+    border-radius: 15px;
+    cursor: pointer;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+    margin: 0;
+}
+
+.modal-tic-button:active {
     transform: translateY(4px);
     border: none;
 }
