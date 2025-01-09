@@ -31,7 +31,7 @@
     margin: 0;
     padding: 10px;
     box-sizing: border-box;
-} */
+}
 
 
 .dropdown-item 
@@ -43,7 +43,6 @@
     color: #ffffff;
     cursor: pointer;
     border-radius: 7px;
-
     border-bottom: 1px solid gray;
     transition: background-color 0.3s ease;
     gap: 10px;
@@ -52,6 +51,7 @@
 .dropdown-item:hover 
 {
     background-color: #ffffffa9;
+
 }
 
 /* Image dans l'élément */
@@ -590,6 +590,8 @@ header
     margin-top: 8vh !important;
     /* border: 1px solid yellow; */
     /* background-color: green; */
+    animation: fadeInUp 0.8s ease-in-out;
+
     display: flex;
     overflow: hidden;
     margin: 0;
@@ -597,6 +599,16 @@ header
     z-index:2 ;
 }
 
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
   
 /* Overlay for background blur */
 .overlay {
