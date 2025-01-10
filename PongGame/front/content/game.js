@@ -271,9 +271,9 @@ function attachEventListeners() {
             function waiting() {
                 document.body.innerHTML = `
 				<div id="waiting">
-                	<div class="circle"><img src="${image}"></div>
+                	<div class="circle_pong"><img src="${image}"></div>
                 	<p>vs</p>
-                	<div class="circle"><img src="boy.png"></div>
+                	<div class="circle_pong"><img src="boy.png"></div>
 				</div>
                 `;
             }

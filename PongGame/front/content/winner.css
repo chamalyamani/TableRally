@@ -30,6 +30,7 @@ body {
 #winner img {
     width: 25vw;
     height: 25vw;
+    border-radius: 100px;
 }
 
 button {
