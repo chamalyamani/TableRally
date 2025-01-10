@@ -78,6 +78,7 @@ class ChatPage extends HTMLElement
       this.chats = this.shadowRoot.querySelector('.chats');
       this.blockList = [];
       this.currentUser;
+      this.otherUser;
       this.plusIcon.addEventListener('click', this.addFriend.bind(this));
 
       this.modalButton.addEventListener('click', this.removeBlur.bind(this));
@@ -142,7 +143,7 @@ class ChatPage extends HTMLElement
           this.conversations.innerHTML = '';
           matchingUsers.forEach(user => {
               let newUser = this.conversations.appendChild(user.single.cloneNode(true));
-              convClick(user.conv, newUser);
+              this.convClick(user.conv, newUser);
           })
       })
       
@@ -191,6 +192,19 @@ class ChatPage extends HTMLElement
       /****************************************************************************************************** */
       /****************************************************************************************************** */
     }
+
+    getTicBtn() {
+        return this.shadowRoot.querySelector('.modal-tic-button');
+    }
+
+    getCurrentUser() {
+        return this.currentUser;
+    }
+
+    getOtherUser() {
+        return this.otherUser;
+    }
+
     connectedCallback() 
     {
       updateActiveNav("chat", this.shadowRoot);
@@ -279,6 +293,7 @@ addFriend = () => {
 
 
 startConversation(singleUser, userData) {
+    console.log("user DAAAAAATA:  ", userData);
     singleUser.addEventListener('click', () => {
         console.log(singleUser, userData);
         this.removeBlur();
@@ -296,7 +311,7 @@ startConversation(singleUser, userData) {
             .then(response => response.json())
             .then(data => {
                 console.log('-----------8-----------');
-                console.log(data.id);
+                console.log(data);
                 // console.log('hnnaaa');
                 // console.log(userData.id);
                 // console.log(currentUser);
@@ -378,9 +393,7 @@ convClick(conv, singleConv) {
 }
 
 convClickAction(conv, singleConv) {
-    // console.log(conv);
-    // console.log('--88--');
-    // console.log(singleConv);
+    this.otherUser = conv.conversation;
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         
         this.socket.close(); // Close the current WebSocket
@@ -403,6 +416,7 @@ convClickAction(conv, singleConv) {
 }
 
 listMessages(conv) {
+    // console.log('coooooooovovv ', conv);
     getAccessToken()
         .then(accessToken => {
             return fetch(`/api/chat/${conv.id}/`, {

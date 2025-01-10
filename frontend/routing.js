@@ -13,6 +13,14 @@ const routes =
     settings: "settings-page",
     pingpong : "pingpong-page",
 };
+
+
+let notif_socket = null;
+let sendNotif = null
+const notificationPopup = document.querySelector('.toast');
+let acceptBtn;
+let rejectBtn;
+let timer;
 // const pageInstances = new Map();
 // function save_me (element) {
 //     if (element) {
@@ -60,14 +68,34 @@ function navigateTo(page)
 
     history.pushState({ page }, "", `/${page}`);
     app.innerHTML = `<${routes[page]}></${routes[page]}>`;
+    // console.log("LOOOOOOOOOOOOOOOOOOOOOG page : ",page)
+    // console.log("LOOOOOOOOOOOOOOOOOOOOOG : ",app)
+    
     document.body.className = `body-${page}`;
-
+    
     const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-
+    
     setTimeout(() => 
-    {
-      loader.style.display = "none";
-    }, randomDelay);
+        {
+            loader.style.display = "none";
+        }, randomDelay);
+    if (page === "chat") {
+        const chatPage = document.querySelector('chat-page');
+        if (chatPage) {
+            sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
+            if (sendNotif) {
+                sendNotif.addEventListener('click', () => {
+                    let jsonMessage = {'type': 'game_request_notification', 'receiver_username': chatPage.getOtherUser(), 'sender_id': chatPage.getCurrentUser()}
+                    console.log('Sending notification:', jsonMessage);
+                    console.log('Notification sent');
+                    notif_socket.send(JSON.stringify(jsonMessage));
+                })
+            }
+            console.log("SEND NOTIF: ", sendNotif);
+        } else {
+            console.error("ChatPage element not found!");
+        }
+    }
   } 
   else 
     navigateTo("login");
@@ -111,23 +139,23 @@ function getAccessToken() {
 }
 
 
-let sendNotif = document.querySelector('#sendNotif')
-const notificationPopup = document.querySelector('.toast');
-let acceptBtn;
-let rejectBtn;
-let timer;
+
+
+// let sendNotif = document.querySelector('#sendNotif')
+// let sendNotif = document.querySelector('#chat-template .modal-tic-button') 
+
 // console.log("heeeey : ",notificationPopup);
 
 
 function notifications() {
 //alert('ahh');
-let notif_socket;
 acceptBtn = document.createElement('button');
 rejectBtn = document.createElement('button');
 rejectBtn.classList.add('rejectBtn');
 acceptBtn.classList.add('acceptBtn');
 rejectBtn.textContent = 'Reject';
 acceptBtn.textContent = 'Accept';
+
 rejectBtn.addEventListener('click', () => {
     clearTimeout(timer);
     notificationPopup.classList.remove('active');
@@ -135,18 +163,22 @@ rejectBtn.addEventListener('click', () => {
         notificationPopup.classList.remove('invtPopup');
     }, 500);
 })
+
 acceptBtn.addEventListener('click', () => {
     let jsonMessage = {'type': 'game_resp', 'receiver_id': '2'}
     notif_socket.send(JSON.stringify(jsonMessage));
     // logic game matching 
     // alert('game_resp');
 })
+
 getAccessToken()
 .then(accessToken => {
   notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
   notif_socket.onmessage = ({data}) => {
       const datap = JSON.parse(data);
-      console.log('Message Received is ', datap.type);
+      console.log('Message Received is --------------------', datap);
+    //   console.log('Message receiverd_id :  ', datap.receiver_id);
+    //   console.log('Message sender_id :  ', datap.sender_id);
       // if game response is received
       // game matching logic
       if (datap.type === 'game_resp') {
@@ -169,11 +201,7 @@ getAccessToken()
       }
   }
   notif_socket.onopen = () => {
-      sendNotif.addEventListener('click', () => {
-          let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '1'}
-          notif_socket.send(JSON.stringify(jsonMessage));
-          console.log('Notification sent');
-      })
+      console.log("Heeeeeeeeeeeeeeeeeeeere : socket oppened");
   }
 })
 .catch(error => console.error('Error fetching notifications:', error));

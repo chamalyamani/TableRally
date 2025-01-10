@@ -1,5 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from authentication.models import CustomUser as User
+from channels.db import database_sync_to_async
 
 class   NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -34,21 +36,31 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
             )
 
         elif text_data_dic['type'] == 'game_request_notification':
-            receiver_id = text_data_dic['receiver_id']
+            print(text_data_dic)
+            receiver_id = text_data_dic['receiver_username']
+            try:
+                receiver_id = await database_sync_to_async(User.objects.get)(username=receiver_id)
+            except User.DoesNotExist:
+                print("User does not exist")
+                await self.close()
+            sender_id = text_data_dic['sender_id']
             await self.channel_layer.group_send(
-                f'user_notification_{receiver_id}',
+                f'user_notification_{receiver_id.id}',
                 {
                     'type': 'game_request_notification',
-                    'receiver': receiver_id,
+                    'receiver': receiver_id.id,
+                    'sender': sender_id,
                 }
             )
         elif text_data_dic['type'] == 'game_resp':
             receiver_id = text_data_dic['receiver_id']
+            sender_id = text_data_dic['sender_id']
             await self.channel_layer.group_send(
                 f'user_notification_{receiver_id}',
                 {
                     'type': 'game_resp',
                     'receiver': receiver_id,
+                    'sender': sender_id,
                 }
             )
 
@@ -64,13 +76,16 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(
             {
                 'type': 'game_request_notification',
-                'receiver': event['receiver']
+                'receiver': event['receiver'],
+                'sender': event['sender']
             }
         ))
+        print("sent to the other ........")
     async def game_resp(self, event):
         await self.send(text_data=json.dumps(
             {
                 'type': 'game_resp',
-                'receiver': event['receiver']
+                'receiver': event['receiver'],
+                'sender': event['sender']
             }
         ))

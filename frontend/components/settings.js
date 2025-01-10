@@ -735,25 +735,61 @@ class SettingsPage extends HTMLElement
   }
 
   downloadUserData(token) {
-    fetch('/user/download-data/', {
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const userDataPromise = fetch('/user/download-data/', {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: headers,
     })
-      .then(response => response.blob())
-      .then(blob => {
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        return response.json(); // Assuming the endpoint returns JSON
+      });
+
+    const gameStatePromise = fetch('/gamesByWinId/', {
+      method: 'GET',
+      headers: headers,
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch game state data');
+        }
+        return response.json();
+      });
+
+    Promise.all([userDataPromise, gameStatePromise])
+      .then(([userData, gameState]) => {
+        const combinedData = {
+          userData: userData,
+          gameState: gameState,
+        };
+        const dataStr = JSON.stringify(combinedData, null, 2); // Pretty-print with 2-space indentation
+        const blob = new Blob([dataStr], { type: 'application/json' });
+
         const url = window.URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = 'user_data.json'; // Filename
+        a.download = userData.username + '_data.json';
+
         document.body.appendChild(a);
         a.click();
+
         window.URL.revokeObjectURL(url);
-        globalNotifPopup('Success', "Data downloaded successfully!")
+        document.body.removeChild(a);
+
+        globalNotifPopup('Success', 'Your data downloaded successfully!');
       })
-      .catch(error => globalNotifPopup('Error', error));
+      .catch(error => {
+        // Handle any errors that occurred during the fetches or processing
+        console.error('Error downloading your data:', error);
+        globalNotifPopup('Error', error.message || 'An error occurred while downloading data.');
+      });
   }
 
   async downloadDataProcess()
