@@ -78,6 +78,7 @@ class ChatPage extends HTMLElement
       this.chats = this.shadowRoot.querySelector('.chats');
       this.blockList = [];
       this.currentUser;
+      this.otherUser;
       this.plusIcon.addEventListener('click', this.addFriend.bind(this));
 
       this.modalButton.addEventListener('click', this.removeBlur.bind(this));
@@ -142,7 +143,7 @@ class ChatPage extends HTMLElement
           this.conversations.innerHTML = '';
           matchingUsers.forEach(user => {
               let newUser = this.conversations.appendChild(user.single.cloneNode(true));
-              convClick(user.conv, newUser);
+              this.convClick(user.conv, newUser);
           })
       })
       
@@ -191,6 +192,13 @@ class ChatPage extends HTMLElement
       /****************************************************************************************************** */
       /****************************************************************************************************** */
     }
+
+    getTicBtn() {
+        return this.shadowRoot.querySelector('.modal-tic-button');
+    }
+
+
+
     connectedCallback() 
     {
       updateActiveNav("chat", this.shadowRoot);
@@ -279,6 +287,7 @@ addFriend = () => {
 
 
 startConversation(singleUser, userData) {
+    console.log("user DAAAAAATA:  ", userData);
     singleUser.addEventListener('click', () => {
         console.log(singleUser, userData);
         this.removeBlur();
