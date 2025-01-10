@@ -993,7 +993,8 @@ class GamePage extends HTMLElement
 
     disconnectedCallback() {
         console.log("dekhle l disco callback ")
-        matchingSocket.close()
+        if (matchingSocket && matchingSocket.readyState === WebSocket.OPEN)
+            matchingSocket.close()
         // matchingSocket = null
         game_obj = null
       // Nettoyage de l'écouteur d'événement lors de la suppression du composant

@@ -209,7 +209,8 @@ class ChatPage extends HTMLElement
 
     disconnectedCallback() {
         console.log("dekhle l disco callback in chat  ")
-        this.socket.close()
+        if (this.socket && this.socket.readyState === WebSocket.OPEN)
+            this.socket.close()
         // matchingSocket = null
         // game_obj = null
       // Nettoyage de l'écouteur d'événement lors de la suppression du composant
