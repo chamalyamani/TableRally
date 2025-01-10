@@ -13,17 +13,35 @@ function attachEventListeners(shadowRoot) {
       `
           <div class="full">
           <div id="content">
-              <div id="score">
-                  <img src="boy.png">
-                  <h1>Player1</h1>
-                  <h1 id="score1" >0</h1>
-                  <p id="test"></p>
-                  <h1 id="score2">0</h1>
-                  <h1>Player2</h1>
-                  <img src="boy.png">
-              </div>
-  
-              <canvas id="Game" width="700" height="350"></canvas>
+
+          <div id="score">
+          <div class="team team1">
+          <img src="">
+          <h1>PLAYER 1</h1>
+          </div>
+          
+          <div class="score-center">
+          <h1 id="score1">0</h1>
+          <span>-</span>
+          <h1 id="score2">0</h1>
+          </div>
+          
+          <div class="team team2">
+          <img src="">
+          <h1>PLAYER 2</h1>
+          </div>
+          </div>
+
+            <div id="game-container">
+            <div class="instructions-box left">
+            <img src="hand-left.png" alt="Left Hand">
+            <p>Use: <span>WS</span></p>
+            </div>
+            <canvas id="Game" width="700" height="350"></canvas>
+            <div class="instructions-box right">
+            <img src="hand-right.png" alt="Right Hand">
+            <p>Use: <span>⬆⬇</span></p>
+            </div>
           </div>
           </div>
           <div id="chat-log"></div>
@@ -210,14 +228,25 @@ function attachEventListeners(shadowRoot) {
       `
       <div class="full">
           <div id="content">
-              <div id="score">
-                  <img src="boy.png">
-                  <h1 >0</h1>
-                  <p id="test"></p>
-                  <h1>0</h1>
-                  <img src="boy.png">
+              <div class="remote-score" id="score">
+                 <div id="score">
+                <div class="team team1">
+                <img src="">
+                <h1>PLAYER 1</h1>
+                </div>
+                
+                <div class="score-center">
+                <h1 id="score1">0</h1>
+                <span>-</span>
+                <h1 id="score2">0</h1>
+                </div>
+                
+                <div class="team team2">
+                <img src="">
+                <h1>PLAYER 2</h1>
+                </div>
+                </div>
               </div>
-
               <canvas id="Game" width="700" height="350"></canvas>
               <p>control the left player by using up and down arrow keys</p>
           </div>
@@ -264,30 +293,57 @@ function attachEventListeners(shadowRoot) {
           
           function waiting() {
               shadowRoot.getElementById("myContainer").innerHTML = `
-				<div id="waiting">
-                	<div class="circle_pong"><img src="${image}"></div>
-                	<p>vs</p>
-                	<div class="circle_pong"><img src="boy.png"></div>
-				</div>
+
+                <div class="lobby-waiting" id="waiting">
+                <div class="content-waiting">
+                    <div class="player player1">
+                        <img src="${image}">
+                        <h2>PLAYER 1</h2>
+                    </div>
+                        <div class="loader-loading"></div>
+                    <div class="player player2">
+                        <img src="assets/player2.png">
+                        <h2>PLAYER 2</h2>
+                    </div>
+                </div>
+            </div>
               `;
           }
       
       function nowait() {
           shadowRoot.getElementById("myContainer").innerHTML = `
+
           <div class="full">
           <div id="content">
+
           <div id="score">
+          <div class="team team1">
           <img src="${image}">
           <h1>${user}</h1>
-          <h1 id="score1"  >0</h1>
-          <p id="test"></p>
-          <h1 id="score2">0</h1>
-          <h1>${other_user}</h1>
-          <img src="${other_image}">
           </div>
           
-          <canvas id="Game" width="700" height="350"></canvas>
-          <p>control the player by using up and down arrow keys</p>
+          <div class="score-center">
+          <h1 id="score1">0</h1>
+          <span>-</span>
+          <h1 id="score2">0</h1>
+          </div>
+          
+          <div class="team team2">
+          <img src="${other_image}">
+          <h1>${other_user}</h1>
+          </div>
+          </div>
+
+            <div id="game-container">
+            <div class="instructions-box left">
+            <img src="hand-left.png" alt="Left Hand">
+            <p>Use: <span>WS</span></p>
+            </div>
+            <canvas id="Game" width="700" height="350"></canvas>
+            <div class="instructions-box right">
+            <img src="hand-right.png" alt="Right Hand">
+            <p>Use: <span>⬆⬇</span></p>
+            </div>
           </div>
           </div>
           <script src="remote.js"></script>
@@ -333,17 +389,35 @@ function attachEventListeners(shadowRoot) {
           setTimeout(function() {
             shadowRoot.getElementById("myContainer").innerHTML = 
             `
-                <div id="holder">
-                    <div>
-                        <button id="local">local</button>
+                 <div id="holder" class="holder">
+                <h1>Choose your game mode</h1>
+                <div class="modes">
+                  <div class="local-mode" id="local">
+                    <div class="icon">
+                      <img src="assests/icon-local.png">
                     </div>
-                    <div>
-                        <button id="remote">remote</button>
+                    <div class="go-local">
+                      <p>Local</p>
                     </div>
-                    <div>
-                        <button id="tournament">tournament</button>
+                  </div>
+                  <div class="remote-mode"  id="remote">
+                    <div class="icon">
+                      <img src="assests/icon-remote.png">
                     </div>
+                    <div class="go-remote">
+                      <p>Remote</p>
+                    </div>
+                  </div>
+                  <div class="tournament-mode" id="tournament">
+                    <div class="icon">
+                      <img src="assests/icon-tournoi.png">
+                    </div>
+                    <div class="go-tournament" >
+                      <p>Tournament</p>
+                    </div>
+                  </div>
                 </div>
+              </div>
             `
             attachEventListeners(shadowRoot)
         }, 2000); 
@@ -355,10 +429,28 @@ function attachEventListeners(shadowRoot) {
           shadowRoot.getElementById("myContainer").innerHTML =
           `
 
+          <div class="content-winner">
               <div id="winner">
-                  <img src="${image}"/>
-                  <p>${winner}</p>
+                <div class="crown"></div>
+                <img src="${image}">
+                <p>${winner}</p>
               </div>
+            </div>
+          
+          `
+      }
+
+      function lost(winner)
+      {
+          shadowRoot.getElementById("myContainer").innerHTML =
+          `
+            <div class="content-lose">
+              <div id="lost">
+                <div class="rejected"></div>
+                <img src="${image}">
+                <p>${winner}</p>
+            </div>
+            </div>
           
           `
       }
@@ -372,17 +464,35 @@ function attachEventListeners(shadowRoot) {
           setTimeout(function() {
               shadowRoot.getElementById("myContainer").innerHTML = 
               `
-                  <div id="holder">
-                      <div>
-                          <button id="local">local</button>
-                      </div>
-                      <div>
-                          <button id="remote">remote</button>
-                      </div>
-                      <div>
-                          <button id="tournament">tournament</button>
-                      </div>
+                  <div id="holder" class="holder">
+                <h1>Choose your game mode</h1>
+                <div class="modes">
+                  <div class="local-mode" id="local">
+                    <div class="icon">
+                      <img src="assests/icon-local.png">
+                    </div>
+                    <div class="go-local">
+                      <p>Local</p>
+                    </div>
                   </div>
+                  <div class="remote-mode"  id="remote">
+                    <div class="icon">
+                      <img src="assests/icon-remote.png">
+                    </div>
+                    <div class="go-remote">
+                      <p>Remote</p>
+                    </div>
+                  </div>
+                  <div class="tournament-mode" id="tournament">
+                    <div class="icon">
+                      <img src="assests/icon-tournoi.png">
+                    </div>
+                    <div class="go-tournament" >
+                      <p>Tournament</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
               `
               attachEventListeners(shadowRoot)
           }, 2000); 
@@ -433,9 +543,9 @@ function attachEventListeners(shadowRoot) {
           {
               console.log("yes wslatni chkon rbah li howo ")
               if (data.winner == id)
-                  winner("you win!");
+                  winner("You win");
               else 
-                  winner("you lost!")
+                 lost("You lost!")
           }
           else if(data.TITLE == "id")
           {

@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <!-- <div class="color-overlay"></div> -->
+        <div class="color-overlay"></div>
 
         <!-- global notif div -->
         <div class="toast">
@@ -1027,23 +1027,36 @@
             <div class="circle bottom-circle"></div>
 
             <div id="myContainer">
-              <div id="holder">
-                <div>
-                  <button id="local">local</button>
-                </div>
-                <div>
-                  <button id="remote">remote</button>
-                </div>
-                <div>
-                  <button id="tournament">tournament</button>
+              <div id="holder" class="holder">
+                <h1>Choose your game mode</h1>
+                <div class="modes">
+                  <div class="local-mode" id="local">
+                    <div class="icon">
+                      <img src="assests/icon-local.png">
+                    </div>
+                    <div class="go-local">
+                      <p>Local</p>
+                    </div>
+                  </div>
+                  <div class="remote-mode"  id="remote">
+                    <div class="icon">
+                      <img src="assests/icon-remote.png">
+                    </div>
+                    <div class="go-remote">
+                      <p>Remote</p>
+                    </div>
+                  </div>
+                  <div class="tournament-mode" id="tournament">
+                    <div class="icon">
+                      <img src="assests/icon-tournoi.png">
+                    </div>
+                    <div class="go-tournament" >
+                      <p>Tournament</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-
-
-
-
         </template>
 
         <template id="settings-template">
