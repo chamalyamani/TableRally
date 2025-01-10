@@ -877,11 +877,14 @@ header
 }
 
 /* "Quit" button */
-#quitBtn {
+#leaveGame {
+    width: 20vw;
+    height: 10vh;
+    padding: 12px 24px;
     background-color: var(--secondary-color);
 }
 
-#quitBtn:hover {
+#leaveGame:hover {
     background-color: #3DBDA7;
     color: var(--primary-color);
 }

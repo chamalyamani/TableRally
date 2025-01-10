@@ -7,22 +7,26 @@ import { logoutProcess } from "../shared.js";
 let matchingSocket = null
 let game_obj = null
 
-function back_to_home(dom) {
-  // console.log(principal_html)
-  let changeable_div = dom.getElementById('contIdx')
-  changeable_div.innerHTML = ""
-  changeable_div.innerHTML = principal_html
-  // game_obj = null
-  fetchGameData(dom);
-  // location.reload()
-  // matchingSocket = null
-  game_obj = null
-  // Update the DOM with the fetched HTML content
-  // document.open()
-  // document.write(html)
-  // document.close()
-}
 
+function back_to_home(obj) {
+    // console.log(principal_html)
+    let changeable_div = obj.shadowRoot.getElementById('contIdx')
+    changeable_div.innerHTML = ""
+    changeable_div.innerHTML = principal_html
+    // game_obj = null
+    let playbtn1 = obj.shadowRoot.querySelector(".play_btn1")
+    let playbtn2 = obj.shadowRoot.querySelector(".play_btn2")
+    playbtn1.addEventListener('click',() => playClassic(obj))
+    playbtn2.addEventListener('click',() => playFt4(obj))
+    fetchGameData(obj.shadowRoot);
+    // location.reload()
+    // matchingSocket = null
+  //   game_obj = null
+    // Update the DOM with the fetched HTML content
+    // document.open()
+    // document.write(html)
+    // document.close()
+  }
 
 function generateHtmlBoard(ina_game){
   const cellPercentage = (ina_game === 3) ? '30%' : '15%';
@@ -89,12 +93,12 @@ function generateHtmlBoard(ina_game){
   </div>
   </div>
   
-  <button id="restart-button" onclick="leaveGame()">Quit</button>
+  <button id="leaveGame">Quit</button>
   </div>
   </div>`
   return htmlBoard
 }
-
+//  onclick="leaveGame()
 
 let principal_html = `<div id="id_dynamic" class="dynamic">
 <div class="ticTacGame">
@@ -130,8 +134,8 @@ let principal_html = `<div id="id_dynamic" class="dynamic">
                 </div>
             </div>
             <div class="btnsPlay">
-              <button class="play_btn" onclick="playClassic()">PLAY 3/3 Classic</button>
-              <button class="play_btn" onclick="playFt4()">PLAY 5/5 FT4</button>
+              <button class="play_btn play_btn1">PLAY 3/3 Classic</button>
+              <button class="play_btn play_btn2">PLAY 5/5 FT4</button>
             </div>
               <!-- <button>3</button>
               <button>5</button>
@@ -427,7 +431,16 @@ class t3 {
   async quit()
   {
       // change it with fetch + animation
-      back_to_home(this.shadowRoot)
+    // let changeable_div = this.shadowRoot.getElementById('contIdx')
+    // changeable_div.innerHTML = ""
+    // changeable_div.innerHTML = principal_html
+    // // game_this = null
+    // let playbtn1 = this.shadowRoot.querySelector(".play_btn1")
+    // let playbtn2 = this.shadowRoot.querySelector(".play_btn2")
+    // playbtn1.addEventListener('click',this.playClassic.bind(this))
+    // playbtn2.addEventListener('click',this.playFt4.bind(this))
+    // fetchGameData(this.shadowRoot);
+      back_to_home(this)
       // location.reload()
   }
   
@@ -536,6 +549,8 @@ class t3 {
       // return
       this.cont.innerHTML = generateHtmlBoard(this.gType);
       let bHolderShow = this.shadowRoot.getElementById("board_holder_id")
+      let leaveBtn = this.shadowRoot.getElementById("leaveGame")
+        leaveBtn.addEventListener('click', () => leaveGame())
       setTimeout(() => {
           bHolderShow.style.marginRight = "0%"
       }, 10)
@@ -683,114 +698,12 @@ class GamePage extends HTMLElement
       /********************************TICTACTOE GAME JAVASCRIPT************************************** */
       this.playbtn1 = this.shadowRoot.querySelector(".play_btn1")
       this.playbtn2 = this.shadowRoot.querySelector(".play_btn2")
-      this.playbtn1.addEventListener('click',this.playClassic.bind(this))
-      this.playbtn2.addEventListener('click',this.playFt4.bind(this))
+      
+      this.playbtn1.addEventListener('click', () => playClassic(this))
+      this.playbtn2.addEventListener('click', () => playFt4(this))
 // </div><div id="contIdx" class="container df_fdc_jcc_aic">
 
-      
-
-      this.principal_html = `<div id="id_dynamic" class="dynamic">
-      <div class="ticTacGame">
-          <div class="leftDivTicTac">
-            <div class="gameDescription">
-              <h4>Tic-Tac-Toe Game OverView</h4>
-              <p>In this Tic Tac Toe game, play against
-                a random opponent or invite a friend. Customize your challenge:
-                be the first to reach 3, 5, or 7 points to win.
-              </p>
-            </div>
-            <div class="playGround">
-              <div id="rMatch">
-                <h3>Random Match</h3>
-                <div id="btnHolder">
-                  <h2>First To</h2>
-                    <div class="radio-container">
-                      <div class="tabs">
-
-                          <input type="radio" id="choice1" name="game-choice" value="1" checked>
-                          <label class="tab" for="choice1">1</label>
-                      
-                          <input type="radio" id="choice3" name="game-choice" value="3">
-                          <label class="tab" for="choice3">3</label>
-                        
-                          <input type="radio" id="choice5" name="game-choice" value="5">
-                          <label class="tab" for="choice5">5</label>
-                        
-                          <input type="radio" id="choice7" name="game-choice" value="7">
-                          <label class="tab" for="choice7">7</label>
-
-                          <div class="rd-slid" id="radio-slid"></div>
-                      </div>
-                  </div>
-                  <div class="btnsPlay">
-                    <button class="play_btn play_btn1" onclick="playClassic()">PLAY 3/3 Classic</button>
-                    <button class="play_btn play_btn2" onclick="playFt4()">PLAY 5/5 FT4</button>
-                  </div>
-                    <!-- <button>3</button>
-                    <button>5</button>
-                    <button>7</button> -->
-                </div>
-              </div>
-              <!-- <div id="invFriend">
-                <h3>Invite Friend</h3>
-                <div class="friendList">
-                  <div class="unitFriend">
-                    <div class="picUF"></div>
-                    <h4 class="nameUF">Reda</h4>
-                  </div>
-                  <div class="unitFriend">
-                    <div class="picUF"></div>
-                    <h4 class="nameUF">Reda</h4>
-                  </div>
-                  <div class="unitFriend">
-                    <div class="picUF"></div>
-                    <h4 class="nameUF">Reda</h4>
-                  </div>
-                  
-                
-                </div>
-              </div> -->
-            </div>
-            <div class="latestGames">
-              <h2>Latest Tic-Tac-Toe Games</h2>
-              <div class="listOfLG" id="listOfLGID">
-                  
-              </div>
-            </div>
-          </div>
-          <div class="rightDivTicTac">
-            <div class="lclGameDiv">
-              <div class="boardlcl">
-                <div class="bSlot">x</div>
-                <div class="bSlot">o</div>
-                <div class="bSlot">x</div>
-                <div class="bSlot">o</div>
-                <div class="bSlot">x</div>
-                <div class="bSlot">o</div>
-                <div class="bSlot">x</div>
-                <div class="bSlot">o</div>
-                <div class="bSlot">x</div>
-              </div>
-              <div class="animWinLose">
-                <h1 class="vertical-text">START</h1>
-              </div>
-              <div class="dashBlcl">
-                <div class="stats"><h4>X WINS</h4><h1>0</h1></div>
-                <div class="stats"><h4>DRAWS</h4><h1>0</h1></div>
-                <div class="stats"><h4>O WINS</h4><h1>0</h1></div>
-                <div class="reset">Reset</div>
-              </div>
-            </div>
-            <div class="menuBtnLcl">
-              <input type="radio" id="rb1p" name="playerMode" value="1" checked>
-              <label for="rb1p" class="radio-div">1 Player</label>
-
-              <input type="radio" id="rb2p" name="playerMode" value="2">
-              <label for="rb2p" class="radio-div">2 Players</label>
-            </div>
-          </div>
-        </div>
-      </div>`;
+    //   onclick="playClassic()"onclick="playFt4()"
       // matchingSocket = null
       // game_obj = null
 
@@ -811,7 +724,9 @@ class GamePage extends HTMLElement
 /********************************END OF CONTRUCTOR************************************** */
 
   
-
+async friendsGame(){
+    await playgame("ft_classic", this)
+}
 
   
 
@@ -841,87 +756,17 @@ class GamePage extends HTMLElement
   // we said here i will take a string to define the type of request 
   // if it comes from friend invite 
   // or from the play button random
-  async playgame (gameType) {
-      if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-          return
-      let tok;
-      await getAccessToken()
-          .then(accessToken => {
-              tok = accessToken;
-          })
-          .catch(error => {
-              console.error('Error getting access token:', error);
-              // alert('Error getting access token', error.message);
-          }); 
-      
-      let first_to = this.shadowRoot.querySelector('input[name="game-choice"]:checked').value;
-      if (!first_to) {
-          console.error("No game choice selected.");
-          return;
-      }
-      try {
-          matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`);
-      } catch (error) {
-          console.error("Error creating WebSocket connection:", error);
-          return;
-      }
-      // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
-      // and the tail size etc ....
-      matchingSocket.onopen = async () => {
-          // alert('tconnecctaa');
-          // this on open msg sent is for the default, but for the friend game
-          // it must be another msg that will hold the username of the friend
-          const msg = {
-              "type" : gameType,
-              "first_to": first_to
-          }
-          matchingSocket.send(JSON.stringify(msg));
-          
-          game_obj = new t3(this.shadowRoot)
-      }
-      matchingSocket.onmessage = async (event) => {
-          game_obj.currMsg = JSON.parse(event.data)
-          console.log("what i got : ", game_obj.currMsg.type)
-          console.log("all : ", game_obj.currMsg)
-          if (game_obj.functionMap.has(game_obj.currMsg.type))
-              await game_obj.functionMap.get(game_obj.currMsg.type)()
-      }
-      matchingSocket.onerror = (event) => {
-          console.log('this is matchingsocket.onerror function')
-          matchingSocket = null
-          // gg = null
-      }
-      matchingSocket.onclose = (event) => {
-          // 4010 is the end of game close, not back to home but to the gameover
-          // then he must click [OK] to go back to home
-          if (event.code != 4010)
-              back_to_home(this.shadowRoot)   
-          matchingSocket = null
-          // should not be null because there is the button OK to quit the gameover there will call the 
-          // back home and free gg
-          // gg = null
-          // event.wasClean = true ? console.log("clean") : console.log("not clean")
-      }
-      // console.log("WHAT ?")
-  }
+  
 
-    async playClassic () {
-        await this.playgame("ft_classic")
-    }
+    // async playClassic () {
+    //     await this.playgame("ft_classic")
+    // }
 
-    async playFt4 () {
-        await this.playgame("ft4")
-    }
+    // async playFt4 () {
+    //     await this.playgame("ft4")
+    // }
 
-  leaveGame() {
-      const msg = { type : "leaveGame" }
-      matchingSocket.send(JSON.stringify(msg))
-
-      // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-      //     matchingSocket.close(1000)
-      // console.log("hello world")
-      // location.reload();
-  }
+  
 
 
 
@@ -1130,8 +975,88 @@ function fetchGameData(dom){
 
 
 
+async function playClassic (obj) {
+    await playgame("ft_classic", obj)
+}
 
+async function playFt4 (obj) {
+    await playgame("ft4", obj)
+}
 
+async function playgame (gameType, obj) {
+    if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+        return
+    let tok;
+    await getAccessToken()
+        .then(accessToken => {
+            tok = accessToken;
+        })
+        .catch(error => {
+            console.error('Error getting access token:', error);
+            // alert('Error getting access token', error.message);
+        }); 
+    
+    let first_to = obj.shadowRoot.querySelector('input[name="game-choice"]:checked').value;
+    if (!first_to) {
+        console.error("No game choice selected.");
+        return;
+    }
+    try {
+        matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`);
+    } catch (error) {
+        console.error("Error creating WebSocket connection:", error);
+        return;
+    }
+    // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
+    // and the tail size etc ....
+    matchingSocket.onopen = async () => {
+        // alert('tconnecctaa');
+        // this on open msg sent is for the default, but for the friend game
+        // it must be another msg that will hold the username of the friend
+        const msg = {
+            "type" : gameType,
+            "first_to": first_to
+        }
+        matchingSocket.send(JSON.stringify(msg));
+        
+        game_obj = new t3(obj.shadowRoot)
+    }
+    matchingSocket.onmessage = async (event) => {
+        game_obj.currMsg = JSON.parse(event.data)
+        console.log("what i got : ", game_obj.currMsg.type)
+        console.log("all : ", game_obj.currMsg)
+        if (game_obj.functionMap.has(game_obj.currMsg.type))
+            await game_obj.functionMap.get(game_obj.currMsg.type)()
+    }
+    matchingSocket.onerror = (event) => {
+        console.log('this is matchingsocket.onerror function')
+        matchingSocket = null
+        // gg = null
+    }
+    matchingSocket.onclose = (event) => {
+        // 4010 is the end of game close, not back to home but to the gameover
+        // then he must click [OK] to go back to home
+        if (event.code != 4010)
+            back_to_home(obj)
+        console.log("gg the close socket ")
+        matchingSocket = null
+        // should not be null because there is the button OK to quit the gameover there will call the 
+        // back home and free gg
+        // gg = null
+        // event.wasClean = true ? console.log("clean") : console.log("not clean")
+    }
+    // console.log("WHAT ?")
+}
+
+function leaveGame() {
+    const msg = { type : "leaveGame" }
+    matchingSocket.send(JSON.stringify(msg))
+
+    // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
+    //     matchingSocket.close(1000)
+    // console.log("hello world")
+    // location.reload();
+}
 
 /**************************LOCAL GAME *************************************** */
 /**************************LOCAL GAME *************************************** */

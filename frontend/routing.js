@@ -146,7 +146,7 @@ function getAccessToken() {
 
 // console.log("heeeey : ",notificationPopup);
 
-
+let datap = null
 function notifications() {
 //alert('ahh');
 acceptBtn = document.createElement('button');
@@ -164,25 +164,83 @@ rejectBtn.addEventListener('click', () => {
     }, 500);
 })
 
+async function callme(obj){
+    await obj.friendsGame()
+}
+
 acceptBtn.addEventListener('click', () => {
-    let jsonMessage = {'type': 'game_resp', 'receiver_id': '2'}
+    console.log("...........................: ",datap);
+    let jsonMessage = {'type': 'game_resp', 'receiver_id': datap.sender, 'sender_id': datap.receiver};
     notif_socket.send(JSON.stringify(jsonMessage));
+    clearTimeout(timer);
+    notificationPopup.classList.remove('active');
+
+    /** TESTINNNG */
+    const app = document.getElementById("app");
+    const loader = document.getElementById("loader");
+
+    loader.style.display = "flex";
+    app.innerHTML = "";
+
+    history.pushState({ page: 'game' }, "", `/game`);
+    app.innerHTML = `<game-page></game-page>`;
+    document.body.className = `body-game`;
+    const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, randomDelay);
+
+    const game_page = document.querySelector('game-page');
+    // async  () => {
+    //     await game_page.friendsGame()
+    // }
+    callme(game_page)
     // logic game matching 
     // alert('game_resp');
+
+    /** END TESTING  */
 })
 
 getAccessToken()
 .then(accessToken => {
   notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
   notif_socket.onmessage = ({data}) => {
-      const datap = JSON.parse(data);
+      datap = JSON.parse(data);
       console.log('Message Received is --------------------', datap);
     //   console.log('Message receiverd_id :  ', datap.receiver_id);
     //   console.log('Message sender_id :  ', datap.sender_id);
       // if game response is received
       // game matching logic
       if (datap.type === 'game_resp') {
-          alert('game_resp');
+          console.log("HE ACCEPTEEEEEEEEEEEEED : ", datap);
+          // render 
+           /** TESTINNNG */
+            // setTimeout(() => {
+                const app = document.getElementById("app");
+            const loader = document.getElementById("loader");
+
+            loader.style.display = "flex";
+            app.innerHTML = "";
+
+            history.pushState({ page: 'game' }, "", `/game`);
+            app.innerHTML = `<game-page></game-page>`;
+            document.body.className = `body-game`;
+            const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+            setTimeout(() => {
+                loader.style.display = "none";
+            }, randomDelay);
+
+            const game_page = document.querySelector('game-page');
+            // game_page.friendsGame()
+        // },1000)
+        // async  () => {
+        //     await game_page.friendsGame()
+        // }
+        callme(game_page)
+            // logic game matching 
+            // alert('game_resp');
+
+            /** END TESTING  */
       }
       else {
 
