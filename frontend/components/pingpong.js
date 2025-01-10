@@ -879,7 +879,7 @@ class PingpongPage extends HTMLElement
 
     disconnectedCallback() {
       // console.log("dekhle l disco callback ")
-      if (chatSocket !== null)
+      if (chatSocket && chatSocket.readyState === WebSocket.OPEN)
         chatSocket.close()
       // matchingSocket = null
       // game_obj = null
