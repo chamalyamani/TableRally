@@ -85,9 +85,10 @@ function navigateTo(page)
             sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
             if (sendNotif) {
                 sendNotif.addEventListener('click', () => {
-                    let jsonMessage = {'type': 'game_request_notification', 'receiver_id': '1'}
-                    notif_socket.send(JSON.stringify(jsonMessage));
+                    let jsonMessage = {'type': 'game_request_notification', 'receiver_username': chatPage.getOtherUser(), 'sender_id': chatPage.getCurrentUser()}
+                    console.log('Sending notification:', jsonMessage);
                     console.log('Notification sent');
+                    notif_socket.send(JSON.stringify(jsonMessage));
                 })
             }
             console.log("SEND NOTIF: ", sendNotif);
@@ -175,7 +176,9 @@ getAccessToken()
   notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
   notif_socket.onmessage = ({data}) => {
       const datap = JSON.parse(data);
-      console.log('Message Received is ', datap.type);
+      console.log('Message Received is --------------------', datap);
+    //   console.log('Message receiverd_id :  ', datap.receiver_id);
+    //   console.log('Message sender_id :  ', datap.sender_id);
       // if game response is received
       // game matching logic
       if (datap.type === 'game_resp') {

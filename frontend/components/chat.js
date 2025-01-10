@@ -311,7 +311,7 @@ startConversation(singleUser, userData) {
             .then(response => response.json())
             .then(data => {
                 console.log('-----------8-----------');
-                console.log(data.id);
+                console.log(data);
                 // console.log('hnnaaa');
                 // console.log(userData.id);
                 // console.log(currentUser);
@@ -393,9 +393,7 @@ convClick(conv, singleConv) {
 }
 
 convClickAction(conv, singleConv) {
-    // console.log(conv);
-    // console.log('--88--');
-    // console.log(singleConv);
+    this.otherUser = conv.conversation;
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         
         this.socket.close(); // Close the current WebSocket
@@ -433,7 +431,6 @@ listMessages(conv) {
             data.messages.forEach(message => {
                 if (message.sender == conv.conversation)
                 {
-                    this.otherUser = message.sender_id;
                     let newLeftMessage = this.leftMessage.cloneNode(true);
                     newLeftMessage.querySelector('.left-message-p').textContent = message.content;
                     newLeftMessage.style.display = 'inline-block';
