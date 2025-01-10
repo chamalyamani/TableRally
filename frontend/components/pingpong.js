@@ -34,12 +34,10 @@ function attachEventListeners(shadowRoot) {
 
             <div id="game-container">
             <div class="instructions-box left">
-            <img src="hand-left.png" alt="Left Hand">
             <p>Use: <span>WS</span></p>
             </div>
             <canvas id="Game" width="700" height="350"></canvas>
             <div class="instructions-box right">
-            <img src="hand-right.png" alt="Right Hand">
             <p>Use: <span>⬆⬇</span></p>
             </div>
           </div>
