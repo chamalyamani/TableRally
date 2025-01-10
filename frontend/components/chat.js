@@ -197,7 +197,13 @@ class ChatPage extends HTMLElement
         return this.shadowRoot.querySelector('.modal-tic-button');
     }
 
+    getCurrentUser() {
+        return this.currentUser;
+    }
 
+    getOtherUser() {
+        return this.otherUser;
+    }
 
     connectedCallback() 
     {
@@ -412,6 +418,7 @@ convClickAction(conv, singleConv) {
 }
 
 listMessages(conv) {
+    // console.log('coooooooovovv ', conv);
     getAccessToken()
         .then(accessToken => {
             return fetch(`/api/chat/${conv.id}/`, {
@@ -426,6 +433,7 @@ listMessages(conv) {
             data.messages.forEach(message => {
                 if (message.sender == conv.conversation)
                 {
+                    this.otherUser = message.sender_id;
                     let newLeftMessage = this.leftMessage.cloneNode(true);
                     newLeftMessage.querySelector('.left-message-p').textContent = message.content;
                     newLeftMessage.style.display = 'inline-block';
