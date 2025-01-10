@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Planet Pong</title>
+        <meta charset="UTF-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;600;800&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2&display=swap" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+        <link rel="stylesheet" href="styles/global.css">
+
+    </head>
+
+    <body>
+        <!-- <div class="color-overlay"></div> -->
+
+        <!-- global notif div -->
+        <div class="toast">
+          <div class="toast-content">
+            <!-- Cercle vert pour le check -->
+            <div class="icon-circle-success success">
+              <img src="assests/check.png" alt="Check" class="icon-image">
+            </div>
+        
+            <!-- Cercle rouge pour l'erreur -->
+            <div class="icon-circle-error error">
+              <img src="assests/close.png" alt="Error" class="icon-image">
+            </div>
+        
+            <div class="message">
+              <span id="notif-type" class="text text-1"></span>
+              <span id="notif-message" class="text text-2"></span>
+            </div>
+          </div>
+          
+          <i class="fa-solid fa-xmark close"></i>
+          
+          <div  class="progress"></div>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader-container">
+          <div class="loader"></div>
+        </div>
+
+        <div id="app"></div>
+
+        <template id="login-template">
+            <div id="mobile-message">
+              <div class="content-message">
+                <h2>Sorry!</h2>
+                <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+              </div>
+            </div>
+            <div class="circle top-circle"></div>
+            <div class="container-login" >
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+                  <div class="login-form">
+                      <div id="error-message"></div>
+                      <h1>Login</h1>
+                      <form id="loginForm">
+                          <h2  class="email-h2">Username</h2>
+                          <input id="username" type="text" placeholder="username">
+                          <h2 class="password-h2">Password</h2>
+                          <input id="password" type="password" placeholder="**********">
+                          <div class="reset-link">
+                              <p>Forget your password?
+                                  <span data-navigate="resetpassword">Reset password</span>
+                              </p>
+                          </div>
+  
+                          <button class="login-button" type="submit">Log in</button>
+  
+                          <div class="separator">
+                              <span></span>
+                              <p>OR</p>
+                              <span></span>
+                          </div>
+  
+                          <button id="login42Btn" class="logo-button">
+                              <img class="logo-42" src="assests/42_Logo.png">
+                          </button>
+                          <div class="register-link">
+                              <p>Don't have an account yet? 
+                                  <span data-navigate="signup">Register</span></p>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+
+            </div>
+            <div class="circle bottom-circle"></div>
+        </template>
+
+        <template id="signup-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+
+            <div class="container-sign-up">
+
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-section">
+                  <div class="table-pong">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="sign-form">
+                    <div id="error-message"></div>
+                      <h1>Sign Up</h1>
+                      <form id="registerForm">
+                        <h2 class="username-h2">Username</h2>
+                        <input id="registerUsername" type="text" placeholder="Username" required>
+
+                        <h2 class="username-h2">Firstname</h2>
+                        <input id="firstname" type="text" placeholder="Firstname" required>
+
+                        <h2 class="username-h2">Lastname</h2>
+                        <input id="lastname" type="text" placeholder="Lastname" required>
+
+                        <h2 class="email-h2-2">Email</h2>
+                        <input id="email" type="email" placeholder="exemple@gmail.com" required>
+
+                        <h2 class="password-h2-2">Password</h2>
+                        <input id="registerPassword" type="password" placeholder="********" required>
+
+                        <h2 class="password-h2-3">Confirm password</h2>
+                        <input id="registerConfirm_password" type="password" placeholder="********" required>
+
+                        <button  class="sign-up-button" type="submit">
+                            Sign up
+                        </button>
+
+                        <div class="login-link">
+                            <p>Have an account ? <span data-navigate="login">Login</span></p>
+                        </div>
+                    </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+  
+          </div>
+          <div class="circle bottom-circle"></div>
+
+            
+        </template>
+
+        <template id="resetpassword-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+            <div class="container-reset-password">
+
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="reset-form">
+                      <h1>Reset Password</h1>
+  
+                      <form id="passwordResetForm">
+  
+                        <h2>Email</h2>
+                        <input id="passwordResetEmail" type="email" placeholder="exemple@gmail.com">
+                        <div class="separator-reset">
+                            <span></span>
+                        </div>
+                        <button type="submit">
+                            Send email
+                        </button>
+                        <div class="login-link">
+                          <p>Back to login ? <span data-navigate="login">Login</span></p>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+          </div>
+          <div class="circle bottom-circle"></div>
+            
+        </template>
+
+        <template id="authentification-template">
+            <div id="mobile-message">
+              <div class="content-message">
+                <h2>Sorry!</h2>
+                <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+              </div>
+            </div>
+          <div class="circle top-circle"></div>
+
+            <div class="container-authentication">
+  
+              <div class="left-content">
+                  <img src="assests/boy.png">
+              </div>
+  
+              <div class="middle-content">
+                  <div class="table-image">
+                      <img src="assests/table-pong.png">
+                  </div>
+  
+                  <div class="authentication-form">
+                      <h1>2FA token</h1>
+  
+                      <form id="2FAFormCheker">
+  
+                          <h2>Token</h2>
+                          <input id="2faTokenAfterLogin" type="text" placeholder="Enter the token">
+                          <div class="separator">
+                              <span></span>
+                          </div>
+                          <button type="submit">
+                              Check token
+                          </button>
+  
+                      </form>
+                  </div>
+              </div>
+  
+              <div class="right-content">
+                  <img src="assests/girl.png">
+              </div>
+              
+          </div>
+          <div class="circle bottom-circle"></div>
+          
+        </template>
+
+        <template id="dashboard-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+
+            <header>
+              <div class="section-name">
+                Dashboard
+              </div>
+          
+              <div class="search-box">
+                <button class="button-search">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+          
+              <div class="header-left">
+                  <img id="NotfImage" src="assests/header/er (7).png">
+                  <div id="arrow" class="dropdown-arrow"></div>
+                <div id="dropdownNotf" class="dropdown-notifications">
+                  <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                  </div>
+
+                  <div class="sub-menu-link-notf">
+                    <img src="assests/header/clyamani.jpeg">
+                    <p>Smounafi send you a request</p>
+                </div>
+                <div class="sub-menu-link-notf">
+                  <img src="assests/header/clyamani.jpeg">
+                  <p>Smounafi send you a request</p>
+              </div>
+              <div class="sub-menu-link-notf">
+                <img src="assests/header/clyamani.jpeg">
+                <p>Smounafi send you a request</p>
+                </div>
+                <div class="sub-menu-link-notf">
+                  <img src="assests/header/clyamani.jpeg">
+                  <p>Smounafi send you a request</p>
+                  </div>
+                  <div class="sub-menu-link-notf">
+                    <img src="assests/header/clyamani.jpeg">
+                    <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+                
+              </div>
+          
+
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+            </header>
+        
+                <div class="side-bar">
+            
+                    <div class="logo">
+                        <img src="assests/side-bard/LOGO.png">
+                    </div>
+        
+                    <nav>
+                        <ul class="list">
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                              <img  data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                              <span class="nav-label">Dashboard</span>
+                            </div>
+                          </li>
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                              <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                              <span class="nav-label">Game</span>
+                            </div>
+                          </li>
+            
+                          <li class="nav-element">
+                            <div class="nav-item">
+                                <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                              <span class="nav-label">Chat</span>
+                            </div>
+                              
+                          </li>
+            
+                          <li class="nav-element">
+                            <div  class="nav-item">
+                              <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                              <span class="nav-label">Settings</span>
+                            </div>
+                          </li>
+            
+                        </ul>
+                      </nav>
+        
+                      <ul class="list">
+                        <li  class="nav-element">
+                          <div  class="nav-item">
+                            <img id="logoutBtn" src="assests/side-bard/Logout-icon.png">
+                            <span class="nav-label">Logout</span>
+                          </div>
+                          </li>
+                      </ul>
+        
+                </div>
+        
+                <div id="content">
+                  <div class="row1">
+                    <div class="left-section">
+                      <img src="assests/Boy-dashboard.png">
+                    </div>
+          
+                    <div class="middle-section">
+                      <h1>PLANET PONG</h1>
+                    </div>
+                    <div class="right-section">
+                      <img src="assests/Girl-dashboard.png">
+                    </div>
+                  </div>
+
+                  <div class="row2">
+                    <div class="div2"></div>
+                    <div class="div3"></div>
+                  </div>
+                </div>
+                <div class="circle bottom-circle"></div>
+
+        </template>
+
+        <template id="chat-template">
+          <div class="circle top-circle"></div>
+          
+            <header>
+              <div class="section-name">
+                Chat
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+    
+    
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+            <div id="chatBody">
+
+              <div class="modal">
+                <div class="div1">
+                    <div class="modal-content">
+                        <svg class="modal-button" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>cross-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-570.000000, -1089.000000)" fill="#EC665F"> <path d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z" id="cross-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+                        <h3 class="modal-find">FIND FRIENDS</h3>
+                        <input class="modal-input" type="search" placeholder='Search Users...'>
+                        <div class="user-field">
+                            <div class='modal-user'>
+                                <div class="modal-usr-img">
+                                    <img class='modal-img' src="assests/chatAssets/default-user-background.png" alt="user-icon">
+                                </div>
+                                <ul>
+                                    <li class='li1'>username</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="div2">
+                    <div class="modal-content2">
+                        <svg class="modal-button2" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>cross-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-570.000000, -1089.000000)" fill="#EC665F"> <path d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z" id="cross-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+    
+                        <h3 class="modal-delete-message">DELETE ALL YOUR MESSAGES?</h3>
+                        <div class="answer-field">
+                            <button class='modal-cancel-button'>CANCEL</button>
+                            <button class='modal-delete-button'>DELETE</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="div3">
+                    <div class="modal-content3">
+                        <svg class="modal-button3" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>cross-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-570.000000, -1089.000000)" fill="#EC665F"> <path d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z" id="cross-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+    
+                        <h3 class="modal-delete-message3">BLOCK THIS USER?</h3>
+                        <div class="answer-field3">
+                            <button class='modal-cancel-button3'>CANCEL</button>
+                            <button class='modal-block-button'>BLOCK</button>
+                            <button class='modal-unblock-button'>UNBLOCK</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="div4">
+                    <div class="modal-content4">
+                        <svg class="modal-button4" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>cross-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-570.000000, -1089.000000)" fill="#EC665F"> <path d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z" id="cross-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+    
+                        <h3 class="modal-delete-message4">INVITE THIS USER?</h3>
+                        <div class="answer-field4">
+                            <button class='modal-cancel-button4'>CANCEL</button>
+                            <button class='modal-tic-button'>TICTACTOE</button>
+                            <button class='modal-pong-button'>PONG</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='chat-bar'>
+                <div class='add-message'>
+                    <h3 class='chats'>Chats</h3>
+                    <img src="assests/chatAssets/plus-icon.png" alt="plus-icon">
+                </div>
+                <div class='search-message'>
+                    <input type="search" placeholder='Search Users...'>
+    
+                </div>
+                <div class='conversations'>
+                    <div class='single-conversation'>
+                        <div class="conversation-img">
+                            <img class="cvr-img" src="assests/chatAssets/default-user-background.png" alt="user-icon">
+                        </div>
+                        <ul>
+                            <li class='li1'>username</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class='chat-content'>
+                <div class="new-chat-page">
+                    <img src="assests/chatAssets/chat-icon.png" alt="chat-icon">
+                    <p class='p1'>Choose a conversation to start a chat</p>
+                    <p class='p2'>Or search a Friend!</p>
+                    <button>FIND FRIENDS</button>
+                </div>
+                <div class="conversation-top-bar">
+                    <div class="top-bar-right">
+                        <div class="top-bar-img">
+                            <img class="img-top-bar" src="assests/chatAssets/default-user-background.png" alt="user-icon">
+                        </div>
+                        <p class='p1'></p>
+                    </div>
+                    <div class="chat-buttons">
+                        <button class='play-button'>
+                            <img src="assests/chatAssets/play-icon.png" alt="play-icon">
+                            PLAY
+                        </button>
+                        <button class='delete-button'>
+                            <img src="assests/chatAssets/garbage-can.png" alt="delete-icon">
+                        </button>
+                        <button class='block-button'>
+                            <img src="assests/chatAssets/block-icon.png" alt="block-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="main-chat">
+                    <div class="right-message">
+                        <p class='right-message-p'>Right message exampleRight message exampleRight message exampleRight message exampleRight message exampleRight message exampleRight message exampleRight message exampleRight message example</p>
+                    </div>
+                    <div class="left-message">
+                        <p class='left-message-p'>and this is a left message exampleand this is a left message exampleand this is a left message exampleand this is a left message exampleand this is a left message exampleand this is a left message exampleand this is a left message exampleand this is a left message example</p>
+                    </div>
+                </div>        
+                <div class="sending">
+                    <input class='message-bar' type="search" placeholder='Type a message...'>
+                    <img src="assests/chatAssets/send-icon.png" alt="send-icon">
+                </div>
+            </div>
+
+
+
+
+
+
+
+            </div>
+            <div class="circle bottom-circle"></div>
+        </template>
+
+        <template id="game-template">
+          <div class="circle top-circle"></div>
+          
+            <header>
+
+              <div class="section-name">
+                Game
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+    
+    
+    
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+            <div class="circle bottom-circle"></div>
+            <!-- TICTACTOE HTML  -->
+            <!-- <div class="motherDiv"> -->
+              <!-- <div class="sideBar" id="sideBar">
+      
+              </div> -->
+              <div id="contIdx" class="all container">
+                  <div id="id_dynamic" class="dynamic">
+                    <div class="ticTacGame">
+                      <div class="leftDivTicTac">
+                        <div class="gameDescription">
+                          <h4>Tic-Tac-Toe Game OverView</h4>
+                          <p>In this Tic Tac Toe game, play against
+                             a random opponent or invite a friend. Customize your challenge:
+                             be the first to reach 3, 5, or 7 points to win.
+                          </p>
+                        </div>
+                        <div class="playGround">
+                          <div id="rMatch">
+                            <h3>Random Match</h3>
+                            <div id="btnHolder">
+                              <h2>First To</h2>
+                                <div class="radio-container">
+                                  <div class="tabs">
+      
+                                      <input type="radio" id="choice1" name="game-choice" value="1" checked>
+                                      <label class="tab" for="choice1">1</label>
+                                   
+                                      <input type="radio" id="choice3" name="game-choice" value="3">
+                                      <label class="tab" for="choice3">3</label>
+                                    
+                                      <input type="radio" id="choice5" name="game-choice" value="5">
+                                      <label class="tab" for="choice5">5</label>
+                                    
+                                      <input type="radio" id="choice7" name="game-choice" value="7">
+                                      <label class="tab" for="choice7">7</label>
+      
+                                      <div class="rd-slid" id="radio-slid"></div>
+                                  </div>
+                              </div>
+                              <div class="btnsPlay">
+                                <button class="play_btn play_btn1">PLAY 3/3 Classic</button>
+                                <button class="play_btn play_btn2">PLAY 5/5 FT4</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="latestGames">
+                          <h2>Latest Tic-Tac-Toe Games</h2>
+                          <div class="listOfLG" id="listOfLGID">
+                              
+                          </div>
+                        </div>
+                      </div>
+                      <div class="rightDivTicTac">
+                        <div class="lclGameDiv">
+                          <div class="boardlcl">
+                            <div class="bSlot">x</div>
+                            <div class="bSlot">o</div>
+                            <div class="bSlot">x</div>
+                            <div class="bSlot">o</div>
+                            <div class="bSlot">x</div>
+                            <div class="bSlot">o</div>
+                            <div class="bSlot">x</div>
+                            <div class="bSlot">o</div>
+                            <div class="bSlot">x</div>
+                          </div>
+                          <div class="animWinLose">
+                            <h1 class="vertical-text">START</h1>
+                          </div>
+                          <div class="dashBlcl">
+                            <div class="stats"><h4>X WINS</h4><h1>0</h1></div>
+                            <div class="stats"><h4>DRAWS</h4><h1>0</h1></div>
+                            <div class="stats"><h4>O WINS</h4><h1>0</h1></div>
+                            <div class="reset">Reset</div>
+                          </div>
+                        </div>
+                        <div class="menuBtnLcl">
+                          <input type="radio" id="rb1p" name="playerMode" value="1" checked>
+                          <label for="rb1p" class="radio-div">1 Player</label>
+      
+                          <input type="radio" id="rb2p" name="playerMode" value="2">
+                          <label for="rb2p" class="radio-div">2 Players</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+          <!-- </div> -->
+            <!-- END OF TICTACTOE HTML  -->
+        </template>
+
+        <template id="settings-template">
+          <div id="mobile-message">
+            <div class="content-message">
+              <h2>Sorry!</h2>
+              <p> This application is designed for larger screens and is not optimized for small viewports.</p>
+            </div>
+          </div>
+          <div class="circle top-circle"></div>
+
+            <header>
+
+              <div class="section-name">
+                Settings
+              </div>
+    
+              <div class="search-box">
+                <button class="button-search ">
+                  <img src="assests/header/er (9).png">
+                </button>
+                <input type="text" class="input-search" placeholder="Type to search ...">
+              </div>
+    
+              <div class="header-left">
+                <img id="NotfImage" src="assests/header/er (7).png">
+                <div id="arrow" class="dropdown-arrow"></div>
+    
+                <div id="dropdownNotf" class="dropdown-notifications">
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                  
+    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                    
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+
+                    <div class="sub-menu-link-notf">
+                      <img src="assests/header/clyamani.jpeg">
+                      <p>Smounafi send you a request</p>
+                    </div>
+                </div>
+              </div>
+  
+              <div class="header-right">
+                <img id="profileImage" class="prfl" src="">
+                <div id="dropdown" class="dropdown-profile">
+                  <div class="user-info">
+                    <img class="img_profile" src="">
+                    <h2 class="usernameProfile"></h2>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/profile.png">
+                    <p>Profile</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/settings.png">
+                    <p>Settings</p>
+                  </div>
+                  <div class="sub-menu-link">
+                    <img src="assests/header/logout.png">
+                    <p>Logout</p>
+                  </div>
+                </div>
+              </div>
+    
+            </header>
+    
+            <div class="side-bar">
+        
+                <div class="logo">
+                    <img src="assests/side-bard/LOGO.png">
+                </div>
+    
+                <nav>
+                    <ul class="list">
+        
+                      <li class="nav-element" >
+                        <div class="nav-item" >
+                          <img data-navigate="dashboard" src="assests/side-bard/Dashboard-icon.png">
+                          <span class="nav-label">Dashboard</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item" >
+                          <img data-navigate="game" src="assests/side-bard/Game-icon.png">
+                          <span class="nav-label">Game</span>
+                        </div>
+                      </li>
+        
+                      <li class="nav-element">
+                        <div class="nav-item">
+                            <img data-navigate="chat" src="assests/side-bard/Chat-icon.png">
+                          <span class="nav-label">Chat</span>
+                        </div>
+                          
+                      </li>
+        
+                      <li class="nav-element" >
+                        <div class="nav-item">
+                          <img data-navigate="settings" src="assests/side-bard/Settings-icon.png">
+                          <span class="nav-label">Settings</span>
+                        </div>
+                      </li>
+        
+                    </ul>
+                  </nav>
+    
+                  <ul class="list">
+                    <li class="nav-element">
+                      <div class="nav-item">
+                        <img id="logoutBtn" data-navigate="login" src="assests/side-bard/Logout-icon.png">
+                        <span class="nav-label">Logout</span>
+                      </div>
+                      </li>
+                  </ul>
+    
+            </div>
+    
+    
+            <div id="content">
+              <div class="guide-notifications">
+                <div id="generalButton" class="nav-button active">
+                  <span>General</span>
+                </div>
+                <div id="friendsListButton" class="nav-button">
+                  <span>Friends</span>
+                </div>
+                <div id="blockListButton" class="nav-button">
+                  <span>BlockList</span>
+                </div>
+              </div>
+
+              <div class="settings-container" id="settingsContainer">
+
+                <div id="generalSection" class="settings-section">
+                  <div class="profile-section">
+
+                    <div class="user-img">
+                      <img id="settingsImage" class="prfl" src="">
+                      <div class="upload-overlay" >
+                        <label for="fileInput">&#x1F4E4;</label>
+                      </div>
+                      <input type="file" id="fileInput" accept=".jpg, .jpeg, .png">
+    
+    
+                    </div>
+    
+                    <div class="separator-profile"></div>
+                    <div class="profile-info">
+                      <p>
+                        Use an image in .jpg , .jpeg, .png format.
+                      </p>
+                    </div>
+    
+                      <button id="saveChangesBtn" class="button-save">
+                        Save changes
+                      </button>
+    
+                      <button id="deleteAccountBtn" class="button-delete">
+                        Delete Account
+                      </button>
+                    
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+                  <!-- USER INFO SECTION -->
+    
+                  <div class="user-infos-section">
+                    <form action="">
+                        <div class="input-group">
+                            <div>
+                                <h3>First Name</h3>
+                                <input id="settingsFN" type="text" placeholder="First Name">
+                            </div>
+                            <div>
+                                <h3>Last Name</h3>
+                                <input id="settingsLN" type="text" placeholder="Last Name">
+                            </div>
+                            <div>
+                                <h3>Username</h3>
+                                <input id="settingsUN" type="text" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="input-group-email">
+                          <div>
+                            <h3>Email</h3>
+                            <input id="settingsEM" type="email" placeholder="Email">
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+    
+                  <!-- Section Mots de Passe -->
+                  <div class="password-section">
+    
+                    <div class="password-infos">
+                      <form action="">
+                        <h3>Old Password</h3>
+                        <input id="settingsOldP" type="password" placeholder="Old password" required>
+                        <h3>New Password</h3>
+                        <input  id="settingsNewP" type="password" placeholder="New password" required>
+                        <h3>Confirm New Password</h3>
+                        <input id="settingsNewConfirmP" type="password" placeholder="Confirm new password" required>
+                      </form>
+                    </div>
+    
+                    <div class="password-requierements">
+                      <h1>Password requierements</h1>
+                      <p>	To create a new password, you have to meet all of the following requirements:
+                      </p>
+                      <ul>
+                        <li>Minimum 8 character</li>
+                        <li>At least one special character</li>
+                        <li>At least one number</li>
+                        <li>Can’t be the same as a previous password</li>
+                    </ul>
+                    </div>
+                  </div>
+    
+                  <!-- SEPARATEUR  -->
+                  <div class="separator"></div>
+    
+                  <div class="two-factor-section">
+    
+                    <div class="section-1">
+                      <h3>Two-factor authentication</h3>
+                      <p>Secure your account by enabling 2FA and adding an extra layer of security</p>
+                      <label class="switch">
+                        <input type="checkbox" id="toggleSwitch2FA">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+    
+                    <div class="separator-profile-password"></div>
+    
+                    <div class="section2">
+                      <h3>Anonymize my data</h3>
+                      <p>Add another layer of security by anonymizing your data</p>
+                      <label class="switch-settings">
+                        <input type="checkbox" id="toggleSwitchAnonym">
+                        <span class="slider-settings"></span>
+                      </label>
+                    </div>
+                    <div class="separator-profile-password"></div>
+    
+                    <div class="section3">
+                      <h3>Download my data</h3>
+                      <p>You want to download your data ? Go ahead!</p>
+                      <label class="switch-settings">
+                        <input type="checkbox" id="toggleSwitchDData">
+                        <span class="slider-settings"></span>
+                      </label>
+                    </div>
+    
+                  </div>
+    
+                  <!-- Section cachée pour le contenu supplémentaire -->
+                  <div class="extra-content" id="extraContent">
+                    <div class="qr-section">
+                      <h1>Scan this QR code with your authentication app</h1>
+                      <label class="code-qr">
+                        <img id="qrCodeImg" src="" alt="QR Code">
+                      </label>
+                      <p>Enter the 2FA token from your authentication app</p>
+                      <input id="2faTokenInputSetup" type="text" placeholder="Enter your 2FA token">
+                      <button id="submit2FATokenSetup" >Verify Token</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div id="friendsListSection" class="settings-section hidden">
+                  <div class="content-friends">
+                    <h2>Friends List</h2>
+                    <p>Content for Friends List...</p>
+                  </div>
+                </div>
+
+                <div id="blockListSection" class="settings-section hidden">
+                  <div class="content-blocklist">
+                    <h2>Block List</h2>
+                    <p>Content for Block List...</p>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+                  <div class="circle bottom-circle"></div>
+            
+        </template>
+
+        <div id="sendNotif" style="width: 50px; height: 50px; background-color: black; z-index: 1111;"> diiiiiiiiiiiiiiiiiiiv notif</div>
+
+        <script src="routing.js"></script>
+        <script src="components/login.js" type="module"></script>
+        <script src="components/signup.js" type="module"></script>
+        <script src="components/resetpassword.js" type="module"></script>
+        <script src="components/authentifications.js" type="module"></script>
+        <script src="components/dashboard.js" type="module"></script>
+        <script src="components/chat.js" type="module"></script>
+        <script src="components/game.js" type="module"></script>
+        <script src="components/settings.js" type="module"></script>
+
+    </body>
+</html>
