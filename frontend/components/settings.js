@@ -761,6 +761,17 @@ class SettingsPage extends HTMLElement
         return response.json();
       });
 
+    // const pongStatePromise = fetch('/api/', {
+    //   method: 'GET',
+    //   headers: headers,
+    // })
+    //   .then(response => {
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch game state data');
+    //     }
+    //     return response.json();
+    //   });
+      
     Promise.all([userDataPromise, gameStatePromise])
       .then(([userData, gameState]) => {
         const combinedData = {
