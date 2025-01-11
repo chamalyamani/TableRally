@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'rest_framework',
+    'Friendship',
     # 'rest_framework.authtoken',
     'rest_framework_simplejwt',
     # 'djoser',

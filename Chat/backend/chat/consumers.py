@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Conversations, Messages, BlockList
 # from django.contrib.auth.models import User
 from authentication.models import CustomUser as User
+from Friendship.models import Friendship
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 from django.db.models import Q
@@ -32,14 +33,27 @@ class   ChatConsumer(AsyncWebsocketConsumer):
             existingBlock = await database_sync_to_async(BlockList.objects.filter(
                 conversation_id=self.conversation.id
                 ).first)()
+            main_existingBlock = await database_sync_to_async(Friendship.objects.filter(
+                Q(from_user=self.user1_id, to_user=self.user2_id, status='B')
+                | Q(from_user=self.user2_id, to_user=self.user1_id, status='B')
+            ).first)()
             if existingBlock:
-                block_details = await database_sync_to_async(BlockList.objects.get)(conversation_id=self.conversation_id)
+                # block_details = await database_sync_to_async(BlockList.objects.get)(conversation_id=self.conversation_id)
                 await self.channel_layer.group_send(
                     self.conversation_id,
                     {
                         'type': 'block_user',
-                        'blocker': block_details.blocker_id,
-                        'blocked': block_details.blocked_id
+                        'blocker': existingBlock.blocker_id,
+                        'blocked': existingBlock.blocked_id
+                    }
+                )
+            elif main_existingBlock:
+                await self.channel_layer.group_send(
+                    self.conversation_id,
+                    {
+                        'type': 'block_user',
+                        'blocker': main_existingBlock.from_user_id,
+                        'blocked': main_existingBlock.to_user_id
                     }
                 )
         else:

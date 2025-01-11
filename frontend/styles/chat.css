@@ -1100,6 +1100,7 @@ header
 .main-chat {
     /* padding: 2rem; */
     /* display: flex; */
+    /* background-color: black; */
     display: none;
     height: calc(100vh - 75px - 85px);
 

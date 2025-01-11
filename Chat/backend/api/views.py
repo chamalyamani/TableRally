@@ -10,16 +10,14 @@ from django.db.models import Q
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 
-
-class ChatOverview(APIView):
+class   ChatOverview(APIView):
     # permission_classes = [IsAuthenticated]
     # permission_classes = [JWTAuthentication]
     def get(self, request):
         conversations = Conversations.objects.filter(
             Q(user1_id=request.user.id) | Q(user2_id=request.user.id)
-        )
-        serializeChat = ChatOverviewSerializer(
-            conversations, many=True, context={'request': request})
+            )
+        serializeChat = ChatOverviewSerializer(conversations, many=True, context={'request': request})
         data = {
             'conversations': serializeChat.data
             # Add conversations images
@@ -34,7 +32,7 @@ class ChatOverview(APIView):
         return Response(data)
 
 
-class ConversationDetail(APIView):
+class   ConversationDetail(APIView):
     def get(self, request, id):
         try:
             display_name = {}
@@ -45,21 +43,18 @@ class ConversationDetail(APIView):
                 display_name = conversation.user1_id.get_full_name()
             else:
                 raise conversation.DoesNotExist()
-            messages = Messages.objects.filter(
-                conversation_id=id).order_by('timestamp')
-            serializeConv = ConversationDetailSerializer(
-                messages, many=True, context={'request': request})
+            messages = Messages.objects.filter(conversation_id=id).order_by('timestamp')
+            serializeConv = ConversationDetailSerializer(messages, many=True, context={'request': request})
             data = {
                 'display_name': display_name,
-                'messages': serializeConv.data
+                'messages' : serializeConv.data
                 # Add conversations images
             }
             return Response(data)
         except Conversations.DoesNotExist:
             return Response({'error': 'Conversation Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-
-class CreateConversation(APIView):
+class   CreateConversation(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -70,28 +65,26 @@ class CreateConversation(APIView):
         print(user2_id)
 
         if request.user.id != user1_id \
-                and request.user.id != user2_id:
+            and request.user.id != user2_id:
             return Response({'error': 'You do not have permission to create this conversation.'}, status=status.HTTP_403_FORBIDDEN)
-
+        
         existingConversation = Conversations.objects.filter(
             (Q(user1_id=user1_id) & Q(user2_id=user2_id)) |
             (Q(user1_id=user2_id) & Q(user2_id=user1_id)
-             )).first()
+        )).first()
         if existingConversation:
-            return Response({'status': 'This conversation already exists.', 'id': existingConversation.id}, status=status.HTTP_200_OK)
+            return Response({'status': 'This conversation already exists.', 'id': existingConversation.id},status=status.HTTP_200_OK)
 
         SerializedUsers = CreateConversationSerializer(data=request.data)
         if SerializedUsers.is_valid():
             SerializedUsers.save()
             return Response(SerializedUsers.data, status=status.HTTP_201_CREATED)
-
+        
         return Response(SerializedUsers.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ListUsers(APIView):
+class   ListUsers(APIView):
     def get(self, request):
         users = User.objects.exclude(id=request.user.id)
-        SerializedUsers = ListUsersSerializer(
-            users, many=True, context={'request': request})
+        SerializedUsers = ListUsersSerializer(users, many=True, context={'request': request})
 
         return Response(SerializedUsers.data)
