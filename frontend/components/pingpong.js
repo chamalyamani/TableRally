@@ -334,12 +334,10 @@ function attachEventListeners(shadowRoot) {
 
             <div id="game-container">
             <div class="instructions-box left">
-            <img src="hand-left.png" alt="Left Hand">
             <p>Use: <span>WS</span></p>
             </div>
             <canvas id="Game" width="700" height="350"></canvas>
             <div class="instructions-box right">
-            <img src="hand-right.png" alt="Right Hand">
             <p>Use: <span>⬆⬇</span></p>
             </div>
           </div>
@@ -616,31 +614,26 @@ function attachEventListeners(shadowRoot) {
       let origintournament = shadowRoot.getElementById("myContainer").innerHTML ;
       shadowRoot.getElementById("myContainer").innerHTML = 
       `
-          <h1>Tournament Registration</h1>
+          <div class="tournament-form">
           <form id="tournamentForm">
-              <div>
-                  <label for="Player1">Player1</label>
-                  <input type="text" id="Player1" name="Player1" required>
+          <h1>Tournament Registration</h1>
+          <label class="player1-tournoi" for="Player1">Name player 1</label>
+                  <input class="input-tournoi" type="text" id="Player1" name="Player1" required>
 
-              </div>
-
-              <div>
-                  <label for="Player2">Player2</label>
-                  <input type="text" id="Player2" name="Player2" required>
-              </div>
+                  <label class="player1-tournoi" for="Player2">Name player 2</label>
+                  <input class="input-tournoi" type="text" id="Player2" name="Player2" required>
               
-              <div>
-                  <label for="Player3">Player3</label>
-                  <input type="text" id="Player3" name="Player3" required>
-              </div>
+                  <label  class="player1-tournoi" for="Player3">Name player 3</label>
+                  <input class="input-tournoi" type="text" id="Player3" name="Player3" required>
               
-              <div>
-                  <label for="Player4">Player4</label>
-                  <input type="text" id="Player4" name="Player4" required>
-              </div>
+                  <label class="player1-tournoi" for="Player4">Name player 4</label>
+                  <input class="input-tournoi" type="text" id="Player4" name="Player4" required>
 
-              <button  id="register_button" type="submit">Register</button>
+              <button class="register-button" id="register_button" type="submit">Register</button>
           </form>
+          </div>
+          
+          
       `
   let playerData = [];
   let winer1 = ""
@@ -663,25 +656,47 @@ function attachEventListeners(shadowRoot) {
   async function WinerFunction() {
   
     shadowRoot.getElementById("myContainer").innerHTML = `
-    <div id="winner">
-      <img src="boy.png"/>
-      <p>${winer3}</p>
+    <div class=content-winner>
+        <div id="winner">
+        <div class="crown"></div>
+        <img src="">
+        <p>${winer3}</p>
+        </div>
     </div>
+    
     `
     setTimeout(function() {
               shadowRoot.getElementById("myContainer").innerHTML = 
               `
-                  <div id="holder">
-                      <div>
-                          <button id="local">local</button>
-                      </div>
-                      <div>
-                          <button id="remote">remote</button>
-                      </div>
-                      <div>
-                          <button id="tournament">tournament</button>
-                      </div>
+                  <div id="holder" class="holder">
+                <h1>Choose your game mode</h1>
+                <div class="modes">
+                  <div class="local-mode" id="local">
+                    <div class="icon">
+                      <img src="assests/icon-local.png">
+                    </div>
+                    <div class="go-local">
+                      <p>Local</p>
+                    </div>
                   </div>
+                  <div class="remote-mode"  id="remote">
+                    <div class="icon">
+                      <img src="assests/icon-remote.png">
+                    </div>
+                    <div class="go-remote">
+                      <p>Remote</p>
+                    </div>
+                  </div>
+                  <div class="tournament-mode" id="tournament">
+                    <div class="icon">
+                      <img src="assests/icon-tournoi.png">
+                    </div>
+                    <div class="go-tournament" >
+                      <p>Tournament</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
                   <script src="game.js"></script>
               `
               attachEventListeners(shadowRoot)
@@ -691,7 +706,7 @@ function attachEventListeners(shadowRoot) {
   async function tournament_table() {
   
     shadowRoot.getElementById("myContainer").innerHTML = `
-          <div id="containe_all">
+         <div id="containe_all">
             <div id="first" >
               <div>
                 <div class="player-box"><p>${playerData[0]}</p></div>
@@ -741,20 +756,38 @@ function attachEventListeners(shadowRoot) {
   
   function MakeMatch(player1, player2) {
     shadowRoot.getElementById("myContainer").innerHTML = `
+
     <div class="full">
-      <div id="content">
-        <div id="score">
-          <img src="boy.png">
-          <h1 id="score1" >0</h1>
-          <p id="test">${player1} | ${player2}</p>
+          <div id="content">
+
+          <div id="score">
+          <div class="team team1">
+          <img src="">
+          <h1>${player1}</h1>
+          </div>
+          
+          <div class="score-center">
+          <h1 id="score1">0</h1>
+          <span>-</span>
           <h1 id="score2">0</h1>
-          <img src="boy.png">
-        </div>
-  
-        <canvas id="Game" width="700" height="350"></canvas>
-        <p>control the left player by using up and down arrow keys</p>
-      </div>
-    </div>
+          </div>
+          
+          <div class="team team2">
+          <img src="">
+          <h1>${player2}</h1>
+          </div>
+          </div>
+
+            <div id="game-container">
+            <div class="instructions-box left">
+            <p>Use: <span>WS</span></p>
+            </div>
+            <canvas id="Game" width="700" height="350"></canvas>
+            <div class="instructions-box right">
+            <p>Use: <span>⬆⬇</span></p>
+            </div>
+          </div>
+          </div>
   
     `;
   
