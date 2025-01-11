@@ -582,7 +582,9 @@ header
 /***************************************************************************************************************************/
 /***************************************************************************************************************************/
 #chatBody {
-    background-color: rgb(41, 27, 27);
+    /* background-color: rgb(41, 27, 27); */
+    /* background-color: var(--primary-color); */
+    background-color: #00000088;
     color: #fff;
     width: calc(100vw - 4.5vw);
     height: calc(100vh - 8vh);
@@ -1097,6 +1099,7 @@ header
 .main-chat {
     /* padding: 2rem; */
     /* display: flex; */
+    /* background-color: black; */
     display: none;
     height: calc(100vh - 75px - 85px);
 
@@ -1106,7 +1109,7 @@ header
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     background: url("/assests/chatAssets/chat-background.svg");
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.832);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

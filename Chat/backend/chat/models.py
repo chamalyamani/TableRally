@@ -2,6 +2,7 @@ from django.db import models
 # from django.contrib.auth.models import User
 from authentication.models import CustomUser as User
 
+
 class   Conversations(models.Model):
     user1_id = models.ForeignKey(User, related_name='user1', on_delete=models.CASCADE)
     user2_id = models.ForeignKey(User, related_name='user2', on_delete=models.CASCADE)

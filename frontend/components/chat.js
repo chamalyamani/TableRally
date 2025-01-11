@@ -510,9 +510,12 @@ async realTime(conv, singleConv) {
             this.blockList.push(conv.id);
             this.disableMessageBar();
             this.removeBlur();
-            if (this.currentUser == receivedMessage.blocked)
+            if (this.currentUser == receivedMessage.blocked) {
                 this.blockButton.disabled = true;
+                this.playButton.disabled = true;
+            }
             else {
+              this.playButton.disabled = true;
               this.blockChat.style.display = 'none';
               this.unblockChat.style.display = 'block';
               this.div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'UNBLOCK THIS USER?'
@@ -523,6 +526,7 @@ async realTime(conv, singleConv) {
             this.enableMessageBar();
             this.removeBlur();
             this.blockButton.disabled = false;
+            this.playButton.disabled = false;
             this.blockChat.style.display = 'block';
             this.unblockChat.style.display = 'none';
             this.div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'BLOCK THIS USER?'
@@ -532,6 +536,7 @@ async realTime(conv, singleConv) {
     this.socket.onopen = () => {
         this.enableMessageBar();
         this.blockButton.disabled = false;
+        this.playButton.disabled = false;
         this.blockChat.style.display = 'block';
         this.unblockChat.style.display = 'none';
         this.div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'BLOCK THIS USER?'
