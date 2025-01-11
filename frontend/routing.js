@@ -174,7 +174,8 @@ const protectedRoutes = new Set([
     "chat",
     "game",
     "settings",
-    "pingpong"
+    "pingpong",
+    "dashboard"
 ]);
 
 let notif_socket = null;
