@@ -315,7 +315,7 @@ function attachEventListeners(shadowRoot) {
           <div id="content">
 
           <div id="score">
-          <div class="team team1">
+          <div class="team team1"> 
           <img src="${image}">
           <h1>${user}</h1>
           </div>
@@ -334,7 +334,7 @@ function attachEventListeners(shadowRoot) {
 
             <div id="game-container">
             <div class="instructions-box left">
-            <p>Use: <span>WS</span></p>
+            <p>Use: <span>⬆⬇</span></p>
             </div>
             <canvas id="Game" width="700" height="350"></canvas>
             <div class="instructions-box right">
@@ -668,7 +668,7 @@ function attachEventListeners(shadowRoot) {
     setTimeout(function() {
               shadowRoot.getElementById("myContainer").innerHTML = 
               `
-                  <div id="holder" class="holder">
+                <div id="holder" class="holder">
                 <h1>Choose your game mode</h1>
                 <div class="modes">
                   <div class="local-mode" id="local">
@@ -707,25 +707,73 @@ function attachEventListeners(shadowRoot) {
   
     shadowRoot.getElementById("myContainer").innerHTML = `
          <div id="containe_all">
-            <div id="first" >
-              <div>
-                <div class="player-box"><p>${playerData[0]}</p></div>
-                <div class="player-box"><p>${playerData[1]}</p></div>
-              </div>
-              <div>
-                <div class="player-box">${winer1}</div>
-              </div>
-              <div>
-                <div class="player-box">${winer2}</div>
-              </div>
-              <div>
-                <div class="player-box"><p>${playerData[2]}</p></div>
-                <div class="player-box"><p>${playerData[3]}</p></div>
-              </div>
+            <div class="title-wrapper">
+              <h1>Tournament</h1>
+              <img class="laurel-decoration" src="assests/title.png"</img>
             </div>
-              <button id="play-tour">play</button>
+            
+            <div class="container-tournament">
 
-          </div>
+              <!-- 1) Bloc des premiers matchs (Match A & Match B) -->
+
+              <div class="first-matches">
+                <div class="round1"><p>ROUND 1</p></div>
+                <div class="round2"><p>ROUND 2</p></div>
+                <div class="round3"><p>FINAL</p></div>
+
+
+                <div class="first-players">
+                  <div class="player-box"><p>${playerData[0]}</p></div>
+                  <div class="player-box"><p>${playerData[1]}</p></div>
+                </div>
+
+                <div class="second-players">
+                  <div class="player-box"><p>${playerData[2]}</p></div>
+                  <div class="player-box"><p>${playerData[3]}</p></div>
+                </div>
+
+              </div>
+
+              <!-- 2) Bloc des deux winners (Winner 1 & Winner 2) -->
+              <div class="second-matches">
+                <div class="champion-1">
+                  <div class="player-box"><p>${winer1}</p></div>
+                </div>
+
+                <div class="champion-2">
+                  <div class="player-box"><p>${winer2}</p></div>
+                </div>
+              </div>
+
+              <!-- 3) Bloc du champion final (Winner 3) -->
+              <div class="champion">
+                <div class="player-box"><p>${winer3}</p></div>
+                <img src="assests/trophee.png" class="trophee-img"</img>
+                <button id="play-tour">play</button>
+              </div>
+
+              <div class="line" id="lineA"></div>
+              <div class="line" id="lineB"></div>
+              <div class="line" id="lineC"></div>
+              <div class="line" id="line1"></div>
+
+
+              <div class="line" id="lineD"></div>
+              <div class="line" id="lineE"></div>
+              <div class="line" id="lineF"></div>
+              <div class="line" id="line2"></div>
+
+
+              <div class="line" id="lineG"></div>
+              <div class="line" id="lineH"></div>
+              <div class="line" id="lineI"></div>
+              <div class="line" id="line3"></div>
+
+
+
+
+            </div> <!-- /container-tournament -->
+          </div> <!-- /containe_all -->
         `;
     shadowRoot.getElementById("play-tour").addEventListener("click", async (event) => {
       console.log("play-tour")

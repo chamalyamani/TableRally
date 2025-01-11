@@ -1,0 +1,6 @@
+fix hadik player win flocal , ndirha as win/lost 
+Nshuf hadik win/lost 
+remodifie registration tournament + add phrase
+tournament brackets DONE
+BUTTON RESWIGER DONE
+nhyd ws mn remote DONE
