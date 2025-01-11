@@ -134,8 +134,8 @@ let principal_html = `<div id="id_dynamic" class="dynamic">
                 </div>
             </div>
             <div class="btnsPlay">
-              <button class="play_btn play_btn1">PLAY 3/3 Classic</button>
-              <button class="play_btn play_btn2">PLAY 5/5 FT4</button>
+              <button class="play_btn play_btn1">PLAY 3X3 Classic</button>
+              <button class="play_btn play_btn2">PLAY 5X5 FT_FOUR</button>
             </div>
               <!-- <button>3</button>
               <button>5</button>
@@ -348,7 +348,7 @@ class t3 {
   }
 
   err_msg(){
-      let pop = this.shadowRoot.querySelector(".toast")
+      let pop = this.shadowRoot.querySelector("#err_pop")
       const closeCode = this.currMsg["code"];
       const closeReason = this.currMsg["msg"];
       console.log("hna f err_msg handler : ", closeCode, "  :  ", closeReason)
@@ -356,19 +356,18 @@ class t3 {
       pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
   
       // Make the popup visible with animation
-    //   pop.style.transition = "top 0.5s ease";
-    //   pop.style.top = "0vh";
+      pop.style.transition = "top 0.5s ease";
+      pop.style.top = "0vh";
   
       // Hide the popup after a delay
       setTimeout(() => {
-          pop.classList.add("active");
-          
-          // Clear the text after hiding for a cleaner reset
-          setTimeout(() => {
-              pop.textContent = "";
-              pop.classList.remove("active");
-          }, 2000); // Matches the transition time
-      }, 50); // Keep the popup visible for 3 seconds
+        pop.style.top = "-15vh";
+
+        // Clear the text after hiding for a cleaner reset
+        setTimeout(() => {
+                pop.textContent = "";
+            }, 500); // Matches the transition time
+        }, 2000); // Keep the popup visible for 3 seconds
       // console.log('onclose : ', event.code, "  :  ", event.reason)
   }
 

@@ -94,13 +94,14 @@ class test(AsyncWebsocketConsumer):
                 Exception("No players found for this game")
             
             if code == 1006 or code == 1001:
+                print("====================================================")
+                print("code 1006 inform the other player that you left unexpectedly")
                 idxHim = 1 if players[0].user_id == self.user.id else 0
                 await self.channel_layer.send(players[idxHim].channel_name, {
                     "type": "error_handle",
                     "code": 1,
                     "msg": "Your opponent has been disconnected unexpectedly."
                 })
-                print("code 1006 inform the other player that you left unexpectedly")
             # Remove both players from player_game_map
             for player in players:
                 player_id = player.user_id
@@ -130,12 +131,12 @@ class test(AsyncWebsocketConsumer):
             await self.channel_layer.send(players[0].channel_name, leave_message)
 
         
-        await self.channel_layer.send(self.channel_name, {
-            "type": "error_handle",
-            "code": 1,
-            "msg" : "safi you left the game ? "
-        })
-        # await self.close(code=4011)
+        # await self.channel_layer.send(self.channel_name, {
+        #     "type": "error_handle",
+        #     "code": 1,
+        #     "msg" : "safi you left the game ? "
+        # })
+        await self.close(code=4011)
         # else:
         #     await self.close(code=1000)
     #function for initializing the game table
@@ -713,16 +714,21 @@ class test(AsyncWebsocketConsumer):
             "board": event["board"]
         }))
     async def error_handle(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "error_handle",
-            "code": event["code"],
-            "msg": event["msg"]
-        }))
-        print("....................................", event["code"])
-        if event["code"] == 1:
-            await self.close(code=4004)
-        elif event["code"] == 3:
-            await self.close(code=4005)
+        try:
+            if self.channel_layer:
+                await self.send(text_data=json.dumps({
+                    "type": "error_handle",
+                    "code": event["code"],
+                    "msg": event["msg"]
+                }))
+            print("....................................", event["code"])
+            if event["code"] == 1:
+                await self.close(code=4004)
+            elif event["code"] == 3:
+                await self.close(code=4005)
+        except Exception as e:
+            print("EXCEPTION : in error_handle function", e)
+            # await self.close(code=4004)
     
 
 
