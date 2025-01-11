@@ -64,7 +64,6 @@ class DashboardPage extends HTMLElement
       this.dashboardProcess();
       window.addEventListener("resize", this.handleResize.bind(this));
       this.handleResize();
-      this.dashboardTest(this.shadowRoot);
     }
     
       handleResize() 
