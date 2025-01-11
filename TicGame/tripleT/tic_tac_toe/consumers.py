@@ -75,7 +75,7 @@ class test(AsyncWebsocketConsumer):
             # BUT YES WHEN SOMEONE JUST ENTERED AND DISCONNECTED WITHOUT ANY MATCHING
             # HE MUST BE FREED FROM THE GRP THATS WHY THIS IS MADE
 
-            grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7]
+            grps_arr = [grp_m, grp_m3, grp_m5, grp_m7, ft4_m, ft4_m3, ft4_m5, ft4_m7, friends_grp]
             for grp in grps_arr:
                 # print("len dyal grp ",len(grp_m))
                 for item in grp:
@@ -491,26 +491,40 @@ class test(AsyncWebsocketConsumer):
                 "message": "en couuuurs. ."
             })
 
-    # async self.friendGame(self, content):
-    #     friend_id = content.get('friend_id', None)
-    #     if friend_id is None:
-    #         await self.close(code=4001)  # Invalid or missing game type
-    #         return
-    #    if friend_id == self.user.id:
-    #         await self.close(code=4001)  # Invalid or missing game type
-    #         return
-    #     if friend_id in player_game_map:
-    #         await self.close(code=4005)  # User is already in a game
-    #         return
-    #     if self.user.id in player_game_map:
-    #         await self.close(code=4005)  # User is already in a game
-    #         return
-    #     if friend_id in friends_grp:
+    async def friendGame(self, content):
+        friend_id = content.get('friendId', None)
+        if friend_id is None:
+            await self.close(code=4001)  # Invalid or missing game type
+            return
+        if friend_id == self.user.id:
+            await self.close(code=4001)  # Invalid or missing game type
+            return
+        if friend_id in player_game_map:
+            await self.close(code=4005)  # User is already in a game
+            return
+        if self.user.id in player_game_map:
+            await self.close(code=4005)  # User is already in a game
+            return
+        found = any(friend_id in d for d in friends_grp)
+        if found:
+            two_friends = deque()
+            two_friends.append({self.user.id:self.channel_name})
+            friend_channel = None
+            for item in friends_grp:
+                if friend_id in item:
+                    friend_channel = item[friend_id]
+                    break
+            two_friends.append({friend_id:friend_channel})
     #         here you must normally send both players to the game box
     #         add each user into a deque with there id and channel name
     #         get the players channel name and id from the friends_grp
-    #
-    #         await self.setupPlayersAndInit(2friends deque, choose a game type)
+            print("your friend is here go PLAY . . .")
+            await self.setupPlayersAndInit(two_friends, ["ft_classic", 1])
+            return
+        else:
+            print("your friend is not here wait . . .")
+            friends_grp.append({self.user.id:self.channel_name})
+        
 
 
     async def receive(self, text_data):
@@ -520,6 +534,7 @@ class test(AsyncWebsocketConsumer):
             txt_json = json.loads(text_data)
             print("RECEIVE : ", txt_json)
             msg_type = txt_json.get("type", None)
+            print("msg_type :-------------------->>>>> ", msg_type)
             if msg_type == None:
                 raise Exception("No type in the message", 1)
             if msg_type not in expected_types:
@@ -536,9 +551,10 @@ class test(AsyncWebsocketConsumer):
             # if he finds him then he must create the game and send the setup message
             # if he doesnt he must set a timer for the other player to come
             # if the timer ends then he must remove himself from the grp
-            
-            # if msg_type == 'friendGame':
-            #     await self.friendGame(txt_json)
+            if msg_type == 'friendGame':
+                print("here in the COnsumer i received friend request ", txt_json)
+                await self.friendGame(txt_json)
+                return
 
             #must be handled if is already in game or is not in game 
             if msg_type == 'ft_classic' or msg_type == 'ft4':

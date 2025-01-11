@@ -164,8 +164,8 @@ rejectBtn.addEventListener('click', () => {
     }, 500);
 })
 
-async function callme(obj){
-    await obj.friendsGame()
+async function callme(friendId, obj){
+    await obj.friendsGame(friendId)
 }
 
 acceptBtn.addEventListener('click', () => {
@@ -194,7 +194,7 @@ acceptBtn.addEventListener('click', () => {
     // async  () => {
     //     await game_page.friendsGame()
     // }
-    callme(game_page)
+    callme(datap.sender,game_page)
     // logic game matching 
     // alert('game_resp');
 
@@ -236,7 +236,9 @@ getAccessToken()
         // async  () => {
         //     await game_page.friendsGame()
         // }
-        callme(game_page)
+        // setTimeout(() => {
+        callme(datap.sender ,game_page)
+        // },1000)
             // logic game matching 
             // alert('game_resp');
 

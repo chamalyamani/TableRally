@@ -724,8 +724,8 @@ class GamePage extends HTMLElement
 /********************************END OF CONTRUCTOR************************************** */
 
   
-async friendsGame(){
-    await playgame("ft_classic", this)
+async friendsGame(friendId){
+    await playgame(friendId, "ft_classic", this)
 }
 
   
@@ -976,14 +976,34 @@ function fetchGameData(dom){
 
 
 async function playClassic (obj) {
-    await playgame("ft_classic", obj)
+    await playgame(-1,"ft_classic", obj)
 }
 
 async function playFt4 (obj) {
-    await playgame("ft4", obj)
+    await playgame(-1,"ft4", obj)
 }
 
-async function playgame (gameType, obj) {
+async function playgame (friendId ,gameType, obj) {
+    let msg;
+    let first_to;
+    if (friendId === -1){
+        first_to = obj.shadowRoot.querySelector('input[name="game-choice"]:checked').value;
+        if (!first_to) {
+            console.error("No game choice selected.");
+            return;
+        }
+        msg = {
+            "type" : gameType,
+            "first_to": first_to
+        }
+    }
+    else{
+        msg = {
+            "type" : "friendGame",
+            "friendId" : friendId
+        }
+        console.log(" Here is the msg im sending for friend game : ", msg)
+    }
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
     let tok;
@@ -996,11 +1016,6 @@ async function playgame (gameType, obj) {
             // alert('Error getting access token', error.message);
         }); 
     
-    let first_to = obj.shadowRoot.querySelector('input[name="game-choice"]:checked').value;
-    if (!first_to) {
-        console.error("No game choice selected.");
-        return;
-    }
     try {
         matchingSocket = new WebSocket(`/ws/play/?Token=${tok}`);
     } catch (error) {
@@ -1013,10 +1028,7 @@ async function playgame (gameType, obj) {
         // alert('tconnecctaa');
         // this on open msg sent is for the default, but for the friend game
         // it must be another msg that will hold the username of the friend
-        const msg = {
-            "type" : gameType,
-            "first_to": first_to
-        }
+        
         matchingSocket.send(JSON.stringify(msg));
         
         game_obj = new t3(obj.shadowRoot)
