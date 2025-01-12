@@ -44,12 +44,15 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                 print("User does not exist")
                 await self.close()
             sender_id = text_data_dic['sender_id']
+            print("self.user.username   ", self.user.username)
             await self.channel_layer.group_send(
                 f'user_notification_{receiver_id.id}',
                 {
                     'type': 'game_request_notification',
                     'receiver': receiver_id.id,
                     'sender': sender_id,
+                    'username': self.user.username,
+                    'gameType': text_data_dic['gameType']
                 }
             )
         elif text_data_dic['type'] == 'game_resp':
@@ -62,6 +65,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                     'type': 'game_resp',
                     'receiver': receiver_id,
                     'sender': sender_id,
+                    'gameType': text_data_dic['gameType']
                 }
             )
 
@@ -78,7 +82,9 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'game_request_notification',
                 'receiver': event['receiver'],
-                'sender': event['sender']
+                'sender': event['sender'],
+                'username': event['username'],
+                'gameType': event['gameType']
             }
         ))
         print("sent to the other ........")
@@ -87,6 +93,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'game_resp',
                 'receiver': event['receiver'],
-                'sender': event['sender']
+                'sender': event['sender'],
+                'gameType': event['gameType']
             }
         ))

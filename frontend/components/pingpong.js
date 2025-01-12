@@ -4,8 +4,393 @@ import { getUserInfos } from "../shared.js";
 import { logoutProcess } from "../shared.js";
 
 let chatSocket = null;
+function callremote(other_id, shadowRoot)
+  {
+    let orignalremote = shadowRoot.getElementById("myContainer").innerHTML;
+    shadowRoot.getElementById("myContainer").innerHTML = 
+    `
+    <div class="full">
+        <div id="content">
+            <div class="remote-score" id="score">
+               <div id="score">
+              <div class="team team1">
+              <img src="">
+              <h1>PLAYER 1</h1>
+              </div>
+              
+              <div class="score-center">
+              <h1 id="score1">0</h1>
+              <span>-</span>
+              <h1 id="score2">0</h1>
+              </div>
+              
+              <div class="team team2">
+              <img src="">
+              <h1>PLAYER 2</h1>
+              </div>
+              </div>
+            </div>
+            <canvas id="Game" width="700" height="350"></canvas>
+            <p>control the left player by using up and down arrow keys</p>
+        </div>
+    </div>
+    <script src="remote.js"></script>
+    `
+    function getAccessToken() {
+        return fetch("/auth/get-access-token/", {
+            method: "GET",
+            credentials: "include",
+        })
+        .then(response => {
+            if (!response.ok) 
+            {
+                throw new Error("Failed to fetch access token");
+            }
+        
+            return response.json();
+        })
+        .then(data => {
+            if (data.access_token) {
+                return data.access_token
+            } else {
+                throw new Error("Access token not found");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching access token:", error);
+        });
+    }
+    
+    getAccessToken().then(token => {
+        console.log(token)
+        chatSocket = new WebSocket(`/ws/game/?Token=${token}&ID=${other_id}`);
+        let user = "--";
+        let other_user = "--";
+        let image = "";
+        let other_image = "";
+        let id = 0
+        const canvas = shadowRoot.getElementById("Game");
+        const context = canvas.getContext("2d");
+        
+        
+        function waiting() {
+            shadowRoot.getElementById("myContainer").innerHTML = `
+
+              <div class="lobby-waiting" id="waiting">
+              <div class="content-waiting">
+                  <div class="player player1">
+                      <img src="${image}">
+                      <h2>PLAYER 1</h2>
+                  </div>
+                      <div class="loader-loading"></div>
+                  <div class="player player2">
+                      <img src="assets/player2.png">
+                      <h2>PLAYER 2</h2>
+                  </div>
+              </div>
+          </div>
+            `;
+        }
+    
+    function nowait() {
+        shadowRoot.getElementById("myContainer").innerHTML = `
+
+        <div class="full">
+        <div id="content">
+
+        <div id="score">
+        <div class="team team1">
+        <img src="${image}">
+        <h1>${user}</h1>
+        </div>
+        
+        <div class="score-center">
+        <h1 id="score1">0</h1>
+        <span>-</span>
+        <h1 id="score2">0</h1>
+        </div>
+        
+        <div class="team team2">
+        <img src="${other_image}">
+        <h1>${other_user}</h1>
+        </div>
+        </div>
+
+          <div id="game-container">
+          <div class="instructions-box left">
+          <p>Use: <span>WS</span></p>
+          </div>
+          <canvas id="Game" width="700" height="350"></canvas>
+          <div class="instructions-box right">
+          <p>Use: <span>⬆⬇</span></p>
+          </div>
+        </div>
+        </div>
+        <script src="remote.js"></script>
+        `;
+    }
+            
+    function draw(context, canvas, ballx, bally, player1, player2) {  
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "rgba(0, 0, 0, 0.2)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        context.fillStyle = "#FFF";
+        context.fillRect(5, player1, 5, 70);
+        
+        context.fillStyle = "#FFF";
+        context.fillRect(canvas.width - 10, player2, 5, 70);
+        
+        context.fillStyle = "#FFF";
+        context.beginPath();
+        context.arc(ballx, bally, 8, 0, Math.PI * 2, false);
+        context.fill();
+        
+        context.beginPath();
+        context.setLineDash([4, 2]);
+        context.moveTo(canvas.width / 2, 0);
+        context.lineTo(canvas.width / 2, 350);
+        context.lineWidth = 2;
+        context.strokeStyle = "white";
+        context.stroke();
+    }
+    
+    chatSocket.onopen = function (event) {
+        console.log("wait..................................");
+    };
+    
+    chatSocket.onerror = (error) => {
+        console.log("onerror enter");
+        
+        shadowRoot.getElementById("myContainer").innerHTML =
+        `
+        <h1>something worng try later</h1>          
+        `
+        setTimeout(function() {
+          shadowRoot.getElementById("myContainer").innerHTML = 
+          `
+               <div id="holder" class="holder">
+              <h1>Choose your game mode</h1>
+              <div class="modes">
+                <div class="local-mode" id="local">
+                  <div class="icon">
+                    <img src="assests/icon-local.png">
+                  </div>
+                  <div class="go-local">
+                    <p>Local</p>
+                  </div>
+                </div>
+                <div class="remote-mode"  id="remote">
+                  <div class="icon">
+                    <img src="assests/icon-remote.png">
+                  </div>
+                  <div class="go-remote">
+                    <p>Remote</p>
+                  </div>
+                </div>
+                <div class="tournament-mode" id="tournament">
+                  <div class="icon">
+                    <img src="assests/icon-tournoi.png">
+                  </div>
+                  <div class="go-tournament" >
+                    <p>Tournament</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `
+          attachEventListeners(shadowRoot)
+      }, 2000); 
+        console.log("onerror exit");
+    };
+
+    function winner(winner)
+    {
+        shadowRoot.getElementById("myContainer").innerHTML =
+        `
+
+        <div class="content-winner">
+            <div id="winner">
+              <div class="crown"></div>
+              <img src="${image}">
+              <p>${winner}</p>
+            </div>
+          </div>
+        
+        `
+    }
+
+    function lost(winner)
+    {
+        shadowRoot.getElementById("myContainer").innerHTML =
+        `
+          <div class="content-lose">
+            <div id="lost">
+              <div class="rejected"></div>
+              <img src="${image}">
+              <p>${winner}</p>
+          </div>
+          </div>
+        
+        `
+    }
+
+    chatSocket.onclose = (event) => {
+        if (!event.wasClean) {
+            console.error("WebSocket connection closed unexpectedly.");
+        } else {
+            console.log("WebSocket connection closed cleanly.");
+        }
+        setTimeout(function() {
+            shadowRoot.getElementById("myContainer").innerHTML = 
+            `
+                <div id="holder" class="holder">
+              <h1>Choose your game mode</h1>
+              <div class="modes">
+                <div class="local-mode" id="local">
+                  <div class="icon">
+                    <img src="assests/icon-local.png">
+                  </div>
+                  <div class="go-local">
+                    <p>Local</p>
+                  </div>
+                </div>
+                <div class="remote-mode"  id="remote">
+                  <div class="icon">
+                    <img src="assests/icon-remote.png">
+                  </div>
+                  <div class="go-remote">
+                    <p>Remote</p>
+                  </div>
+                </div>
+                <div class="tournament-mode" id="tournament">
+                  <div class="icon">
+                    <img src="assests/icon-tournoi.png">
+                  </div>
+                  <div class="go-tournament" >
+                    <p>Tournament</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            `
+            attachEventListeners(shadowRoot)
+        }, 2000); 
+    };
+    
+    
+    chatSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        if (data.TITLE == "start") {
+            const dato = { TITLE: "play" };
+            chatSocket.send(JSON.stringify(dato));
+            
+        }
+        else if (data.TITLE == "gameloop") 
+        {
+            const canvas = shadowRoot.getElementById("Game");
+            const context = canvas.getContext("2d");
+            draw(
+                context,
+                canvas,
+                data.ballx,
+                data.bally,
+                data.player1,
+                data.player2
+            );
+            if (keys.up == true) 
+            {
+                
+                const data = { TITLE: "move_player", player_direction: "up" };
+                chatSocket.send(JSON.stringify(data));
+            }
+            if (keys.down == true) 
+            {
+                const data = { TITLE: "move_player", player_direction: "down" };
+                chatSocket.send(JSON.stringify(data));
+            }
+            shadowRoot.getElementById("score1").innerHTML = data.score1;
+            shadowRoot.getElementById("score2").innerHTML = data.score2;
+        }
+        else if (data.TITLE == "wait") 
+        {
+            image = data.image
+            waiting()
+        }
+        else if (data.TITLE == 'winner_send')
+        {
+            if (data.winner == id)
+                winner("You win");
+            else 
+               lost("You lost!")
+        }
+        else if(data.TITLE == "id")
+        {
+            id = data.id
+        }
+        else if(data.TITLE == "username_id")
+        {
+            if (id != data.id)
+            {
+                other_user = data.username
+                other_image = data.image
+            }
+            else 
+            {
+                user = data.username
+                image = data.image
+            }
+            nowait()
+        }
+
+    };
+                
+    function MovePlayer() {
+        if (keys.up == true) 
+            {
+                const data = { TITLE: "move_player", player_direction: "up" };
+                chatSocket.send(JSON.stringify(data));
+            }
+            if (keys.down == true) 
+                {
+                    const data = { TITLE: "move_player", player_direction: "down" };
+                    chatSocket.send(JSON.stringify(data));
+                }
+                requestAnimationFrame(MovePlayer);
+            }
+            
+            const keys = {
+                up: false,
+                down: false,
+            };
+
+            const goBackButton = shadowRoot.getElementById("go_back");
+            if (goBackButton) {
+                goBackButton.addEventListener('click', function (event) {
+                    nowait();
+                });
+            }
+            
+            
+            window.addEventListener("keydown", function (event) 
+            {
+                if (event.key === "ArrowUp") keys.up = true;
+                if (event.key === "ArrowDown") keys.down = true;
+            });
+            
+            window.addEventListener("keyup", function (event) 
+            {
+                if (event.key === "ArrowUp") keys.up = false;
+                if (event.key === "ArrowDown") keys.down = false;
+            });
+                        
+    })
+    .catch(error => {
+            console.error("Error fetching access token:", error);
+    })
+  }
+
 function attachEventListeners(shadowRoot) {
-  console.log("shadow ROOT : ",shadowRoot)
   shadowRoot.getElementById("local").addEventListener('click', function(event) {
     let orignallocal;
       orignallocal = shadowRoot.getElementById("myContainer").innerHTML;
@@ -220,395 +605,8 @@ function attachEventListeners(shadowRoot) {
       
   });
   
-  shadowRoot.getElementById("remote").addEventListener('click', function (event) {
-      let orignalremote = shadowRoot.getElementById("myContainer").innerHTML;
-      shadowRoot.getElementById("myContainer").innerHTML = 
-      `
-      <div class="full">
-          <div id="content">
-              <div class="remote-score" id="score">
-                 <div id="score">
-                <div class="team team1">
-                <img src="">
-                <h1>PLAYER 1</h1>
-                </div>
-                
-                <div class="score-center">
-                <h1 id="score1">0</h1>
-                <span>-</span>
-                <h1 id="score2">0</h1>
-                </div>
-                
-                <div class="team team2">
-                <img src="">
-                <h1>PLAYER 2</h1>
-                </div>
-                </div>
-              </div>
-              <canvas id="Game" width="700" height="350"></canvas>
-              <p>control the left player by using up and down arrow keys</p>
-          </div>
-      </div>
-      <script src="remote.js"></script>
-      `
-      function getAccessToken() {
-          return fetch("/auth/get-access-token/", {
-              method: "GET",
-              credentials: "include",
-          })
-          .then(response => {
-              if (!response.ok) 
-              {
-                  throw new Error("Failed to fetch access token");
-              }
-          
-              return response.json();
-          })
-          .then(data => {
-              if (data.access_token) {
-                  return data.access_token
-              } else {
-                  console.log("Token is empty");
-                  throw new Error("Access token not found");
-              }
-          })
-          .catch(error => {
-              console.error("Error fetching access token:", error);
-          });
-      }
-      
-      getAccessToken().then(token => {
-          console.log(token)
-          chatSocket = new WebSocket(`/ws/game/?Token=${token}`);
-          let user = "--";
-          let other_user = "--";
-          let image = "";
-          let other_image = "";
-          let id = 0
-          const canvas = shadowRoot.getElementById("Game");
-          const context = canvas.getContext("2d");
-          
-          
-          function waiting() {
-              shadowRoot.getElementById("myContainer").innerHTML = `
-
-                <div class="lobby-waiting" id="waiting">
-                <div class="content-waiting">
-                    <div class="player player1">
-                        <img src="${image}">
-                        <h2>PLAYER 1</h2>
-                    </div>
-                        <div class="loader-loading"></div>
-                    <div class="player player2">
-                        <img src="assets/player2.png">
-                        <h2>PLAYER 2</h2>
-                    </div>
-                </div>
-            </div>
-              `;
-          }
-      
-      function nowait() {
-          shadowRoot.getElementById("myContainer").innerHTML = `
-
-          <div class="full">
-          <div id="content">
-
-          <div id="score">
-          <div class="team team1">
-          <img src="${image}">
-          <h1>${user}</h1>
-          </div>
-          
-          <div class="score-center">
-          <h1 id="score1">0</h1>
-          <span>-</span>
-          <h1 id="score2">0</h1>
-          </div>
-          
-          <div class="team team2">
-          <img src="${other_image}">
-          <h1>${other_user}</h1>
-          </div>
-          </div>
-
-            <div id="game-container">
-            <div class="instructions-box left">
-            <p>Use: <span>WS</span></p>
-            </div>
-            <canvas id="Game" width="700" height="350"></canvas>
-            <div class="instructions-box right">
-            <p>Use: <span>⬆⬇</span></p>
-            </div>
-          </div>
-          </div>
-          <script src="remote.js"></script>
-          `;
-      }
-              
-      function draw(context, canvas, ballx, bally, player1, player2) {  
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          context.fillStyle = "rgba(0, 0, 0, 0.2)";
-          context.fillRect(0, 0, canvas.width, canvas.height);
-          
-          context.fillStyle = "#FFF";
-          context.fillRect(5, player1, 5, 70);
-          
-          context.fillStyle = "#FFF";
-          context.fillRect(canvas.width - 10, player2, 5, 70);
-          
-          context.fillStyle = "#FFF";
-          context.beginPath();
-          context.arc(ballx, bally, 8, 0, Math.PI * 2, false);
-          context.fill();
-          
-          context.beginPath();
-          context.setLineDash([4, 2]);
-          context.moveTo(canvas.width / 2, 0);
-          context.lineTo(canvas.width / 2, 350);
-          context.lineWidth = 2;
-          context.strokeStyle = "white";
-          context.stroke();
-      }
-      
-      chatSocket.onopen = function (event) {
-          console.log("wait..................................");
-      };
-      
-      chatSocket.onerror = (error) => {
-          console.log("onerror enter");
-          
-          shadowRoot.getElementById("myContainer").innerHTML =
-          `
-          <h1>something worng try later</h1>          
-          `
-          setTimeout(function() {
-            shadowRoot.getElementById("myContainer").innerHTML = 
-            `
-                 <div id="holder" class="holder">
-                <h1>Choose your game mode</h1>
-                <div class="modes">
-                  <div class="local-mode" id="local">
-                    <div class="icon">
-                      <img src="assests/icon-local.png">
-                    </div>
-                    <div class="go-local">
-                      <p>Local</p>
-                    </div>
-                  </div>
-                  <div class="remote-mode"  id="remote">
-                    <div class="icon">
-                      <img src="assests/icon-remote.png">
-                    </div>
-                    <div class="go-remote">
-                      <p>Remote</p>
-                    </div>
-                  </div>
-                  <div class="tournament-mode" id="tournament">
-                    <div class="icon">
-                      <img src="assests/icon-tournoi.png">
-                    </div>
-                    <div class="go-tournament" >
-                      <p>Tournament</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `
-            attachEventListeners(shadowRoot)
-        }, 2000); 
-          console.log("onerror exit");
-      };
+  shadowRoot.getElementById("remote").addEventListener('click', (event) => callremote("none", shadowRoot));
   
-      function winner(winner)
-      {
-          shadowRoot.getElementById("myContainer").innerHTML =
-          `
-
-          <div class="content-winner">
-              <div id="winner">
-                <div class="crown"></div>
-                <img src="${image}">
-                <p>${winner}</p>
-              </div>
-            </div>
-          
-          `
-      }
-
-      function lost(winner)
-      {
-          shadowRoot.getElementById("myContainer").innerHTML =
-          `
-            <div class="content-lose">
-              <div id="lost">
-                <div class="rejected"></div>
-                <img src="${image}">
-                <p>${winner}</p>
-            </div>
-            </div>
-          
-          `
-      }
-  
-      chatSocket.onclose = (event) => {
-          if (!event.wasClean) {
-              console.error("WebSocket connection closed unexpectedly.");
-          } else {
-              console.log("WebSocket connection closed cleanly.");
-          }
-          setTimeout(function() {
-              shadowRoot.getElementById("myContainer").innerHTML = 
-              `
-                  <div id="holder" class="holder">
-                <h1>Choose your game mode</h1>
-                <div class="modes">
-                  <div class="local-mode" id="local">
-                    <div class="icon">
-                      <img src="assests/icon-local.png">
-                    </div>
-                    <div class="go-local">
-                      <p>Local</p>
-                    </div>
-                  </div>
-                  <div class="remote-mode"  id="remote">
-                    <div class="icon">
-                      <img src="assests/icon-remote.png">
-                    </div>
-                    <div class="go-remote">
-                      <p>Remote</p>
-                    </div>
-                  </div>
-                  <div class="tournament-mode" id="tournament">
-                    <div class="icon">
-                      <img src="assests/icon-tournoi.png">
-                    </div>
-                    <div class="go-tournament" >
-                      <p>Tournament</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              `
-              attachEventListeners(shadowRoot)
-          }, 2000); 
-      };
-      
-      
-      chatSocket.onmessage = function (event) {
-          const data = JSON.parse(event.data);
-          console.log(data);
-          if (data.TITLE == "start") {
-              const dato = { TITLE: "play" };
-              chatSocket.send(JSON.stringify(dato));
-              
-          }
-          else if (data.TITLE == "gameloop") 
-          {
-              const canvas = shadowRoot.getElementById("Game");
-              const context = canvas.getContext("2d");
-              draw(
-                  context,
-                  canvas,
-                  data.ballx,
-                  data.bally,
-                  data.player1,
-                  data.player2
-              );
-              if (keys.up == true) 
-              {
-                  console.log("up true");
-                  
-                  const data = { TITLE: "move_player", player_direction: "up" };
-                  chatSocket.send(JSON.stringify(data));
-              }
-              if (keys.down == true) 
-              {
-                  const data = { TITLE: "move_player", player_direction: "down" };
-                  chatSocket.send(JSON.stringify(data));
-              }
-              shadowRoot.getElementById("score1").innerHTML = data.score1;
-              shadowRoot.getElementById("score2").innerHTML = data.score2;
-          }
-          else if (data.TITLE == "wait") 
-          {
-              image = data.image
-              waiting()
-          }
-          else if (data.TITLE == 'winner_send')
-          {
-              console.log("yes wslatni chkon rbah li howo ")
-              if (data.winner == id)
-                  winner("You win");
-              else 
-                 lost("You lost!")
-          }
-          else if(data.TITLE == "id")
-          {
-              id = data.id
-          }
-          else if(data.TITLE == "username_id")
-          {
-              if (id != data.id)
-              {
-                  other_user = data.username
-                  other_image = data.image
-              }
-              else 
-              {
-                  user = data.username
-                  image = data.image
-              }
-              nowait()
-          }
-
-      };
-                  
-      function MovePlayer() {
-          console.log("moveplaye function woe")
-          if (keys.up == true) 
-              {
-                  const data = { TITLE: "move_player", player_direction: "up" };
-                  chatSocket.send(JSON.stringify(data));
-              }
-              if (keys.down == true) 
-                  {
-                      const data = { TITLE: "move_player", player_direction: "down" };
-                      chatSocket.send(JSON.stringify(data));
-                  }
-                  requestAnimationFrame(MovePlayer);
-              }
-              
-              const keys = {
-                  up: false,
-                  down: false,
-              };
-  
-              const goBackButton = shadowRoot.getElementById("go_back");
-              if (goBackButton) {
-                  goBackButton.addEventListener('click', function (event) {
-                      nowait();
-                  });
-              }
-              
-              
-              window.addEventListener("keydown", function (event) 
-              {
-                  if (event.key === "ArrowUp") keys.up = true;
-                  if (event.key === "ArrowDown") keys.down = true;
-              });
-              
-              window.addEventListener("keyup", function (event) 
-              {
-                  if (event.key === "ArrowUp") keys.up = false;
-                  if (event.key === "ArrowDown") keys.down = false;
-              });
-                          
-      })
-      .catch(error => {
-              console.error("Error fetching access token:", error);
-      })
-  });
 
   shadowRoot.getElementById("tournament").addEventListener('click', function (event) {
       let origintournament = shadowRoot.getElementById("myContainer").innerHTML ;
@@ -728,25 +726,21 @@ function attachEventListeners(shadowRoot) {
           </div>
         `;
     shadowRoot.getElementById("play-tour").addEventListener("click", async (event) => {
-      console.log("play-tour")
     if (playerData[0] && playerData[1])
       {
         if(winer1 == "")
         {
       winer1 = await MakeMatch(playerData[0], playerData[1])
-      console.log({ winer1 });
       await tournament_table()
         }
         else if(winer2 == "")
       {
         winer2 = await MakeMatch(playerData[2], playerData[3])
-        console.log({ winer2 });
         await tournament_table()
       }
       else if(winer3 == "")
       {
         winer3 = await MakeMatch(winer1, winer2)
-        console.log({ winer3 });
           await WinerFunction()
       }
           
@@ -977,7 +971,6 @@ class PingpongPage extends HTMLElement
     constructor() 
     {
       super();
-      console.log("sheeeeeeeeeeeeeeeeeeeeeeeee")
       const shadow = this.attachShadow({ mode: "open" });
   
 
@@ -1000,6 +993,11 @@ class PingpongPage extends HTMLElement
       shadow.appendChild(link);
 
       attachEventListeners(this.shadowRoot)
+
+    }
+    async playwithfriend(id)
+    {
+      callremote(id, this.shadowRoot)
 
     }
     connectedCallback() 

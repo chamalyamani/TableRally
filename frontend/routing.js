@@ -17,6 +17,7 @@ const routes =
 
 let notif_socket = null;
 let sendNotif = null
+let sendNotifPong = null
 const notificationPopup = document.querySelector('.toast');
 let acceptBtn;
 let rejectBtn;
@@ -83,9 +84,28 @@ function navigateTo(page)
         const chatPage = document.querySelector('chat-page');
         if (chatPage) {
             sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
+            sendNotifPong = chatPage.getPongBtn(); // Access element from shadowRoot
             if (sendNotif) {
                 sendNotif.addEventListener('click', () => {
-                    let jsonMessage = {'type': 'game_request_notification', 'receiver_username': chatPage.getOtherUser(), 'sender_id': chatPage.getCurrentUser()}
+                    let jsonMessage = {
+                        'type': 'game_request_notification',
+                        'receiver_username': chatPage.getOtherUser(),
+                        'sender_id': chatPage.getCurrentUser(),
+                        'gameType': 'tic-tac-toe'
+                    }
+                    console.log('Sending notification:', jsonMessage);
+                    console.log('Notification sent');
+                    notif_socket.send(JSON.stringify(jsonMessage));
+                })
+            }
+            if (sendNotifPong) {
+                sendNotifPong.addEventListener('click', () => {
+                    let jsonMessage = {
+                        'type': 'game_request_notification',
+                        'receiver_username': chatPage.getOtherUser(),
+                        'sender_id': chatPage.getCurrentUser(),
+                        'gameType': 'ping-pong'
+                    }
                     console.log('Sending notification:', jsonMessage);
                     console.log('Notification sent');
                     notif_socket.send(JSON.stringify(jsonMessage));
@@ -170,35 +190,66 @@ async function callme(friendId, obj){
 
 acceptBtn.addEventListener('click', () => {
     console.log("...........................: ",datap);
-    let jsonMessage = {'type': 'game_resp', 'receiver_id': datap.sender, 'sender_id': datap.receiver};
+    let jsonMessage = {
+        'type': 'game_resp',
+        'receiver_id': datap.sender,
+        'sender_id': datap.receiver,
+        'gameType': datap.gameType
+    };
     notif_socket.send(JSON.stringify(jsonMessage));
     clearTimeout(timer);
     notificationPopup.classList.remove('active');
 
-    /** TESTINNNG */
-    const app = document.getElementById("app");
-    const loader = document.getElementById("loader");
+    /** logic tictactoe */
+    if (datap.gameType === 'tic-tac-toe') {
+        const app = document.getElementById("app");
+        const loader = document.getElementById("loader");
+    
+        loader.style.display = "flex";
+        app.innerHTML = "";
+    
+        history.pushState({ page: 'game' }, "", `/game`);
+        app.innerHTML = `<game-page></game-page>`;
+        document.body.className = `body-game`;
+        const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, randomDelay);
+    
+        const game_page = document.querySelector('game-page');
+        // async  () => {
+        //     await game_page.friendsGame()
+        // }
+        callme(datap.sender,game_page)
+        // logic game matching 
+        // alert('game_resp');
+    }
+    /** END logic tictactoe  */
+    else if (datap.gameType === 'ping-pong') {
+        const app = document.getElementById("app");
+        const loader = document.getElementById("loader");
+    
+        loader.style.display = "flex";
+        app.innerHTML = "";
+    
+        history.pushState({ page: 'pingpong' }, "", `/pingpong`);
+        app.innerHTML = `<pingpong-page></pingpong-page>`;
+        document.body.className = `body-pingpong`;
+        const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, randomDelay);
+    
+        const pingpong_page = document.querySelector('pingpong-page');
+        // async  () => {
+        //     await game_page.friendsGame()
+        // }
+        pingpong_page.playwithfriend(datap.sender)
+        // callme(datap.sender, pingpong_page)
+        // logic game matching 
+        // alert('game_resp');
+    }
 
-    loader.style.display = "flex";
-    app.innerHTML = "";
-
-    history.pushState({ page: 'game' }, "", `/game`);
-    app.innerHTML = `<game-page></game-page>`;
-    document.body.className = `body-game`;
-    const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-    setTimeout(() => {
-        loader.style.display = "none";
-    }, randomDelay);
-
-    const game_page = document.querySelector('game-page');
-    // async  () => {
-    //     await game_page.friendsGame()
-    // }
-    callme(datap.sender,game_page)
-    // logic game matching 
-    // alert('game_resp');
-
-    /** END TESTING  */
 })
 
 getAccessToken()
@@ -214,39 +265,52 @@ getAccessToken()
       if (datap.type === 'game_resp') {
           console.log("HE ACCEPTEEEEEEEEEEEEED : ", datap);
           // render 
-           /** TESTINNNG */
-            // setTimeout(() => {
+           /** tictactoe logic game */
+           // setTimeout(() => {
+            console.log("PINGPONG PAGE : /*************************/", datap.gameType);
+            if (datap.gameType === 'tic-tac-toe') {
                 const app = document.getElementById("app");
-            const loader = document.getElementById("loader");
-
-            loader.style.display = "flex";
-            app.innerHTML = "";
-
-            history.pushState({ page: 'game' }, "", `/game`);
-            app.innerHTML = `<game-page></game-page>`;
-            document.body.className = `body-game`;
-            const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-            setTimeout(() => {
-                loader.style.display = "none";
-            }, randomDelay);
-
-            const game_page = document.querySelector('game-page');
-            // game_page.friendsGame()
-        // },1000)
-        // async  () => {
-        //     await game_page.friendsGame()
-        // }
-        // setTimeout(() => {
-        callme(datap.sender ,game_page)
-        // },1000)
-            // logic game matching 
-            // alert('game_resp');
-
-            /** END TESTING  */
-      }
+                const loader = document.getElementById("loader");
+                
+                loader.style.display = "flex";
+                app.innerHTML = "";
+                
+                history.pushState({ page: 'game' }, "", `/game`);
+                app.innerHTML = `<game-page></game-page>`;
+                document.body.className = `body-game`;
+                const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+                setTimeout(() => {
+                    loader.style.display = "none";
+                }, randomDelay);
+                
+                const game_page = document.querySelector('game-page');
+                
+                callme(datap.sender ,game_page)
+            }
+            else if (datap.gameType === 'ping-pong') {
+                const app = document.getElementById("app");
+                const loader = document.getElementById("loader");
+                
+                loader.style.display = "flex";
+                app.innerHTML = "";
+                
+                history.pushState({ page: 'pingpong' }, "", `/pingpong`);
+                app.innerHTML = `<pingpong-page></pingpong-page>`;
+                document.body.className = `body-pingpong`;
+                const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+                setTimeout(() => {
+                    loader.style.display = "none";
+                }, randomDelay);
+                
+                const pingpong_page = document.querySelector('pingpong-page');
+                pingpong_page.playwithfriend(datap.sender)
+            }
+                // callme(datap.sender ,pingpong_page)
+            }
+            /** end tictactoe logic game */
       else {
 
-          notificationPopup.textContent = "flane is inviting you to play a game";
+          notificationPopup.textContent = `${datap.username} is inviting you to play ${datap.gameType}`;
           let btns = document.createElement('div');
           btns.appendChild(acceptBtn);
           btns.appendChild(rejectBtn);

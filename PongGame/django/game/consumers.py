@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from queue import Queue
 import time
 import asyncio
-from .models import Score  
+from .models import pongames  
 from asgiref.sync import sync_to_async
 from authentication.models import CustomUser as User
 from channels.db import database_sync_to_async
@@ -17,6 +17,8 @@ main_player = []
 second_player = False
 acepted_users = []
 games_map = {}
+friend_game = []
+games_map_friend = {}
 x = 0
 
 def CreateGameName():
@@ -104,7 +106,7 @@ class LiveGame:
 		self.ball.IncrementY(self.stepy)
 
 
-
+from urllib.parse import parse_qs
 class ChatConsumer(AsyncWebsocketConsumer):
 
 	def __init__(self):
@@ -116,18 +118,65 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.inwaiting = False
 		self.waiter = False
 		self.task = None
+		self.ID = "none"
 
 	async def connect(self):
-		self.user = self.scope['user']
-		if (self.user.id in acepted_users) == True:
-			await self.close()
-			return
-		else :
-			await self.accept()
-			self.me = self.user.id
-			acepted_users.append(self.me)
-			await self.send(text_data=json.dumps({"TITLE": "wait"}))
-			await self.add_to_woiting_list()
+		query_string = self.scope['query_string'].decode()
+		query_params = parse_qs(query_string)
+
+		token = query_params.get('Token', [None])[0]
+		other_id = query_params.get('ID', [None])[0]
+		if(other_id == 'none'):
+			self.user = self.scope['user']
+			if (self.user.id in acepted_users) == True:
+				await self.close()
+				return
+			else :
+				await self.accept()
+				self.me = self.user.id
+				acepted_users.append(self.me)
+				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url}))
+				await self.add_to_woiting_list()
+		else:
+			self.user = self.scope['user']
+			if (self.user.id in acepted_users) == True:
+				await self.close()
+				return
+			else :
+				await self.accept()
+				self.me = self.user.id
+				acepted_users.append(self.me)
+				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url}))
+				self.other = int(other_id)
+				await self.match_friend()
+
+	async def match_friend(self):
+		if self.me < self.other:
+			self.group_name = CreateGameName()
+			friend_game.append([self.other, CreateGameName()])
+			await self.channel_layer.group_add(
+				self.group_name,
+				self.channel_name
+			)
+			self.game = LiveGame()
+			games_map_friend[self.group_name] = self.game
+		else:
+			await asyncio.sleep(1)
+			self.group_name = friend_game[self.serch_in_sublist(friend_game, self.me)][1]
+			self.game = games_map_friend[self.group_name]
+			await self.channel_layer.group_add(
+				self.group_name,
+				self.channel_name
+			)
+			await self.channel_layer.group_send(
+			self.group_name,
+			{
+				"type" : "start",
+				"group" : self.group_name,
+				"TITLE" : "start",			
+			}
+			)
+		
 
 	async def add_to_woiting_list(self):
 		woiting_list.append(self.user.id)
@@ -180,14 +229,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		game = json.loads(text_data)
 		if game["TITLE"] == "play" :
-			await self.send(text_data=json.dumps({"TITLE": 'id',
-			"id" : self.me}))
-			games_map[self.group_name] = True
-			self.inwaiting = False
-			self.ingame = True
-			if self.other == 0 :
-				self.index = self.serch_in_sublist(groups, self.me)
-				self.other = main_player[self.index]
+			if self.ID == "none":
+				await self.send(text_data=json.dumps({"TITLE": 'id',
+				"id" : self.me}))
+				games_map[self.group_name] = True
+				self.inwaiting = False
+				self.ingame = True
+				if self.other == 0 :
+					self.index = self.serch_in_sublist(groups, self.me)
+					self.other = main_player[self.index]
 			await self.channel_layer.group_send(
 				self.group_name,
 				{
@@ -213,7 +263,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					self.game.player2.Down()
 
 	async def disconnect(self, code):
-		games_map[self.group_name] = False
+		if friend_game:
+			ind = self.serch_in_sublist(friend_game, self.me)
+			if ind != -1:
+				friend_game.pop(ind)
+		if self.group_name:
+			games_map[self.group_name] = False
 		await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
@@ -286,12 +341,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	@sync_to_async
 	def create_score_entry(self):
-		Score.objects.create(
-			user1_id=self.me,
-			user2_id=self.other,
+		pongames.objects.create(
+			player1_id=(User.objects.get)(id=self.me),
+			player2_id=(User.objects.get)(id=self.other),
 			score1=self.game.score1,
 			score2= self.game.score2
 		)
+
 		
 	async def loopsend(self, event):
 		TITLE = event["TITLE"]

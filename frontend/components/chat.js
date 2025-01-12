@@ -197,6 +197,10 @@ class ChatPage extends HTMLElement
         return this.shadowRoot.querySelector('.modal-tic-button');
     }
 
+    getPongBtn() {
+        return this.shadowRoot.querySelector('.modal-pong-button');
+    }
+
     getCurrentUser() {
         return this.currentUser;
     }
