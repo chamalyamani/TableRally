@@ -21,11 +21,7 @@ X_CHAR = 'x'
 O_CHAR = 'o'
 
 expected_types = ["ft_classic", "ft4", "leaveGame", "in_game", "friendGame"]
-# codeToMsg = {
-#     4001 : "You are not athenticated !",
-#     4002 : "Parse error !",
-#     4003 : "You are already in waiting list !",
-# }
+
 
 # game mode groups
 grp_m = deque()
@@ -45,15 +41,12 @@ game_box = {}
 # ft4_game_box = {}
 
 player_game_map = {} # map the player to the game
-# ft4_player_game_map = {} # map the player to the game
-# grp_m2 = deque()
-# grp_m3 = deque()
+
 msgsDic = {
     game_setup         : {
         "type": "setup",
         "player": "",
         "ina_game": 0,
-        # "opwins": 0,
         "turn": T_OFF,
         "board" : copy.deepcopy(empty_board),
         "him": {
@@ -84,7 +77,6 @@ msgsDic = {
         "turn"      : T_OFF,
         "valid"     : "y",
         "wins"     : 0,
-        # "played_now": "",
         "board"     : copy.deepcopy(empty_board)
     },
     game_reslt  :   {
@@ -123,7 +115,6 @@ class player:
         self.lvl = 0.55
         self.nbGames = 0
         self._wins = 0
-        # self.again = A_OFF 
         self._res = 'Draw Match !'
         self.winBoards = []
         self.board_type = bSize[0]
@@ -134,22 +125,17 @@ class player:
         self.re_setup  = copy.deepcopy(msgsDic[re_setup])
         self.inGame = copy.deepcopy(msgsDic[in_gaming])
         self.gameResult = copy.deepcopy(msgsDic[game_reslt])
-        # self.partyResult = copy.deepcopy(msgsDic[party_reslt])
-        # self.playAgainMsg   = copy.deepcopy(msgsDic[rePlay_req])
         self.waitingMsg = copy.deepcopy(msgsDic[wait4Match])
     
     # Update board for all message dictionaries
 
         if bSize[0] == "ft4":
             self.setup["ina_game"] = 5
-            # print("bSize ::: ",bSize)
         else:
             self.setup["ina_game"] = 3
-        # print("khrejt b hadi  ",self.setup["ina_game"])
             
 
         self.setup["board"] = copy.deepcopy(self.init_board())
-        # print("setup board inside class : ",self.setup["board"])
         self.re_setup["board"] = copy.deepcopy(self.init_board())
         self.inGame["board"] = copy.deepcopy(self.init_board())
         self.gameResult["board"] = copy.deepcopy(self.init_board())
@@ -165,10 +151,8 @@ class player:
     @wins.setter
     def wins(self, value):
         self._wins = value
-        # self.partyResult["myscore"] = value
         self.inGame["wins"] = value
         self.re_setup["wins"] = value
-        # self.setup["wins"] = value
         self.gameResult["wins"] = value
 
     @property
@@ -210,13 +194,3 @@ class player:
         self.re_setup["board"] = value
 
 
-
-
-
-        # -----------------------------------------------------------------------------------------
-        # -----------------------------------------------------------------------------------------
-        # -----------------------------------------------------------------------------------------
-
-        # import export js for sending wherever the user is
-        # new general socket
-        # new js static file that manages the notifications
