@@ -98,7 +98,6 @@ function callremote(other_id, shadowRoot)
               </div>
             </div>
             <canvas id="Game" width="700" height="350"></canvas>
-            <p>control the left player by using up and down arrow keys</p>
         </div>
     </div>
     <script src="remote.js"></script>
@@ -185,7 +184,7 @@ function callremote(other_id, shadowRoot)
 
           <div id="game-container">
           <div class="instructions-box left">
-          <p>Use: <span>WS</span></p>
+          <p>Use: <span>⬆⬇</span></p>
           </div>
           <canvas id="Game" width="700" height="350"></canvas>
           <div class="instructions-box right">

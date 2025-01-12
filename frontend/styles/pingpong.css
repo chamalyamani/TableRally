@@ -1818,7 +1818,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     font-family: Righteous, sans-serif;
     position: relative;
     z-index: 2;
-    animation: fadeIn 5s ease infinite;
+    animation: fadeIn 1s ease infinite;
 }
 
 @keyframes fadeIn {
