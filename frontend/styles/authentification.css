@@ -16,6 +16,23 @@
     color:#fff;
 
 }
+.separator-reset
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 7%;
+}
+
+.separator-reset span 
+{
+    width: 25%;
+    height: 2px;
+    background-color: rgb(255, 255, 255);
+    margin: 0 10%;
+}
+
 
 .content-message
 {
