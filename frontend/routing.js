@@ -211,8 +211,8 @@ async function checkAuthentication() {
 /**
  * Modified navigateTo function that checks authentication for protected routes.
  */
-async function navigateTo(page) {
-    console.log("%%%%%%%%%%%%% PAGE : ", page);
+async function navigateTo(page, shouldPush = true) 
+{
     const app = document.getElementById("app");
     const loader = document.getElementById("loader");
 
@@ -227,10 +227,14 @@ async function navigateTo(page) {
         }
     }
 
-    if (routes[page]) {
+    if (routes[page]) 
+    {
+        if (shouldPush) 
+        {
+            history.pushState({ page }, "", `/${page}`);
+        }
+
         app.innerHTML = "";
-        history.pushState({ page }, "", `/${page}`);
-        // history.replaceState({ page}, "", `/${page}`);
         app.innerHTML = `<${routes[page]}></${routes[page]}>`;
         document.body.className = `body-${page}`;
     
@@ -279,18 +283,19 @@ async function navigateTo(page) {
             }
         }
     } else {
-        // Unknown route: redirect to login
         navigateTo("login");
     }
 }
 
-// Browser navigation using the back/forward buttons
+
 window.addEventListener("popstate", (e) => {
     const state = e.state;
-    if (state && state.page) {
-        navigateTo(state.page);
+    if (state && state.page) 
+    {
+      // ICI on navigue sans pushState :
+      navigateTo(state.page, false);
     }
-});
+  });
 
 // On initial page load, determine the route from the URL path.
 document.addEventListener("DOMContentLoaded", () => {

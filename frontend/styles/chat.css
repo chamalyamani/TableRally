@@ -487,15 +487,17 @@ header
 {
     display: flex;
     justify-content: center;
-    margin-top:13%;
+    margin-top: 13%;
     width: 130%;
-    margin-left:-15%;
+    margin-left: -15%;
 }
-
-.logo img
-{
-    width: 180%;
-}
+  
+  .logo img 
+  {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+  }
 
 /* UNORDER LIST  */
 
