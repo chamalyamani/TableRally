@@ -761,22 +761,23 @@ class SettingsPage extends HTMLElement
         return response.json();
       });
 
-    // const pongStatePromise = fetch('/api/', {
-    //   method: 'GET',
-    //   headers: headers,
-    // })
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch game state data');
-    //     }
-    //     return response.json();
-    //   });
+    const pongStatePromise = fetch('/api/player-games/', {
+      method: 'GET',
+      headers: headers,
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch game state data');
+        }
+        return response.json();
+      });
       
-    Promise.all([userDataPromise, gameStatePromise])
-      .then(([userData, gameState]) => {
+    Promise.all([userDataPromise, gameStatePromise, pongStatePromise])
+      .then(([userData, gameState, pongStatePromise]) => {
         const combinedData = {
           userData: userData,
           gameState: gameState,
+          pongStatePromise: pongStatePromise
         };
         const dataStr = JSON.stringify(combinedData, null, 2); // Pretty-print with 2-space indentation
         const blob = new Blob([dataStr], { type: 'application/json' });
