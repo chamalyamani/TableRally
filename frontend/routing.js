@@ -242,37 +242,39 @@ async function navigateTo(page) {
             const chatPage = document.querySelector('chat-page');
             if (chatPage) {
                 sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
-            sendNotifPong = chatPage.getPongBtn(); // Access element from shadowRoot
-            if (sendNotif) {
-                // helper2(sendNotif, 'tic-tac-toe', chatPage.getCurrentUser(), chatPage.getOtherUser())
-                sendNotif.addEventListener('click', () => {
-                    let jsonMessage = {
-                        'type': 'game_request_notification',
-                        'receiver_username': chatPage.getOtherUser(),
-                        'sender_id': chatPage.getCurrentUser(),
-                        'gameType': 'tic-tac-toe'
-                    }
-                    console.log('Sending notification:', jsonMessage);
-                    console.log('Notification sent');
-                    notif_socket.send(JSON.stringify(jsonMessage));
-                })
+                sendNotifPong = chatPage.getPongBtn(); // Access element from shadowRoot
+                const currUser = chatPage.getCurrentUser();
+                const otherUser = chatPage.getOtherUser();
+                if (sendNotif) {
+                    // helper2(sendNotif, 'tic-tac-toe', chatPage.getCurrentUser(), chatPage.getOtherUser())
+                    sendNotif.addEventListener('click', () => {
+                        let jsonMessage = {
+                            'type': 'game_request_notification',
+                            'receiver_username': otherUser,
+                            'sender_id': currUser,
+                            'gameType': 'tic-tac-toe'
+                        }
+                        console.log('Sending notification:', jsonMessage);
+                        console.log('Notification sent');
+                        notif_socket.send(JSON.stringify(jsonMessage));
+                    })
+                }
+                if (sendNotifPong) {
+                    // helper2(sendNotifPong, 'ping-pong', chatPage.getCurrentUser(), chatPage.getOtherUser())
+                    sendNotifPong.addEventListener('click', () => {
+                        let jsonMessage = {
+                            'type': 'game_request_notification',
+                            'receiver_username': otherUser,
+                            'sender_id': currUser,
+                            'gameType': 'ping-pong'
+                        }
+                        console.log('Sending notification:', jsonMessage);
+                        console.log('Notification sent');
+                        notif_socket.send(JSON.stringify(jsonMessage));
+                    })
+                }
             }
-            if (sendNotifPong) {
-                // helper2(sendNotifPong, 'ping-pong', chatPage.getCurrentUser(), chatPage.getOtherUser())
-                sendNotifPong.addEventListener('click', () => {
-                    let jsonMessage = {
-                        'type': 'game_request_notification',
-                        'receiver_username': chatPage.getOtherUser(),
-                        'sender_id': chatPage.getCurrentUser(),
-                        'gameType': 'ping-pong'
-                    }
-                    console.log('Sending notification:', jsonMessage);
-                    console.log('Notification sent');
-                    notif_socket.send(JSON.stringify(jsonMessage));
-                })
-            }
-                console.log("SEND NOTIF: ", sendNotif);
-            } else {
+            else {
                 console.error("ChatPage element not found!");
             }
         }

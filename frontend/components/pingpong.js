@@ -3,6 +3,73 @@ import { initializeCommonScripts } from "../shared.js";
 import { getUserInfos } from "../shared.js";
 import { logoutProcess } from "../shared.js";
 
+let player_tour1 = "test1"
+let player_tour2 = "test2"
+function globalNotifPopup(type = "Success", message = "Your changes have been saved") {
+  const toast = document.querySelector(".toast");
+  const closeIcon = toast.querySelector(".close");
+  const progress = toast.querySelector(".progress");
+  const notifType = toast.querySelector("#notif-type");
+  const notifMessage = toast.querySelector("#notif-message");
+
+  const iconSuccess = toast.querySelector(".icon-circle-success");
+  const iconError = toast.querySelector(".icon-circle-error");
+
+  let timer1, timer2;
+
+  // Réinitialisation du texte de la notification
+  notifType.textContent = type;
+  notifMessage.textContent = message;
+
+  // Cacher les cercles au départ
+  iconSuccess.style.display = "none";
+  iconError.style.display = "none";
+
+  progress.style.backgroundColor = 'transparent';
+
+  // Afficher le cercle correspondant en fonction du type
+  if (type === "Error") {
+    iconError.style.display = "flex";  // Afficher cercle rouge pour erreur
+    notifType.style.color = "#f44040";  // Afficher cercle rouge pour erreur
+    progress.style.backgroundColor = '#f44040';
+  }
+  else if (type === "Warning") 
+  {
+    notifType.style.color = "#E49B0F";
+    progress.style.backgroundColor = '#E49B0F';
+  }
+  else {
+    iconSuccess.style.display = "flex";  // Afficher cercle vert pour succès
+    notifType.style.color = "#4CAF50";
+    progress.style.backgroundColor = '#4CAF50';
+  }
+
+  // Activer la toast et la barre de progression
+  toast.classList.add("active");
+  progress.classList.add("active");
+
+  // Timer pour retirer la toast après 5 secondes
+  timer1 = setTimeout(() => {
+    toast.classList.remove("active");
+  }, 5000);
+
+  // Timer pour retirer la barre de progression après 5.3 secondes
+  timer2 = setTimeout(() => {
+    progress.classList.remove("active");
+  }, 5300);
+
+  // Fermeture de la notification au clic sur la croix
+  closeIcon.addEventListener("click", () => {
+    toast.classList.remove("active");
+
+    setTimeout(() => {
+      progress.classList.remove("active");
+    }, 300);
+
+    clearTimeout(timer1);
+    clearTimeout(timer2);
+  });
+}
 let chatSocket = null;
 function callremote(other_id, shadowRoot)
   {
@@ -647,6 +714,8 @@ function attachEventListeners(shadowRoot) {
       playerData[1] = formData.get("Player2");
       playerData[2] = formData.get("Player3");
       playerData[3] = formData.get("Player4");
+      player_tour1 = playerData[0]
+      player_tour2 = playerData[1]
       await tournament_table();
     });
 
@@ -703,6 +772,7 @@ function attachEventListeners(shadowRoot) {
   }
   
   async function tournament_table() {
+    globalNotifPopup("NEXT MATCH", player_tour1 + " VS " + player_tour2);
   
     shadowRoot.getElementById("myContainer").innerHTML = `
          <div id="containe_all">
@@ -780,11 +850,15 @@ function attachEventListeners(shadowRoot) {
         if(winer1 == "")
         {
       winer1 = await MakeMatch(playerData[0], playerData[1])
+      player_tour1 = playerData[2]
+      player_tour2 = playerData[3]
       await tournament_table()
         }
         else if(winer2 == "")
       {
         winer2 = await MakeMatch(playerData[2], playerData[3])
+        player_tour1 = winer1
+        player_tour2 = winer2
         await tournament_table()
       }
       else if(winer3 == "")

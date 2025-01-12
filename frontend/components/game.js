@@ -9,23 +9,14 @@ let game_obj = null
 
 
 function back_to_home(obj) {
-    // console.log(principal_html)
     let changeable_div = obj.shadowRoot.getElementById('contIdx')
     changeable_div.innerHTML = ""
     changeable_div.innerHTML = principal_html
-    // game_obj = null
     let playbtn1 = obj.shadowRoot.querySelector(".play_btn1")
     let playbtn2 = obj.shadowRoot.querySelector(".play_btn2")
     playbtn1.addEventListener('click',() => playClassic(obj))
     playbtn2.addEventListener('click',() => playFt4(obj))
     fetchGameData(obj.shadowRoot);
-    // location.reload()
-    // matchingSocket = null
-  //   game_obj = null
-    // Update the DOM with the fetched HTML content
-    // document.open()
-    // document.write(html)
-    // document.close()
   }
 
 function generateHtmlBoard(ina_game){
@@ -265,21 +256,16 @@ let wait_html = `
             this.imgElement.src = i;
         }
         updatePlayerTurn(t) {
-            
-            // Set to "Not Your Turn"
             this.turn = t;
             if (this.turn) {
-                // this.turnElement.innerHTML = "✔";
                 this.turnElement.classList.add('your-turn');
                 this.turnElement.classList.remove('not-turn');
             }
             else
             {
-                // this.turnElement.innerHTML = "✘";
                 this.turnElement.classList.add('not-turn');
                 this.turnElement.classList.remove('your-turn');
             }
-            // this.turnElement.style.backgroundColor = this.turn ? "green" : "red";
         }
         updatePlayerArmChar(s) {
             this.sign = s;
@@ -287,8 +273,6 @@ let wait_html = `
             this.armElement.innerHTML = this.sign === "x" ? "KATANA" : "SHURIKEN";
         }
         updatePlayerScore(sc) {
-            console.log("score-------------------- : ", sc)
-  
             this.score = sc;
             this.scoreElement.innerHTML = this.score;
         }
@@ -331,8 +315,6 @@ class t3 {
   }
 
   oppLeftGame(){
-      // this.winloss = this.shadowRoot.getElementById("losswin")
-      // let announce = this.shadowRoot.getElementById("msg")
       const winMsg = this.shadowRoot.getElementById("popup");
       winMsg.textContent = ""
       winMsg.textContent = this.currMsg["message"]
@@ -340,35 +322,25 @@ class t3 {
       winMsg.style.display = "flex"; 
       setTimeout(() => {
           this.removeClick()
-          // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-          //     matchingSocket.close(1000)
-          // location.reload()
       }, 1000);
-      // console.log("inform : ", announce)
   }
 
   err_msg(){
       let pop = this.shadowRoot.querySelector("#err_pop")
       const closeCode = this.currMsg["code"];
       const closeReason = this.currMsg["msg"];
-      console.log("hna f err_msg handler : ", closeCode, "  :  ", closeReason)
-      // Update the content of the popup
+
       pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
-  
-      // Make the popup visible with animation
       pop.style.transition = "top 0.5s ease";
       pop.style.top = "0vh";
   
-      // Hide the popup after a delay
       setTimeout(() => {
         pop.style.top = "-15vh";
 
-        // Clear the text after hiding for a cleaner reset
         setTimeout(() => {
                 pop.textContent = "";
-            }, 500); // Matches the transition time
-        }, 2000); // Keep the popup visible for 3 seconds
-      // console.log('onclose : ', event.code, "  :  ", event.reason)
+            }, 500);
+        }, 2000);
   }
 
   async showWinMessage(mesg) {
@@ -397,11 +369,8 @@ class t3 {
       }
 
       winMsg.style.display = "flex"; 
-      // Ensure it's visible
-      console.log("flex given")
       return new Promise(resolve => {
           setTimeout(() => {
-              console.log("give the none back");
               if (mesg != 2)
               {
                   this.currMsg["combo"].forEach(index => {
@@ -409,10 +378,10 @@ class t3 {
                       cell.classList.remove("win-highlight");
                   });
               }
-              winMsg.style.display = "none"; // Hide after animation
+              winMsg.style.display = "none";
               winMsg.classList.remove("win", "lose", "draw");
-              resolve(); // Resolve the promise after the animation completes
-          }, 2000); // Match the animation duration
+              resolve();
+          }, 2000);
       });
   }
   waiting(){
@@ -444,9 +413,7 @@ class t3 {
   }
   
   async windrawloose(){
-      console.log("In windrawLoose func")
       this.board = this.currMsg["board"]
-      // console.log("in win : ",this.board)
       this.updateBoard()
       await this.removeClick()
       if ( this.currMsg["msg"] === "Match Draw !")
@@ -456,22 +423,22 @@ class t3 {
       }
 
       await this.showWinMessage(this.currMsg["message"])
-      // this.zhisP.updatePlayerScore(this.currMsg["wins"])
+
       this.cont = this.shadowRoot.getElementById("contIdx")
       this.cont.innerHTML = gOver_html;
 
-      // this.shadowRoot.querySelector('.winloss').firstChild.textContent = this.currMsg["msg"]
       let winDiv = this.shadowRoot.querySelector('.winloss')
+
       winDiv.style.display = 'flex';
-      // this.shadowRoot.getElementById("turnShow").innerText = this.currMsg["msg"]
-      // let playAgainBtn = this.shadowRoot.getElementById('playAgainBtn')
+
       let quitGameBtn = this.shadowRoot.getElementById('quitBtn')
       let msgRes = this.shadowRoot.getElementById("msg")
       let winScore = this.shadowRoot.getElementById('winScore')
       let nb_games = this.shadowRoot.getElementById('nbofgames')
       let hescore = this.shadowRoot.getElementById('hescore')
-      // console.log("Ha ch9amto : ",this.currMsg["wins"])
+
       msgRes.textContent = this.currMsg["msg"]
+
       if ( this.currMsg["message"] )
           winDiv.style.background = "rgba(1, 140, 90, 0.5)"
       else
@@ -479,11 +446,7 @@ class t3 {
       winScore.textContent = this.currMsg["wins"]
       nb_games.textContent = this.currMsg["nbGames"]
       hescore.textContent = this.currMsg["opwins"]
-      // playAgainBtn.addEventListener('click', this.playAgain.bind(this))
       quitGameBtn.addEventListener('click', this.quit.bind(this))
-
-      // this.shadowRoot.querySelector('.winloss').style.marginTop = '20vh';
-      // alert(this.currMsg["msg"])
   }
 
   formatCells(){
@@ -495,12 +458,10 @@ class t3 {
   }
 
   setupDataBoard(win, opwin){
-      // console.log(this.zhisP, this.thatP)
 
       this.zhisP.updatePlayerScore(win)
       this.zhisP.updatePlayerArmChar(this.currMsg["player"])
       this.zhisP.updatePlayerTurn(this.currMsg["turn"])
-
 
       let hisChar = this.currMsg["player"] === "x" ? "o" : "x"
       this.thatP.updatePlayerScore(opwin)
@@ -508,90 +469,64 @@ class t3 {
       this.thatP.updatePlayerTurn(!this.currMsg["turn"])
   }
 
-  /** re_setup function will trigger when receiving the re_setup msg from backend
-   * it will handle formatting the board
-   * showing win msg
-   * update the data in board aka score
-   * animate
-   */
-  /** problem after re_setup f ft4 3la wed had update board ma khdamch o hta reset dl board */
   async re_setup(){
       this.board = this.currMsg["board"]
-      // alert(".")
-      console.log("getting daba inside re_setup : ")
       this.updateBoard()
+
       await this.removeClick()
-      // setTimeout(() => {
       await this.showWinMessage(this.currMsg["reslt"])
-      // }, 1000)
+
       this.board = Array(this.gType**2).fill('.');
+
       this.formatCells()
       this.setupDataBoard(this.currMsg["wins"],this.currMsg["opwins"])
-      // this.updateDataBoard()
+
       this.turnShow.textContent = this.zhisP.turn ? "Your Turn" : "Opponent's Turn"
+
       if ( this.currMsg["turn"] )
           await this.setBoardToClick()
       else
           await this.removeClick()
   }
   async setup_game_field(){
-      // this function is important, and can hold more animations, and 
-      // i can also add a presenter, that will present the two players before the game start
-      console.log("gggggggggggggggg :",this.currMsg["ina_game"])
-      console.log("you are : ", this.currMsg["me"]["fname"], "  |  Your lvl : ", this.currMsg["me"]["lvl"])
-      console.log("You will be playing against :", this.currMsg["him"]["fname"], "   |  Hes lvl : ", this.currMsg["him"]["lvl"])
-      // here must fill the data
-      this.cont = this.shadowRoot.getElementById("contIdx")
-      // here i will build the html board by calling the function and giving it the currmsg[ina game]
-      this.gType = this.currMsg["ina_game"]
-      // console.log(this.generateHtmlBoard(this.gType))
-      // return
-      this.cont.innerHTML = generateHtmlBoard(this.gType);
-      let bHolderShow = this.shadowRoot.getElementById("board_holder_id")
-      let leaveBtn = this.shadowRoot.getElementById("leaveGame")
-        leaveBtn.addEventListener('click', () => leaveGame())
-      setTimeout(() => {
-          bHolderShow.style.marginRight = "0%"
-      }, 10)
+    this.cont = this.shadowRoot.getElementById("contIdx")
+    this.gType = this.currMsg["ina_game"]
+    this.cont.innerHTML = generateHtmlBoard(this.gType);
 
-      console.log("-------------->>>> ",this.currMsg["board"])
-      this.board = this.currMsg["board"]
-      // this.updateBoard()
-      this.cells =  Array.from(this.shadowRoot.querySelectorAll(".cell"))
-      // this.pSign = this.currMsg["player"]  // not needed ??
-      this.turnShow = this.shadowRoot.getElementById("turnShow")
-      // this.turnShow.style.marginTop = "0%"
+    let bHolderShow = this.shadowRoot.getElementById("board_holder_id")
+    let leaveBtn = this.shadowRoot.getElementById("leaveGame")
 
-      this.zhisP = new Player(this.shadowRoot, "thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis", "thisPlayer_name", "thisPlayer_img");
-      this.thatP = new Player(this.shadowRoot, "opponent_score", "opponent_arm", "opponent_char", "turnToggleThat", "opponent_name", "opponent_img");
-      
-      this.zhisP.setPlayerName(this.currMsg["me"]["fname"])
-      this.zhisP.setPlayerImg(this.currMsg["me"]["pic"])
-      this.thatP.setPlayerName(this.currMsg["him"]["fname"])
-      this.thatP.setPlayerImg(this.currMsg["him"]["pic"])
+    leaveBtn.addEventListener('click', () => leaveGame())
+    setTimeout(() => {
+        bHolderShow.style.marginRight = "0%"
+    }, 10)
 
-      this.setupDataBoard(0,0)
-      // this.turnShow.style.marginTop = "100%"
-      this.turnShow.textContent = this.zhisP.turn ? "Your Turn" : "Opponent's Turn"
-      // this.turnShow.style.marginTop = "0%"
+    this.board = this.currMsg["board"]
+    this.cells =  Array.from(this.shadowRoot.querySelectorAll(".cell"))
+    this.turnShow = this.shadowRoot.getElementById("turnShow")
 
-      if ( this.cells.length === this.gType * this.gType )
-      {
-          this.elements = this.cells.map(id => this.shadowRoot.getElementById(id));
-          // console.log("after Replace size : ", this.elements.length)
-          // if ( this.pSign === this.fplayer )
-          if ( this.currMsg["turn"] )
-              await this.setBoardToClick()
-          else
-              await this.removeClick()
+    this.zhisP = new Player(this.shadowRoot, "thisPlayer_score", "thisPlayer_arm", "thisPlayer_char", "turnToggleZis", "thisPlayer_name", "thisPlayer_img");
+    this.thatP = new Player(this.shadowRoot, "opponent_score", "opponent_arm", "opponent_char", "turnToggleThat", "opponent_name", "opponent_img");
+    
+    this.zhisP.setPlayerName(this.currMsg["me"]["fname"])
+    this.zhisP.setPlayerImg(this.currMsg["me"]["pic"])
+    this.thatP.setPlayerName(this.currMsg["him"]["fname"])
+    this.thatP.setPlayerImg(this.currMsg["him"]["pic"])
 
-      }
-      else
-      {
-          console.log("NOT GOOOD TRYING AGAIN")
-          setTimeout(this.setup_game_field.bind(this), 10)
-      }
-      // return
+    this.setupDataBoard(0,0)
+    this.turnShow.textContent = this.zhisP.turn ? "Your Turn" : "Opponent's Turn"
+
+    if ( this.cells.length === this.gType * this.gType )
+    {
+        this.elements = this.cells.map(id => this.shadowRoot.getElementById(id));
+        if ( this.currMsg["turn"] )
+            await this.setBoardToClick()
+        else
+            await this.removeClick()
+    }
+    else{
+        setTimeout(this.setup_game_field.bind(this), 10)
+    }
   }
 
   updateDataBoard(){
@@ -601,23 +536,20 @@ class t3 {
   }
 
   async in_game(){
-      // if (this.currMsg["board"])
-      console.log("I got here buddy", this.currMsg["board"])
-      this.board = this.currMsg["board"]
-      this.updateBoard()
-      this.updateDataBoard()
-      if ( this.currMsg["turn"] )
-          await this.setBoardToClick()
-      else
-          await this.removeClick()
+    this.board = this.currMsg["board"]
+    this.updateBoard()
+    this.updateDataBoard()
+    
+    if ( this.currMsg["turn"] )
+        await this.setBoardToClick()
+    else
+        await this.removeClick()
   }
 }
 
 t3.prototype.setBoardToClick = async function() {
 this.cells.forEach( (lm, i) => {
-    // console.log(i)
     if (lm && this.board[i] === ".") {
-        console.log("gg")
         lm.addEventListener('click', this.lmClickHandler)
         lm.classList.remove("disabled")
     }
@@ -634,33 +566,30 @@ this.cells.forEach( lm => {
 }
 
 t3.prototype.lmClick = function(ev) {
-const idx = this.cells.indexOf(ev.target)
-// console.log("hhhhhhhh : ", idx)
-// if( idx > 8 || idx < 0 )
-//     return
 
-// console.log("EV = ", ev)
-this.save_ev = ev
-const msg = {
-    type : "in_game",
-    clickIdx : idx
-}
-matchingSocket.send(JSON.stringify(msg))
+    const idx = this.cells.indexOf(ev.target)
+
+    this.save_ev = ev
+
+    const msg = {
+        type : "in_game",
+        clickIdx : idx
+    }
+
+    matchingSocket.send(JSON.stringify(msg))
 }
 
 t3.prototype.updateBoard = function() {
-console.log("rah dkheeeeeelt hna ")
-this.cells.forEach( (lm, i) => {
-    console.log("o hta hnaaaaaaaaaaaaaa")
-    if( lm && this.board[i] != "." && lm.innerHTML.trim() === ""){
-        let g = this.board[i]
-        let p = document.createElement("p")
-        p.textContent = g
-        p.classList.add(g)
-        lm.innerHTML = ""
-        lm.appendChild(p)
-    }
-})
+    this.cells.forEach( (lm, i) => {
+        if( lm && this.board[i] != "." && lm.innerHTML.trim() === ""){
+            let g = this.board[i]
+            let p = document.createElement("p")
+            p.textContent = g
+            p.classList.add(g)
+            lm.innerHTML = ""
+            lm.appendChild(p)
+        }
+    })
 }
 
 
@@ -752,56 +681,6 @@ async friendsGame(friendId){
       });
   }
 
-  // we said here i will take a string to define the type of request 
-  // if it comes from friend invite 
-  // or from the play button random
-  
-
-    // async playClassic () {
-    //     await this.playgame("ft_classic")
-    // }
-
-    // async playFt4 () {
-    //     await this.playgame("ft4")
-    // }
-
-  
-
-
-
-  // function that add and remove onclick event 
-
-  
-
-  // -----------------------> must fetch data here using token JWT instead of ID
-  // fetchGameData(){
-
-  //     let list = document.getElementById("listOfLGID")
-  //     getAccessToken()
-  //             .then(accessToken => {
-  //                 console.log("hhhhhhhhhhhhhhhhhhhhhhhh :", accessToken)
-  //                 return fetch('/gamesByWinId/', {
-  //                     method: 'GET',
-  //                     headers: { 'Authorization': `Bearer ${accessToken}`}
-  //                 })
-  //             })
-  //             .then(response => response.json())
-  //             .then(data => { console.log(data); 
-  //                 data.forEach( game => {
-  //                     // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ before : ', game)
-  //                     gameUnit(game, list)
-  //                 })
-  //             })
-  //             .catch(error => {
-  //                 console.error('Error:', error)
-  //                 list.textContent = "Error fetching data ! Please try to refresh the page !"
-  //                 // re-call the fetchGameData
-  //             });
-  // }
-
-  
-  // window.location.host
-      
     connectedCallback() 
     {
       updateActiveNav("game", this.shadowRoot);
@@ -836,14 +715,9 @@ async friendsGame(friendId){
     // }
 
     disconnectedCallback() {
-        console.log("dekhle l disco callback ")
         if (matchingSocket && matchingSocket.readyState === WebSocket.OPEN)
             matchingSocket.close()
-        // matchingSocket = null
         game_obj = null
-      // Nettoyage de l'écouteur d'événement lors de la suppression du composant
-      // window.removeEventListener("resize", this.handleResize.bind(this));
-    //   window.removeEventListener("resize", this.handleResize.bind(this));
     }
 
     logoutListener()
@@ -892,11 +766,11 @@ function create_board(gType, boards){
       if (cell === ".") {
           divChar.textContent = "";
       } else if (cell === cell.toUpperCase() && cell !== ".") {
-          divChar.textContent = cell; // Keep uppercase if it's a winning combo
-          divChar.className = "win-combo"; // Highlight winning combo
-          divChar.style.backgroundColor = "green" // Do not add anything for empty cells
+          divChar.textContent = cell;
+          divChar.className = "win-combo";
+          divChar.style.backgroundColor = "green"
         } else {
-          divChar.textContent = cell.toLowerCase(); // Convert to lowercase otherwise
+          divChar.textContent = cell.toLowerCase();
         }
         boardiv.appendChild(divChar);
     });
@@ -932,7 +806,6 @@ function create_player(img, name, score, l_r){
 function gameUnit(unit, list){
   let oneUnit = document.createElement('div');
   oneUnit.classList.add('unitLG','df_jcc_aic');
-  // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ : ', unit.winner_or_looser)
   if (unit.winner_or_loser === 'L')
     oneUnit.style.backgroundColor = 'rgba(200, 50, 50, 0.5)';
   else
@@ -951,7 +824,6 @@ function fetchGameData(dom){
   let list = dom.getElementById("listOfLGID")
   getAccessToken()
     .then(accessToken => {
-        console.log("hhhhhhhhhhhhhhhhhhhhhhhh :", accessToken)
         return fetch('/gamesByWinId/', {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${accessToken}`}
@@ -960,14 +832,12 @@ function fetchGameData(dom){
     .then(response => response.json())
     .then(data => { console.log(data); 
         data.forEach( game => {
-            // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ before : ', game)
             gameUnit(game, list)
         })
     })
     .catch(error => {
         console.error('Error:', error)
         list.textContent = "Error fetching data ! Please try to refresh the page !"
-        // re-call the fetchGameData
     });
 }
 
@@ -1001,7 +871,6 @@ async function playgame (friendId ,gameType, obj) {
             "type" : "friendGame",
             "friendId" : friendId
         }
-        console.log(" Here is the msg im sending for friend game : ", msg)
     }
     if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
         return
@@ -1021,52 +890,30 @@ async function playgame (friendId ,gameType, obj) {
         console.error("Error creating WebSocket connection:", error);
         return;
     }
-    // gg.matchingSocket.onopen = here i should tell if they are playing 3 5 or 7
-    // and the tail size etc ....
+
     matchingSocket.onopen = async () => {
-        // alert('tconnecctaa');
-        // this on open msg sent is for the default, but for the friend game
-        // it must be another msg that will hold the username of the friend
-        
         matchingSocket.send(JSON.stringify(msg));
         
         game_obj = new t3(obj.shadowRoot)
     }
     matchingSocket.onmessage = async (event) => {
         game_obj.currMsg = JSON.parse(event.data)
-        console.log("what i got : ", game_obj.currMsg.type)
-        console.log("all : ", game_obj.currMsg)
         if (game_obj.functionMap.has(game_obj.currMsg.type))
             await game_obj.functionMap.get(game_obj.currMsg.type)()
     }
     matchingSocket.onerror = (event) => {
-        console.log('this is matchingsocket.onerror function')
         matchingSocket = null
-        // gg = null
     }
     matchingSocket.onclose = (event) => {
-        // 4010 is the end of game close, not back to home but to the gameover
-        // then he must click [OK] to go back to home
         if (event.code != 4010)
             back_to_home(obj)
-        console.log("gg the close socket ")
         matchingSocket = null
-        // should not be null because there is the button OK to quit the gameover there will call the 
-        // back home and free gg
-        // gg = null
-        // event.wasClean = true ? console.log("clean") : console.log("not clean")
     }
-    // console.log("WHAT ?")
 }
 
 function leaveGame() {
     const msg = { type : "leaveGame" }
     matchingSocket.send(JSON.stringify(msg))
-
-    // if ( matchingSocket && matchingSocket.readyState === WebSocket.OPEN )
-    //     matchingSocket.close(1000)
-    // console.log("hello world")
-    // location.reload();
 }
 
 /**************************LOCAL GAME *************************************** */
@@ -1080,7 +927,6 @@ let aiPlayer = 'O';
 
 class TicTacToeGame {
     constructor(shadowRoot) {
-        // Get the necessary elements from the DOM
         this.shadowRoot = shadowRoot
         this.boardSlots = this.shadowRoot.querySelectorAll('.bSlot');
         this.statsXWins = this.shadowRoot.querySelector('.stats:nth-child(1) h1');
@@ -1089,36 +935,28 @@ class TicTacToeGame {
         this.resetButton = this.shadowRoot.querySelector('.reset');
         this.startButton = this.shadowRoot.querySelector('.animWinLose h1');
         this.animWinLose = this.shadowRoot.querySelector('.animWinLose h1');
-        this.playerMode = this.shadowRoot.querySelector('input[name="playerMode"]:checked').value; // Get the initial mode
-        this.playerTurn = 'X'; // X always starts
+        this.playerMode = this.shadowRoot.querySelector('input[name="playerMode"]:checked').value;
+        this.playerTurn = 'X';
         this.movesCount = 0;
-        // this.boardState = Array(9).fill(null); // Empty board
         this.boardState = Array.from({ length: 9 }, (_, index) => index);
 
         this.xWins = 0;
         this.oWins = 0;
         this.draws = 0;
-        this.isGameActive = false; // Track if the game is active
+        this.isGameActive = false;
 
-        // Initialize game event listeners
         this.initListeners();
     }
 
-    // Initialize click listeners on board slots, reset, start button, and radio buttons
     initListeners() {
-        // Listen for the "Start" button click
-        // console.log("beningin ::: ", this.playerMode)
         this.startButton.addEventListener('click', () => this.startGame());
 
-        // Listen for the reset button click
         this.resetButton.addEventListener('click', () => this.resetScores());
 
-        // Add event listeners to the radio buttons to reset the game mode
         this.shadowRoot.querySelectorAll('input[name="playerMode"]').forEach(radio => {
             radio.addEventListener('change', (event) => this.changeMode(event.target.value));
         });
 
-        // Add click event listeners to the board slots
         this.boardSlots.forEach((slot, index) => {
             slot.addEventListener('click', () => this.handleSlotClick(slot, index));
         });
@@ -1126,61 +964,55 @@ class TicTacToeGame {
 
     changeMode(mode) {
         this.playerMode = mode;
-        this.resetGame(); // Reset the board whenever mode changes
-        this.resetScores(); // Reset the scores as well
-        this.animWinLose.textContent = 'START'; // Update the text back to "START"
-        this.startButton.textContent = 'START'; // Reset start button text
+        this.resetGame();
+        this.resetScores();
+        this.animWinLose.textContent = 'START';
+        this.startButton.textContent = 'START';
     }
 
     startGame() {
-        if (this.isGameActive) return; // Prevent starting if already active
-        console.log("ggggggggggggggggggggggg")
-        this.animWinLose.textContent = `${this.playerTurn}'s Turn`; // Show who's turn it is
-        this.isGameActive = true; // Mark the game as active
+        if (this.isGameActive) return;
+        this.animWinLose.textContent = `${this.playerTurn}'s Turn`;
+        this.isGameActive = true;
         this.movesCount = 0;
-        this.playerTurn = 'X'; // X always starts
-        // this.boardState.fill(null); // Clear the board state
-        this.boardState = Array.from({ length: 9 }, (_, index) => index); // [0, 1, 2, ..., 8]
+        this.playerTurn = 'X';
+        this.boardState = Array.from({ length: 9 }, (_, index) => index);
 
     
-        // Clear the board display and reset classes
         this.boardSlots.forEach(slot => {
             slot.textContent = '';
             slot.classList.remove('xSlot', 'oSlot');
         });
-        this.startButton.textContent = 'Playing'; // Update Start button
+        this.startButton.textContent = 'Playing';
         
-        // Enable the slots for interaction
         this.enableBoard();
     }
 
     enableBoard() {
         this.boardSlots.forEach(slot => {
-            slot.style.pointerEvents = 'auto'; // Enable interaction
+            slot.style.pointerEvents = 'auto';
         });
     }
 
     disableBoard() {
         this.boardSlots.forEach(slot => {
-            slot.style.pointerEvents = 'none'; // Disable interaction
+            slot.style.pointerEvents = 'none';
         });
     }
 
     resetGame() {
-        // this.boardState.fill(null); // Clear the board state
-        this.boardState = Array.from({ length: 9 }, (_, index) => index); // [0, 1, 2, ..., 8]
-        this.playerTurn = 'X'; // X always starts
+        this.boardState = Array.from({ length: 9 }, (_, index) => index);
+        this.playerTurn = 'X';
         this.movesCount = 0;
         this.isGameActive = false;
 
-        // Clear the board display and reset classes
         this.boardSlots.forEach(slot => {
             slot.textContent = '';
             slot.classList.remove('xSlot', 'oSlot');
         });
 
-        this.animWinLose.textContent = 'START'; // Reset display text
-        this.startButton.textContent = 'Start'; // Reset Start button
+        this.animWinLose.textContent = 'START';
+        this.startButton.textContent = 'Start';
     }
 
     resetScores() {
@@ -1194,18 +1026,14 @@ class TicTacToeGame {
     }
 
     handleSlotClick(slot, index) {
-        if (!this.isGameActive || typeof this.boardState[index] !== 'number') return; // Ignore if game not active or slot filled
+        if (!this.isGameActive || typeof this.boardState[index] !== 'number') return;
 
-        // Set the clicked slot with the current player's symbol (X or O)
         this.boardState[index] = this.playerTurn;
         slot.textContent = this.playerTurn;
         slot.classList.add(this.playerTurn === 'X' ? 'xSlot' : 'oSlot');
         this.movesCount++;
 
-        // Check if the current player has won or if the game is a draw
-        // this.switchTurn();
         let gameStatus = this.checkWin(this.boardState, this.playerTurn);
-        console.log("gameStatus ::: ", gameStatus)
         if (gameStatus) {
             this.announceWinner(this.playerTurn);
         }
@@ -1214,24 +1042,18 @@ class TicTacToeGame {
         }
         else {
             if (this.playerMode === '1' && this.playerTurn === 'X') {
-                // If it's 1-player mode and X just played, disable board and make the bot (O) play
-                this.disableBoard();  // Disable clicks while bot is playing
+                this.disableBoard();
                 this.switchTurn();
                 setTimeout(() => {
-                    // this.minimax(this.boardState, this.playerTurn);  // Bot plays after short delay
                     const bestMove = this.minimax(this.boardState, this.playerTurn).index;
-                    // console.log("bestMove ::: ", bestMove)
                     this.handleSlotClick(this.boardSlots[bestMove], bestMove);
-                    // this.boardState[bestMove] = this.playerTurn;
                     if (this.isGameActive)
-                        this.enableBoard(); // Re-enable the board after bot finishes playing
+                        this.enableBoard();
                 }, 500);
             } else {
-                this.switchTurn(); // Switch turns in 2-player mode or after bot's turn
+                this.switchTurn();
             }
         } 
-        // else
-        //     this.switchTurn();
     }
 
     checkWin(board, player) {
@@ -1240,7 +1062,6 @@ class TicTacToeGame {
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
             [0, 4, 8], [2, 4, 6]             // Diagonals
         ];
-        // console.log("winPatterns ::: ")
         return winPatterns.some(pattern => {
             return pattern.every(index => board[index] === player);
         });
@@ -1250,7 +1071,7 @@ class TicTacToeGame {
         this.animWinLose.textContent = `${player} Wins!`;
         this.animWinLose.classList.add('win-animation');
         this.isGameActive = false;
-        this.startButton.textContent = 'START AGAIN'; // Update Start button for a new game
+        this.startButton.textContent = 'START AGAIN';
         if (player === 'X') {
             this.xWins++;
             this.statsXWins.textContent = this.xWins;
@@ -1259,7 +1080,6 @@ class TicTacToeGame {
             this.statsOWins.textContent = this.oWins;
         }
 
-        // Disable further moves
         this.disableBoard();
     }
 
@@ -1267,7 +1087,7 @@ class TicTacToeGame {
         this.animWinLose.textContent = "It's a Draw!";
         this.animWinLose.classList.add('draw-animation');
         this.isGameActive = false;
-        this.startButton.textContent = 'START AGAIN'; // Update Start button for a new game
+        this.startButton.textContent = 'START AGAIN';
         this.draws++;
         this.statsDraws.textContent = this.draws;
 
@@ -1276,7 +1096,6 @@ class TicTacToeGame {
 
     switchTurn() {
         this.playerTurn = this.playerTurn === 'X' ? 'O' : 'X';
-        console.log("this.playerTurn ::: ", this.playerTurn)
         this.animWinLose.textContent = `${this.playerTurn}'s Turn`;
         this.animWinLose.classList.add('turn-animation');
         setTimeout(() => {
@@ -1333,9 +1152,7 @@ class TicTacToeGame {
                     bestMove = i;
                 }
             }
-        }
-        // console.log("bestMove ::: ", bestMove)
-        
+        }        
         return moves[bestMove];
     }
 
