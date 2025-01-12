@@ -4,8 +4,6 @@ from collections import defaultdict
 
 from .models import games
 from asgiref.sync import sync_to_async
-#import the model games
-#this for probably syncronizing server with database
 from channels.db import database_sync_to_async
 from authentication.models import CustomUser as User
 import json
@@ -13,10 +11,6 @@ import json
 import random, time
 from .consu_helper import *
 
-
-#read me :
-# I will need to create a list of all the communication strings for parsing
-# 
 
 def switchturnUpdtboardAddmoves(p1,p2,idx,is_x_turn):
     if( p1.ina_game[0] == "ft_classic" and ( idx > 8 or idx < 0 ) ):
@@ -55,7 +49,6 @@ class test(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         try:
-            print("this is deco code : ", code)
             if code == 4005:
                 return
 
@@ -595,7 +588,6 @@ class test(AsyncWebsocketConsumer):
                     "code": event["code"],
                     "msg": event["msg"]
                 }))
-            print("....................................", event["code"])
             if event["code"] == 1:
                 await self.close(code=4004)
             elif event["code"] == 3:

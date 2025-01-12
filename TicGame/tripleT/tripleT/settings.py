@@ -10,11 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR.parent.parent / 'Backend'))
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tripleT.settings')
-# django.setup() 
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tripleT.settings')
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&ofs!4x6k6g9swvr^avs+h%b#4v#*vd7py6mg!ztkw#%nsqnu2'
@@ -46,7 +41,6 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (

@@ -830,7 +830,7 @@ function fetchGameData(dom){
         })
     })
     .then(response => response.json())
-    .then(data => { console.log(data); 
+    .then(data => {
         data.forEach( game => {
             gameUnit(game, list)
         })
