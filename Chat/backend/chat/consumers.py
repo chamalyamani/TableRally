@@ -67,13 +67,11 @@ class   ChatConsumer(AsyncWebsocketConsumer):
 
     async def   receive(self, text_data):
         text_data_dic = json.loads(text_data)
-        print('hhhhhnnnnanaa: ', text_data_dic)
 
         ### Deleting messages action ###
         if 'action' in text_data_dic and text_data_dic['action'] == 'delete':
             sender_id = text_data_dic['sender_id']
             user = self.scope['user'].username
-            print('±-------->', sender_id)
             existingMessage = await database_sync_to_async(Messages.objects.filter(conversation_id=self.conversation_id, sender_id=sender_id).first)()
             if existingMessage:
                 await database_sync_to_async(lambda: Messages.objects.filter(conversation_id=self.conversation_id, sender_id=sender_id).delete())()
@@ -100,8 +98,7 @@ class   ChatConsumer(AsyncWebsocketConsumer):
                     blocked = TheBlocked,
                     conversation_id = self.conversation
                 )
-                print('blllloooooooooockkkkkk')
-                print(self.conversation.id)
+                
                 existingBlock = await database_sync_to_async(BlockList.objects.filter(
                     conversation_id=self.conversation.id
                     ).first)()
@@ -124,7 +121,6 @@ class   ChatConsumer(AsyncWebsocketConsumer):
         ### Unblocking a user action ###
         elif 'action' in text_data_dic and text_data_dic['action'] == 'unblock':
             try:
-                print('uunnnnnnnnnblllloooooooooockkkkkk')
                 to_unblock = await database_sync_to_async(BlockList.objects.get)(conversation_id=self.conversation_id)
                 if to_unblock:
                     await database_sync_to_async(to_unblock.delete)()
@@ -140,9 +136,7 @@ class   ChatConsumer(AsyncWebsocketConsumer):
         ### Sending messages action ###
         elif 'message' in text_data_dic:
             message = text_data_dic['message']
-            # user = text_data_dic['user']
             user = self.scope['user'].username
-            print ("UUSER = ", user)
 
             existingBlock = await database_sync_to_async(BlockList.objects.filter(
                 (Q(blocker=self.user1_id.id, blocked=self.user2_id.id)) | (Q(blocker=self.user2_id.id, blocked=self.user1_id.id))

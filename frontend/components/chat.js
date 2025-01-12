@@ -126,12 +126,9 @@ class ChatPage extends HTMLElement
       // input handling
       
       this.sideSearchBar.addEventListener('input', (input) => {
-          // console.log(input);
           const value = input.target.value.toLowerCase();
-          // console.log(singleConversationList.single);
           let matchingUsers = [];
           this.singleConversationList.forEach(singleConversationList => {
-              // console.log(singleConversationList.single);
               let matchingUser = singleConversationList.single.querySelector('.li1').textContent.toLowerCase().includes(value);
               if (matchingUser)
                   matchingUsers.push(singleConversationList);
@@ -155,12 +152,9 @@ class ChatPage extends HTMLElement
           })
               .then(response => response.json())
               .then(data => data.forEach(user => {
-                  console.log(user)
                   let newUser = this.modalUser.cloneNode(true);
-                  // console.log(newUser)
                   newUser.querySelector('.li1').textContent = user.username;
                   newUser.style.display = 'flex';
-                  console.log(user.image_url);
                   newUser.querySelector('.modal-img').src = user.image_url;
                   // userField.appendChild(newUser);
                   if (value != '') {
@@ -222,7 +216,6 @@ class ChatPage extends HTMLElement
     }
 
     disconnectedCallback() {
-        console.log("dekhle l disco callback in chat  ")
         if (this.socket && this.socket.readyState === WebSocket.OPEN)
             this.socket.close()
         // matchingSocket = null
@@ -293,9 +286,7 @@ addFriend = () => {
 
 
 startConversation(singleUser, userData) {
-    console.log("user DAAAAAATA:  ", userData);
     singleUser.addEventListener('click', () => {
-        console.log(singleUser, userData);
         this.removeBlur();
         getAccessToken()
         .then(accessToken => {
@@ -310,16 +301,10 @@ startConversation(singleUser, userData) {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('-----------8-----------');
-                console.log(data);
-                // console.log('hnnaaa');
-                // console.log(userData.id);
-                // console.log(currentUser);
                 if (data['status']) {
                     for (let i = 0; this.singleConversationList[i]; i++){
                         if (this.singleConversationList[i].conv.id == data.id)
                         {
-                            console.log(this.singleConversationList[i].single);
                             this.convClickAction(this.singleConversationList[i].conv,
                                 this.singleConversationList[i].single);
                             break;
@@ -327,7 +312,6 @@ startConversation(singleUser, userData) {
                     }
                 }
                 else {
-                    console.log('noooo error');
                     let newSingleConversation = this.singleConversation.cloneNode(true);
                     newSingleConversation.querySelector('.li1').textContent = userData.username;
                     newSingleConversation.style.display = 'flex';
@@ -360,13 +344,10 @@ listConversations() {
             })
         })
         .then(response => response.json())
-        .then(data => { 
-            console.log('hnaa');
-            console.log(data);
+        .then(data => {
             this.currentUser = data.conversations[0].currentUser;
             if (data.conversations[0].id != undefined) {
                 data.conversations.forEach(conv => {
-                    console.log('dkhaaaaal');
                     let newSingleConversation = this.singleConversation.cloneNode(true);
                     newSingleConversation.querySelector('.li1').textContent = conv.conversation;
                     newSingleConversation.style.display = 'flex';
@@ -374,8 +355,8 @@ listConversations() {
                         'single': newSingleConversation,
                         'conv': conv,
                     }
-                    console.log('000000');
-                    console.log(conv);
+                    
+                    
                     newSingleConversation.querySelector('.cvr-img').src = conv.userImage;
                     this.singleConversationList.push(fullConv);
                     this.conversations.appendChild(newSingleConversation);
@@ -401,14 +382,14 @@ convClickAction(conv, singleConv) {
     if (this.currentConversation)
         this.currentConversation.style.backgroundColor = '';
     this.currentConversation = singleConv;
-    console.log('iyeeeehh');
+    
     singleConv.style.backgroundColor = '#2E2E2E';
     this.newChatPage.style.display = 'none';
     this.conversationTopBar.style.display = 'flex';
     this.mainChat.style.display = 'flex';
     this.sending.style.display = 'flex';
-    console.log('?????????');
-    console.log(conv.userImage);
+    
+    
     this.conversationTopBar.querySelector('.img-top-bar').src = conv.userImage;
 
     this.listMessages(conv);
@@ -416,7 +397,7 @@ convClickAction(conv, singleConv) {
 }
 
 listMessages(conv) {
-    // console.log('coooooooovovv ', conv);
+    
     getAccessToken()
         .then(accessToken => {
             return fetch(`/api/chat/${conv.id}/`, {
@@ -448,7 +429,7 @@ listMessages(conv) {
 }
 
 async realTime(conv, singleConv) {
-    console.log('ccvvvvv');
+    
     let token;
     await getAccessToken()
         .then(accessToken => {
@@ -462,17 +443,17 @@ async realTime(conv, singleConv) {
       this.socket = new WebSocket(`/ws/chat/${conv.id}/?Token=${token}`);
     this.socket.onmessage = ({ data }) => {
         let receivedMessage = JSON.parse(data);
-        // console.log('mmmmm');
-        // console.log(receivedMessage);
+        
+        
         if (receivedMessage.type == 'send_message') {
-            // console.log(receivedMessage);
+            
             if (receivedMessage.message && receivedMessage.message.trim() != '')
             {
-                // console.log(conv.conversation);
-                // console.log(receivedMessage.user);
+                
+                
                 if (conv.conversation == receivedMessage.user)
                 {
-                    // console.log(singleConv);
+                    
                     let newLeftMessage = this.leftMessage.cloneNode(true);
                     newLeftMessage.querySelector('.left-message-p').textContent = receivedMessage.message;
                     newLeftMessage.style.display = 'inline-block';
@@ -480,7 +461,7 @@ async realTime(conv, singleConv) {
                 }
                 else
                 {
-                    // console.log(singleConv);
+                    
                     let newRightMessage = this.rightMessage.cloneNode(true);
                     newRightMessage.querySelector('.right-message-p').textContent = receivedMessage.message;
                     newRightMessage.style.display = 'inline-block';
@@ -497,16 +478,16 @@ async realTime(conv, singleConv) {
             else
                 messages = this.mainChat.querySelectorAll('.right-message');
             messages.forEach(message => {
-                console.log(message)
+                
 
                 message.remove();
             })
             this.removeBlur();
         }
         else if (receivedMessage.type == 'block_user') {
-            console.log('222222222222222222');
-            console.log(receivedMessage);
-            console.log(this.currentUser);
+            
+            
+            
             this.blockList.push(conv.id);
             this.disableMessageBar();
             this.removeBlur();
@@ -522,7 +503,7 @@ async realTime(conv, singleConv) {
             }
         }
         else if (receivedMessage.type == 'unblock_user') {
-            console.log('333333333333333333');
+            
             this.enableMessageBar();
             this.removeBlur();
             this.blockButton.disabled = false;
@@ -531,7 +512,6 @@ async realTime(conv, singleConv) {
             this.unblockChat.style.display = 'none';
             this.div3.querySelector('.modal-content3 .modal-delete-message3').textContent = 'BLOCK THIS USER?'
         }
-        console.log('Message from server: ', receivedMessage.message);
     }
     this.socket.onopen = () => {
         this.enableMessageBar();
@@ -546,7 +526,6 @@ async realTime(conv, singleConv) {
                 if (this.messageInput.value.trim() != '') {
                     let jsonMessage = {'message': this.messageInput.value, 'user': singleConv.querySelector('.li1').textContent}
                     this.socket.send(JSON.stringify(jsonMessage));
-                    // console.log(this.messageInput.value);
                 }
                 this.messageInput.value = '';
             }
@@ -556,11 +535,8 @@ async realTime(conv, singleConv) {
             if (event.key == 'Enter' && this.messageInput.value)
             {
                 if (this.messageInput.value.trim() != '') {
-                    console.log('dkhaall');
-                    // console.log(this.messageInput.value.trim())
                     let jsonMessage = {'message': this.messageInput.value, 'user': singleConv.querySelector('.li1').textContent}
                     this.socket.send(JSON.stringify(jsonMessage));
-                    // console.log(this.messageInput.value);
                 }
                 this.messageInput.value = '';
             }
@@ -568,18 +544,15 @@ async realTime(conv, singleConv) {
 
         this.deleteChat.addEventListener('click', () => {
             let action = { 'action': 'delete', 'sender_id': `${this.currentUser}` };
-            console.log(this.currentUser);
             this.socket.send(JSON.stringify(action));
         })
 
         this.blockChat.addEventListener('click', () => {
             let action = { 'action': 'block' };
             this.socket.send(JSON.stringify(action));
-            console.log(conv);
         })
 
         this.unblockChat.addEventListener('click', () => {
-            console.log('UNBLOCKK');
             let action = { 'action': 'unblock' };
             this.socket.send(JSON.stringify(action));
         })

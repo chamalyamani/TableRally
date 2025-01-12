@@ -7,8 +7,6 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.user_notification_id = f'user_notification_{self.user.id}'
-        print ('user ===> ', self.user.id)
-        print ('group ===> ', self.user_notification_id)
 
         if not self.user.is_authenticated:
             print ("USER is NOT authenticated")
@@ -36,7 +34,6 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
             )
 
         elif text_data_dic['type'] == 'game_request_notification':
-            print(text_data_dic)
             receiver_id = text_data_dic['receiver_username']
             try:
                 receiver_id = await database_sync_to_async(User.objects.get)(username=receiver_id)
@@ -44,7 +41,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                 print("User does not exist")
                 await self.close()
             sender_id = text_data_dic['sender_id']
-            print("self.user.username   ", self.user.username)
+
             await self.channel_layer.group_send(
                 f'user_notification_{receiver_id.id}',
                 {
@@ -56,7 +53,6 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                 }
             )
         elif text_data_dic['type'] == 'game_resp':
-            print("***********: ",text_data_dic)
             receiver_id = text_data_dic['receiver_id']
             sender_id = text_data_dic['sender_id']
             await self.channel_layer.group_send(
@@ -87,7 +83,7 @@ class   NotificationsConsumer(AsyncWebsocketConsumer):
                 'gameType': event['gameType']
             }
         ))
-        print("sent to the other ........")
+
     async def game_resp(self, event):
         await self.send(text_data=json.dumps(
             {
