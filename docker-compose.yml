@@ -54,7 +54,7 @@ services:
     container_name: nginx
     build: ./nginx/
     ports:
-      - "4443:443"
+      - "4443:4443"
     volumes:
       - ./frontend:/usr/share/nginx/html/backend
       - ./Backend/staticfiles:/staticfiles/

@@ -1,4 +1,4 @@
-
+console.log("Im in routing.js")
 // const routes = 
 // {
 //     login: "login-page",
@@ -212,6 +212,7 @@ async function checkAuthentication() {
  * Modified navigateTo function that checks authentication for protected routes.
  */
 async function navigateTo(page) {
+    console.log("%%%%%%%%%%%%% PAGE : ", page);
     const app = document.getElementById("app");
     const loader = document.getElementById("loader");
 

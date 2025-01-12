@@ -129,7 +129,6 @@ function callremote(other_id, shadowRoot)
     }
     
     getAccessToken().then(token => {
-        console.log(token)
         chatSocket = new WebSocket(`/ws/game/?Token=${token}&ID=${other_id}`);
         let user = "--";
         let other_user = "--";
@@ -223,11 +222,10 @@ function callremote(other_id, shadowRoot)
     }
     
     chatSocket.onopen = function (event) {
-        console.log("wait..................................");
+
     };
     
     chatSocket.onerror = (error) => {
-        console.log("onerror enter");
         
         shadowRoot.getElementById("myContainer").innerHTML =
         `
@@ -268,7 +266,6 @@ function callremote(other_id, shadowRoot)
           `
           attachEventListeners(shadowRoot)
       }, 2000); 
-        console.log("onerror exit");
     };
 
     function winner(winner)
@@ -305,8 +302,6 @@ function callremote(other_id, shadowRoot)
     chatSocket.onclose = (event) => {
         if (!event.wasClean) {
             console.error("WebSocket connection closed unexpectedly.");
-        } else {
-            console.log("WebSocket connection closed cleanly.");
         }
         setTimeout(function() {
             shadowRoot.getElementById("myContainer").innerHTML = 
