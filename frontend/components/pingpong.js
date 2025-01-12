@@ -81,7 +81,6 @@ function callremote(other_id, shadowRoot)
             <div class="remote-score" id="score">
                <div id="score">
               <div class="team team1">
-              <img src="">
               <h1>PLAYER 1</h1>
               </div>
               
@@ -92,7 +91,6 @@ function callremote(other_id, shadowRoot)
               </div>
               
               <div class="team team2">
-              <img src="">
               <h1>PLAYER 2</h1>
               </div>
               </div>
@@ -463,7 +461,6 @@ function attachEventListeners(shadowRoot) {
 
           <div id="score">
           <div class="team team1">
-          <img src="">
           <h1>PLAYER 1</h1>
           </div>
           
@@ -474,7 +471,6 @@ function attachEventListeners(shadowRoot) {
           </div>
           
           <div class="team team2">
-          <img src="">
           <h1>PLAYER 2</h1>
           </div>
           </div>
@@ -722,7 +718,6 @@ function attachEventListeners(shadowRoot) {
         <div id="winner">
         <p>You win !</p>
         <div class="crown"></div>
-        <img src="">
         <p>${winer3}</p>
         </div>
     </div>
@@ -812,7 +807,7 @@ function attachEventListeners(shadowRoot) {
               <!-- 3) Bloc du champion final (Winner 3) -->
               <div class="champion">
                 <div class="player-box"><p>${winer3}</p></div>
-                <img src="assests/trophee.png" class="trophee-img"</img>
+                <img src="assests/trophee.png" class="trophee-img"/img>
                 <button id="play-tour">play</button>
               </div>
 
@@ -874,7 +869,6 @@ function attachEventListeners(shadowRoot) {
 
           <div id="score">
           <div class="team team1">
-          <img src="">
           <h1>${player1}</h1>
           </div>
           
@@ -885,7 +879,6 @@ function attachEventListeners(shadowRoot) {
           </div>
           
           <div class="team team2">
-          <img src="">
           <h1>${player2}</h1>
           </div>
           </div>

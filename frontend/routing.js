@@ -1,93 +1,3 @@
-console.log("Im in")
-// const routes = 
-// {
-//     login: "login-page",
-//     signup: "signup-page",
-//     resetpassword: "resetpassword-page",
-//     newpassword: "newpassword-page",
-//     dashboard: "dashboard-page",
-//     authentification: "authentification-page",
-//     chat: "chat-page",
-//     game: "game-page" ,
-//     settings: "settings-page",
-//     pingpong : "pingpong-page",
-// };
-
-
-
-// let notif_socket = null;
-// let sendNotif = null
-// const notificationPopup = document.querySelector('.toast');
-// let acceptBtn;
-// let rejectBtn;
-// let timer;
-// // const pageInstances = new Map();
-// // function save_me (element) {
-// //     if (element) {
-// //         pageInstances.set(element.tagName.toLowerCase(), element);
-// //         console.log("pageINSTANCE in SAVER : ",pageInstances)
-// //     }
-// // }
-// function navigateTo(page) 
-// {
-//   const app = document.getElementById("app");
-//   const loader = document.getElementById("loader");
-
-//   loader.style.display = "flex";
-
-//   if (routes[page])
-//   {
-//     app.innerHTML = "";
-
-//     history.pushState({ page }, "", `/${page}`);
-//     app.innerHTML = `<${routes[page]}></${routes[page]}>`;
-
-//     document.body.className = `body-${page}`;
-    
-//     const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-    
-//     setTimeout(() => 
-//         {
-//             loader.style.display = "none";
-//         }, randomDelay);
-//     if (page === "chat") {
-//         const chatPage = document.querySelector('chat-page');
-//         if (chatPage) {
-//             sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
-//             if (sendNotif) {
-//                 sendNotif.addEventListener('click', () => {
-//                     let jsonMessage = {'type': 'game_request_notification', 'receiver_username': chatPage.getOtherUser(), 'sender_id': chatPage.getCurrentUser()}
-//                     console.log('Sending notification:', jsonMessage);
-//                     console.log('Notification sent');
-//                     notif_socket.send(JSON.stringify(jsonMessage));
-//                 })
-//             }
-//             console.log("SEND NOTIF: ", sendNotif);
-//         } else {
-//             console.error("ChatPage element not found!");
-//         }
-//     }
-//   } 
-//   else 
-//     navigateTo("login");
-// }
-
-
-// window.addEventListener("popstate", (e) => 
-// {
-//     const state = e.state;
-//     if (state && state.page) 
-//     {
-//       navigateTo(state.page);
-//     }
-// });
-
-// document.addEventListener("DOMContentLoaded", () => 
-// {
-//     const path = window.location.pathname.slice(1);
-//     const page = path || "login";
-//     navigateTo(page);
-// });
 
 function globalNotifPopup(type = "Success", message = "Your changes have been saved") {
     const toast = document.querySelector(".toast");
@@ -225,6 +135,11 @@ async function navigateTo(page, shouldPush = true)
             globalNotifPopup("Warning", `Login to access ${page}. Redirecting to login.`);
             return navigateTo("login");
         }
+        else{
+            if (notif_socket == null) {
+                notifications();
+            }
+        }
     }
 
     if (routes[page]) 
@@ -258,8 +173,6 @@ async function navigateTo(page, shouldPush = true)
                             'sender_id': chatPage.getCurrentUser(),
                             'gameType': 'tic-tac-toe'
                         }
-                        console.log('Sending notification:', jsonMessage);
-                        console.log('Notification sent');
                         notif_socket.send(JSON.stringify(jsonMessage));
                     })
                 }
@@ -272,8 +185,6 @@ async function navigateTo(page, shouldPush = true)
                             'sender_id': chatPage.getCurrentUser(),
                             'gameType': 'ping-pong'
                         }
-                        console.log('Sending notification:', jsonMessage);
-                        console.log('Notification sent');
                         notif_socket.send(JSON.stringify(jsonMessage));
                     })
                 }
@@ -331,8 +242,6 @@ function helper2(element, gameType, currUser, otherUser){
             'sender_id': currUser,
             'gameType': gameType
         }
-        console.log('Sending notification:', jsonMessage);
-        console.log('Notification sent');
         notif_socket.send(JSON.stringify(jsonMessage));
     })
 }
@@ -380,7 +289,6 @@ async function callme(friendId, obj){
 }
 
 acceptBtn.addEventListener('click', () => {
-    console.log("...........................: ",datap);
     let jsonMessage = {
         'type': 'game_resp',
         'receiver_id': datap.sender,
@@ -430,84 +338,43 @@ acceptBtn.addEventListener('click', () => {
 
 })
 
+
 getAccessToken()
 .then(accessToken => {
   notif_socket = new WebSocket(`/ws/notification/?Token=${accessToken}`);
   notif_socket.onmessage = ({data}) => {
       datap = JSON.parse(data);
-      console.log('Message Received is --------------------', datap);
-    //   console.log('Message receiverd_id :  ', datap.receiver_id);
-    //   console.log('Message sender_id :  ', datap.sender_id);
-      // if game response is received
-      // game matching logic
-      if (datap.type === 'game_resp') {
-          console.log("HE ACCEPTEEEEEEEEEEEEED : ", datap);
-          // render 
-           /** tictactoe logic game */
-           // setTimeout(() => {
-            console.log("PINGPONG PAGE : /*************************/", datap.gameType);
-            if (datap.gameType === 'tic-tac-toe') {
-                // const app = document.getElementById("app");
-                // const loader = document.getElementById("loader");
-                
-                // loader.style.display = "flex";
-                // app.innerHTML = "";
-                
-                // history.pushState({ page: 'game' }, "", `/game`);
-                // app.innerHTML = `<game-page></game-page>`;
-                // document.body.className = `body-game`;
-                // const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-                // setTimeout(() => {
-                //     loader.style.display = "none";
-                // }, randomDelay);
-                
-                const game_page = helper('game');
-                
-                callme(datap.sender ,game_page)
-            }
-            else if (datap.gameType === 'ping-pong') {
-                // const app = document.getElementById("app");
-                // const loader = document.getElementById("loader");
-                
-                // loader.style.display = "flex";
-                // app.innerHTML = "";
-                
-                // history.pushState({ page: 'pingpong' }, "", `/pingpong`);
-                // app.innerHTML = `<pingpong-page></pingpong-page>`;
-                // document.body.className = `body-pingpong`;
-                // const randomDelay = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
-                // setTimeout(() => {
-                //     loader.style.display = "none";
-                // }, randomDelay);
-                
-                const pingpong_page = helper('pingpong');
-                pingpong_page.playwithfriend(datap.sender)
-            }
-                // callme(datap.sender ,pingpong_page)
-            }
-            /** end tictactoe logic game */
-      else {
+    if (datap.type === 'game_resp') {          
+        if (datap.gameType === 'tic-tac-toe') {
+            const game_page = helper('game');
+            callme(datap.sender ,game_page)
+        }
+        else if (datap.gameType === 'ping-pong') {
+            const pingpong_page = helper('pingpong');
+            pingpong_page.playwithfriend(datap.sender)
+        }
+    }
+    else {
 
-          notificationPopup.textContent = `${datap.username} is inviting you to play ${datap.gameType}`;
-          let btns = document.createElement('div');
-          btns.appendChild(acceptBtn);
-          btns.appendChild(rejectBtn);
-          notificationPopup.appendChild(btns);
-          notificationPopup.classList.add('active', 'invtPopup');
-          timer = setTimeout(() => {
-              notificationPopup.classList.remove('active');
-              setTimeout(() => {
-                  notificationPopup.classList.remove('invtPopup');
-              }, 500);
-          }, 5000); // Hide after 3 seconds
-      }
+        notificationPopup.textContent = `${datap.username} is inviting you to play ${datap.gameType}`;
+        let btns = document.createElement('div');
+        btns.appendChild(acceptBtn);
+        btns.appendChild(rejectBtn);
+        notificationPopup.appendChild(btns);
+        notificationPopup.classList.add('active', 'invtPopup');
+        timer = setTimeout(() => {
+            notificationPopup.classList.remove('active');
+            setTimeout(() => {
+                notificationPopup.classList.remove('invtPopup');
+            }, 500);
+        }, 5000); // Hide after 3 seconds
+    }
   }
   notif_socket.onopen = () => {
-      console.log("Heeeeeeeeeeeeeeeeeeeere : socket oppened");
   }
 })
 .catch(error => console.error('Error fetching notifications:', error));
 }
 
-notifications();
+// notifications();
 

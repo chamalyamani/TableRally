@@ -327,10 +327,9 @@ class t3 {
 
   err_msg(){
       let pop = this.shadowRoot.querySelector("#err_pop")
-      const closeCode = this.currMsg["code"];
       const closeReason = this.currMsg["msg"];
 
-      pop.textContent = `Connection closed: Code ${closeCode} - ${closeReason}`;
+      pop.textContent = `Connection closed: - ${closeReason}`;
       pop.style.transition = "top 0.5s ease";
       pop.style.top = "0vh";
   
