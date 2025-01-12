@@ -135,7 +135,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				await self.accept()
 				self.me = self.user.id
 				acepted_users.append(self.me)
-				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url}))
+				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url,"username": self.user.username}))
 				await self.add_to_woiting_list()
 		else:
 			self.user = self.scope['user']
@@ -146,7 +146,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				await self.accept()
 				self.me = self.user.id
 				acepted_users.append(self.me)
-				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url}))
+				await self.send(text_data=json.dumps({"TITLE": "wait", "image" : self.user.image_url,"username": self.user.username}))
 				self.other = int(other_id)
 				await self.match_friend()
 

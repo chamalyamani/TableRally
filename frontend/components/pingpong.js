@@ -140,14 +140,14 @@ function callremote(other_id, shadowRoot)
         const context = canvas.getContext("2d");
         
         
-        function waiting() {
+        function waiting(your_user) {
             shadowRoot.getElementById("myContainer").innerHTML = `
 
               <div class="lobby-waiting" id="waiting">
               <div class="content-waiting">
                   <div class="player player1">
                       <img src="${image}">
-                      <h2>PLAYER 1</h2>
+                      <h2>${your_user}</h2>
                   </div>
                       <div class="loader-loading"></div>
                   <div class="player player2">
@@ -382,7 +382,8 @@ function callremote(other_id, shadowRoot)
         else if (data.TITLE == "wait") 
         {
             image = data.image
-            waiting()
+            let your_user = data.username
+            waiting(your_user)
         }
         else if (data.TITLE == 'winner_send')
         {
