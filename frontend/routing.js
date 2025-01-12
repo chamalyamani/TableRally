@@ -1,4 +1,4 @@
-
+console.log("Im in")
 // const routes = 
 // {
 //     login: "login-page",
@@ -212,6 +212,7 @@ async function checkAuthentication() {
  * Modified navigateTo function that checks authentication for protected routes.
  */
 async function navigateTo(page) {
+    console.log("%%%%%%%%%%%%% PAGE : ", page);
     const app = document.getElementById("app");
     const loader = document.getElementById("loader");
 
@@ -243,15 +244,14 @@ async function navigateTo(page) {
             if (chatPage) {
                 sendNotif = chatPage.getTicBtn(); // Access element from shadowRoot
                 sendNotifPong = chatPage.getPongBtn(); // Access element from shadowRoot
-                const currUser = chatPage.getCurrentUser();
-                const otherUser = chatPage.getOtherUser();
+
                 if (sendNotif) {
                     // helper2(sendNotif, 'tic-tac-toe', chatPage.getCurrentUser(), chatPage.getOtherUser())
                     sendNotif.addEventListener('click', () => {
                         let jsonMessage = {
                             'type': 'game_request_notification',
-                            'receiver_username': otherUser,
-                            'sender_id': currUser,
+                            'receiver_username': chatPage.getOtherUser(),
+                            'sender_id': chatPage.getCurrentUser(),
                             'gameType': 'tic-tac-toe'
                         }
                         console.log('Sending notification:', jsonMessage);
@@ -264,8 +264,8 @@ async function navigateTo(page) {
                     sendNotifPong.addEventListener('click', () => {
                         let jsonMessage = {
                             'type': 'game_request_notification',
-                            'receiver_username': otherUser,
-                            'sender_id': currUser,
+                            'receiver_username': chatPage.getOtherUser(),
+                            'sender_id': chatPage.getCurrentUser(),
                             'gameType': 'ping-pong'
                         }
                         console.log('Sending notification:', jsonMessage);

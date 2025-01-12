@@ -20,15 +20,10 @@ class   ChatOverview(APIView):
         serializeChat = ChatOverviewSerializer(conversations, many=True, context={'request': request})
         data = {
             'conversations': serializeChat.data
-            # Add conversations images
         }
-        # print(data['conversations'])
         if not data['conversations']:
-            print('--------------8---------------')
             data['conversations'].append({'currentUser': request.user.id})
-            # print(data['conversations'][0]['currentUser'])
-            # data['conversations'][0]['currentUser'] = request.user.id
-            print(data['conversations'][0]['currentUser'])
+
         return Response(data)
 
 
@@ -60,9 +55,6 @@ class   CreateConversation(APIView):
     def post(self, request):
         user1_id = request.data.get('user1_id')
         user2_id = request.data.get('user2_id')
-        print('*********WSAL************')
-        print(user1_id)
-        print(user2_id)
 
         if request.user.id != user1_id \
             and request.user.id != user2_id:
