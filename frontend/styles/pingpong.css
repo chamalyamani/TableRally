@@ -1637,7 +1637,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     position: relative;
     z-index: 2;
     overflow: hidden;
-    padding-top:5%;
+    padding-top:10%;
     padding-bottom: 5%;
 }
 
@@ -1650,6 +1650,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 .tournament-form h1 
 {
     padding-top:0.5%;
+    margin-top:-10%;
     padding-left:20%;
     text-align: center;
     color: white;
@@ -1675,9 +1676,9 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 
 .player1-tournoi 
 {
-    color: white;
+    color: rgb(255, 255, 255);
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 600;
     margin-left: 10%; 
     margin-bottom: 1%;
 }
@@ -1719,7 +1720,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     cursor: pointer;
     font-weight: 600;
     padding: 15px 30px;
-    margin-bottom: 2%;
+    margin-bottom: -1%;
     margin-top: 2%;
     margin-left:28%;
     text-align: center;
@@ -1764,19 +1765,10 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     backdrop-filter: blur(10px);
     margin-left:3%;
     animation: fadeInUp 0.8s ease-in-out;
+    
+
 }
 
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* <div id="containe_all">
             <div id="first" >
@@ -1908,13 +1900,19 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 {
     width: 300px;
     height: 75px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     margin-bottom: 5%;
     border-radius: 10px;
-
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+}
+
+.player-box:hover
+{
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
 }
 
 .round1
@@ -1997,16 +1995,12 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     margin-top:20%;
 }
 
-.trophee-img
-{
-
-}
-
 
 .line 
 {
     position: absolute;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
+
     height: 2px;
     width: 400px;
 }

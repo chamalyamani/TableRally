@@ -442,12 +442,12 @@ function attachEventListeners(shadowRoot) {
           `
             <div class="content-lose">
               <div id="lost">
+              <p>You lost !</p>
                 <div class="rejected"></div>
                 <img src="${image}">
                 <p>${winner}</p>
             </div>
             </div>
-          
           `
       }
   
@@ -658,6 +658,7 @@ function attachEventListeners(shadowRoot) {
     shadowRoot.getElementById("myContainer").innerHTML = `
     <div class=content-winner>
         <div id="winner">
+        <p>You win !</p>
         <div class="crown"></div>
         <img src="">
         <p>${winer3}</p>

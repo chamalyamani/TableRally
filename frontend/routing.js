@@ -174,7 +174,8 @@ const protectedRoutes = new Set([
     "chat",
     "game",
     "settings",
-    "pingpong"
+    "pingpong",
+    "dashboard"
 ]);
 
 let notif_socket = null;
@@ -227,6 +228,7 @@ async function navigateTo(page) {
     if (routes[page]) {
         app.innerHTML = "";
         history.pushState({ page }, "", `/${page}`);
+        // history.replaceState({ page}, "", `/${page}`);
         app.innerHTML = `<${routes[page]}></${routes[page]}>`;
         document.body.className = `body-${page}`;
     
