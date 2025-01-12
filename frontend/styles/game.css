@@ -773,18 +773,6 @@ header
 }
 
 
-/* * {
-   
-} */
-
-
-/* body {
-    font-family: Arial, sans-serif;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
-} */
-
 .holder {
     width: 100%;
     height: 100vh;
@@ -795,7 +783,6 @@ header
     width: 100%;
     height: 100vh;
     position: relative;
-    background: linear-gradient(139.98deg, #003E38 10.69%, #003E38 20.26%, #014E46 30.76%, #00766A 40.02%, rgba(0, 78, 70, 0.941257) 54.12%, rgba(3, 81, 73, 0.952228) 55.88%, rgba(0, 62, 56, 0.983651) 78.08%, #002924 83.04%);
 }
 .board_holder {
     padding: 15px;
@@ -805,8 +792,6 @@ header
     border: 1px solid grey;
     border-radius: 15px;
     margin-right: 200%;
-    /* From https://css.glass */
-    /* background-image: url("/assets/wallpp.jpeg"); */
     background-size: cover;
     
     box-shadow: 0px 5px 20px 5px rgba(0,0,0,0.5);
@@ -904,10 +889,7 @@ header
   width: 60%;
   height: 100%;
     display: grid;
-    /* grid-template-columns: repeat(3, 30%);
-    grid-template-rows: repeat(3, 30%); */
     gap: 2%;
-    /* flex-wrap: wrap; */
     margin-top: 3%;
     justify-content: center;
     align-content:  center;
@@ -918,8 +900,6 @@ header
     height: 100%;
     background-color: #fff;
     border: 2px solid #333;
-    /* color: green; */
-    /* font-size: 0.1em; */
     line-height: 100px;
     display: flex;
     align-items: center;
@@ -957,8 +937,6 @@ header
 
 
 #restart-button {
-  /* width: 56%;
-    height: 10%; */
     padding: 5px;
     font-size: 2em;
     cursor: pointer;
@@ -978,9 +956,6 @@ header
     cursor: not-allowed;
     opacity: 0.5;
 }
-
-
-/* Board head / info player and match data */
 
 .board_head {
     width: 100%;
@@ -1031,7 +1006,6 @@ header
     color: #3DBDA7;
     font-weight: bold;
     perspective: 1000px;
-    /* transition: all 0.3s ease-in-out; */
 }
 
 .turnToggle .inTurnTog{
@@ -1106,7 +1080,6 @@ header
     justify-content: center;
     align-items: center;
     position: absolute;
-    /* transform: translate(-50%, -50%) scale(0.8); Start smaller */
     color: var(--accent-color);
     font-weight: bold;
     animation: popupAnimation 2s ease-in-out forwards;
@@ -1240,16 +1213,14 @@ header
   .dynamic {
       width: 100%;
       height: 90%;
-      /* background: rgb(1,63,56); */
-      /* background: var(--my-gradient); */
+
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
       position: relative;
       opacity: 1;
-      /* border-left: 2.5px solid rgba(61,105,117,1); */
-      /* padding-left: 100%; */
+
       transition: all 0.1s ease-in-out;
     }
     
@@ -1261,7 +1232,7 @@ header
     }
     
     .all {
-        width: calc(100vw - 4.5vw);
+        width: calc(100vw - 3.3vw);
         height: calc(100vh - 8vh);
         margin-left: 4.5vw !important;
         margin-top: 8vh !important;
@@ -1290,9 +1261,6 @@ header
         align-items: center;
         justify-content: center;
         padding: 5%;
-        /* gap: 5px;     */
-        /* border-radius: 50%; */
-        /* background-color: #2C8C87; */
         color: black;
     }
     .radio-item label{
@@ -1305,8 +1273,6 @@ header
     }
     /* Styling the radio button with a larger size */
     input[type="radio"] {
-        /* width: 20px; */
-        /* height: 20px; */
         background-color: red;
     }
     /********************************************************/
@@ -1315,8 +1281,6 @@ header
     height: 100%;
     margin-top: 0%;
     opacity: 1;
-    /* margin-top: 120%; */
-    /* opacity: 0; */
     position: absolute;
     display: flex;
     align-items: center;
@@ -1366,8 +1330,6 @@ header
     height: 25%;
     border-radius: 2.5em;
     padding: 0 1em 0 1em;
-    /* background-color: #027267; */
-    /* margin-top: 1%; */
     border-left: 0.3vh solid var(--border-color);
     border-right: 0.3vh solid var(--border-color);
     border-bottom: 0.3vh solid var(--border-color);
@@ -1391,7 +1353,6 @@ header
     font-size: 1em;
     font-weight: bold;
     color: var(--border-color);
-    /* background-color: red; */
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -1400,10 +1361,8 @@ header
 .game-info{
     width: 70%;
     height: 100%;
-    /* background-color: blue; */
     display: flex;
     overflow-x: auto;
-    /* flex-direction: column; */
     align-items: center;
     justify-content: space-around;
     position: relative;
@@ -1413,7 +1372,6 @@ header
     flex-shrink: 0;
     width: 30%;
     height: 90%;
-    /* background-color: yellow; */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1438,7 +1396,6 @@ header
     flex-shrink: 0;
     width: 30%;
     height: 90%;
-    /* background-color: yellow; */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1488,24 +1445,6 @@ header
     border: 2px solid var(--accent-color); /* Adds some space around the thumb */
 }
 
-/* For Firefox */
-
-
-/* .game-info::-webkit-scrollbar {
-    height: 0px;
-    opacity: 0;
-}
-
-.game-info::-webkit-scrollbar-track {
-    background: var(--accent-color);
-}
-
-.game-info::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 10px;
-    border: 2px solid var(--accent-color);
-} */
-
 
 .win-combo {
     color: white;
@@ -1521,13 +1460,11 @@ header
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: space-evenly; */
 }
 
 .gameDescription h4, .gameDescription p{
     width: 80%;
     height: 40%;
-    /* height: auto; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1551,7 +1488,6 @@ header
 .playGround{
     width: 100%;
     height: 28%;
-    /* border-radius: 1em; */
     border: 1% solid black;
     display: flex; 
 }
@@ -1648,12 +1584,8 @@ header
     height: 100%;
     left: 0;
     z-index: 1;
-    /* margin-left: -75%; */
     transform: translateX(0%);
     display: flex;
-    /*
-    align-items: center;
-    justify-content: space-around; */
     position: absolute;
     background-color: var(--primary-color);
     transition: transform 0.4s ease-in-out;
@@ -1803,8 +1735,6 @@ header
     position: absolute;
     width: 70%;
     height: 70%;
-    /* background-color: #333; */
-    /* border: 2px solid #00766A; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1874,9 +1804,7 @@ header
 .lclGameDiv{
     width: 100%;
     height: 71%;
-    /* border-radius: 1em; */
     background-color: #3DBDA7;
-    /* border: 1% solid black; */
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -1981,7 +1909,6 @@ input[type="radio"] {
 .menuBtnLcl {
     width: 100%;
     height: 28%;
-    /* border-radius: 1em; */
     border: 1% solid black;
     display: flex; 
 }
