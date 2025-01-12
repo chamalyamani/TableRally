@@ -8,11 +8,7 @@ class ChatPage extends HTMLElement
 {
     constructor() 
     {
-        console.log("dkheeeeeeeeeeeeeeeeeeeeeeeeeeeeeelllllll")
       super();
-  
-
-      
       const shadow = this.attachShadow({ mode: "open" });
   
 

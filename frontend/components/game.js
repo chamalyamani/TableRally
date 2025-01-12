@@ -1,7 +1,7 @@
 import { updateActiveNav } from "../shared.js";
 import { initializeCommonScripts } from "../shared.js";
 import { getUserInfos } from "../shared.js";
-import { logoutProcess } from "../shared.js";
+import { logoutProcess, getAccessToken } from "../shared.js";
 
 
 let matchingSocket = null

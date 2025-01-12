@@ -1082,7 +1082,8 @@ header
   }
 
 
-  .instructions-box {
+.instructions-box 
+{
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -1098,7 +1099,7 @@ header
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background-color: #333533e0;
 
-  }
+}
   
 .instructions-box img 
 {
@@ -1225,15 +1226,7 @@ canvas {
     border-radius: 100vw;
 }
 
-.player-box {
-    width: 20vw;
-    height: 200px;
-    border: 1px rgb(0, 59, 54) solid;
-    border-radius: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 
 #tournamentForm {
     display: flex;
@@ -1253,7 +1246,7 @@ canvas {
     justify-content: space-around;
     align-items: center;
 }
-
+/* 
 #containe_all {
     width: 100%;
     height: 100%;
@@ -1262,7 +1255,7 @@ canvas {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-}
+} */
 
 #second {
     width: 100%;
@@ -1418,21 +1411,46 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 
 
 
-#play-tour {
-    width: 20vw;
-    height: 40px;
-    border : 0;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.3);
+#play-tour 
+{
+    background-color: #ff5722;
+    border: none;
+    position:absolute;
+    bottom: 20%;
+    right:-22%;
+    padding-top:2%;
+    padding-bottom: 2%;
+    padding-right:10%;
+    padding-left:10%;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    color: #fff;
+    cursor:pointer;
+    outline: none;
+    outline: 0;
+    text-align: center;
+    transform: translateY(0);
+    transition: transform 150ms, box-shadow 150ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
-#register_button {
-    width: 20vw;
-    height: 40px;
-    border : 0;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.3);
+#play-tour:hover
+{
+    box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+    transform: translateY(-2px);
 }
+
+#play-tour:active
+{
+    background-color: #862e13;
+    transform: scale(0.96);
+}
+
+
 
 
 #waiting 
@@ -1619,7 +1637,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     position: relative;
     z-index: 2;
     overflow: hidden;
-    padding-top:5%;
+    padding-top:10%;
     padding-bottom: 5%;
 }
 
@@ -1632,6 +1650,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 .tournament-form h1 
 {
     padding-top:0.5%;
+    margin-top:-10%;
     padding-left:20%;
     text-align: center;
     color: white;
@@ -1657,9 +1676,9 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 
 .player1-tournoi 
 {
-    color: white;
+    color: rgb(255, 255, 255);
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 600;
     margin-left: 10%; 
     margin-bottom: 1%;
 }
@@ -1701,7 +1720,7 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     cursor: pointer;
     font-weight: 600;
     padding: 15px 30px;
-    margin-bottom: 2%;
+    margin-bottom: -1%;
     margin-top: 2%;
     margin-left:28%;
     text-align: center;
@@ -1733,7 +1752,6 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
 {
     margin-top:4%;
     width: 80%;
-    /* max-width: 800px; */
     height: 80%;
     display: flex;
     flex-direction: column;
@@ -1745,6 +1763,332 @@ to { text-shadow: 1px 1px 20px rgba(255,255,255,1); }
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     padding: 20px;
     backdrop-filter: blur(10px);
+    margin-left:3%;
+    animation: fadeInUp 0.8s ease-in-out;
+    
+
 }
 
 
+/* <div id="containe_all">
+            <div id="first" >
+              <div>
+                <div class="player-box"><p>${playerData[0]}</p></div>
+                <div class="player-box"><p>${playerData[1]}</p></div>
+              </div>
+              <div>
+                <div class="player-box">${winer1}</div>
+              </div>
+              <div>
+                <div class="player-box">${winer2}</div>
+              </div>
+              <div>
+                <div class="player-box"><p>${playerData[2]}</p></div>
+                <div class="player-box"><p>${playerData[3]}</p></div>
+              </div>
+            </div>
+            <button id="play-tour">play</button>
+          </div> */
+
+.container-tournament 
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position:relative;
+    width: 90%;
+    height: 90%;
+    margin: 0 auto;
+    padding-top:3%;
+    padding-right: 10%;
+}
+
+.title-wrapper 
+{
+    position: relative;
+    text-align: center;
+    margin-bottom: 6%;
+    margin-top:-1%;
+    margin-left:-2%;
+}
+  
+.title-wrapper h1 
+{
+    color: white;
+    font-family: Righteous, sans-serif;
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 5s ease infinite;
+}
+
+@keyframes fadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+
+.laurel-decoration 
+{
+    position: absolute;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: auto;
+    pointer-events: none;
+}
+
+
+        
+.first-matches, .second-matches
+{
+    margin-top:-2%;
+    flex: 1; 
+    /* margin: 0 1rem; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.champion 
+{
+    position:relative;
+    margin-bottom: -7%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+        
+.trophee-img 
+{
+    width: 250px;
+    height: auto;
+    margin-right: -150px;
+    margin-bottom: 10%;
+    /* object-fit: contain; */
+}
+
+.first-matches 
+{
+    /* background-color: #044406; */
+    /* padding: 1rem; */
+}
+
+.second-matches 
+{
+    /* background-color: rgb(234, 0, 255); */
+    /* padding: 1rem; */
+}
+
+.champion-1
+{
+    /* margin-bottom: 20%;    */
+}
+
+.champion-2
+{
+    margin-top:40%;
+    margin-bottom: -20%;
+}
+
+
+        
+.player-box 
+{
+    width: 300px;
+    height: 75px;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 5%;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.player-box:hover
+{
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.round1
+{
+    width: 200px;
+    height: 50px;
+    background-color: #333533e0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-top: -30%;
+    padding-bottom: 1%;
+
+    margin-bottom: 15%;
+    cursor: pointer;
+
+}
+
+.round2
+{
+    width: 200px;
+    height: 50px;
+    background-color: #333533e0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-top: -25%;
+    padding-bottom: 1%;
+    margin-left:200%;
+    margin-bottom: 15%;
+    cursor: pointer;
+
+}
+
+
+.round3
+{
+    width: 200px;
+    height: 50px;
+    background-color: #333533e0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    padding-bottom: 1%;
+    margin-top: -27%;
+    margin-left:360%;
+    margin-bottom: 20%;
+    cursor: pointer;
+}
+
+
+.round2 p, .round1 p , .round3 p
+{
+    color:white;
+    font-weight: 600;
+}
+
+.player-box p 
+{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+}
+
+
+.first-players 
+{
+    /* margin-bottom: 1%; */
+}
+        
+.second-players
+{
+    margin-bottom:-22%;
+    margin-top:20%;
+}
+
+
+.line 
+{
+    position: absolute;
+    background-color: rgb(255, 255, 255);
+
+    height: 2px;
+    width: 400px;
+}
+  
+#lineA 
+{
+    top: 180px;
+    left: 380px;
+    width: 114px;
+}
+  
+#lineB 
+{
+    top: 270px;
+    left: 380px;  
+    width: 114px;
+}
+  
+ #lineC
+{
+    /* Peut être un trait vertical ? => on inverse width/height */
+    width: 2px;
+    height: 92px; 
+    top: 180px;
+    left: 494px;
+}
+
+#lineD
+{
+    top: 460px;
+    left: 380px;
+    width: 114px;
+}
+
+#lineE
+{
+    top: 550px;
+    left: 380px;
+    width: 114px;
+}
+
+#lineF
+{
+    width: 2px;
+    height: 92px; 
+    top: 460px;
+    left: 494px;
+}
+
+#line1
+{
+    top: 220px;
+    left: 495px;
+    width: 95px;
+}
+
+#line2
+{
+    top: 500px;
+    left: 495px;
+    width: 95px;
+}
+
+#lineG
+{
+    top: 213px;
+    left: 840px;
+    width: 112px;
+}
+
+#lineH
+{
+    top: 490px;
+    left: 840px;
+    width: 114px;
+}
+
+#lineI
+{
+    width: 2px;
+    height: 279.1px; 
+    top: 213px;
+    left: 952px;
+}
+
+#line3
+{
+    top: 370px;
+    left: 953px;
+    width: 65px;
+}

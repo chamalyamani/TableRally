@@ -93,7 +93,7 @@ class test(AsyncWebsocketConsumer):
                 print("players not found")
                 Exception("No players found for this game")
             
-            if code == 1006 or code == 1001:
+            if code == 1006 or code == 1001 or code == None:
                 print("====================================================")
                 print("code 1006 inform the other player that you left unexpectedly")
                 idxHim = 1 if players[0].user_id == self.user.id else 0
