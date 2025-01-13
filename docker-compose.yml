@@ -59,9 +59,6 @@ services:
       - ./frontend:/usr/share/nginx/html/backend
       - ./Backend/staticfiles:/staticfiles/
       - ./Backend/media:/media/
-      - ./Chat/frontend:/usr/share/nginx/html/chat
-      - ./PongGame/front/content:/usr/share/nginx/html/ponggame
-      - ./TicGame/frontend/:/usr/share/nginx/html/ticgame
     depends_on:
       backend:
         condition: service_healthy

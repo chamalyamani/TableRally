@@ -304,6 +304,3 @@ class DownloadUserDataView(APIView):
 
         response['Content-Disposition'] = 'attachment; filename="user_data.json"'
         return response
-
-def password_reset_template(request):
-    return render(request, 'password_reset/password_reset_form.html')

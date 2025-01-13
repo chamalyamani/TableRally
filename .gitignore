@@ -12,7 +12,6 @@ TicGame/tripleT/tic_tac_toe/migrations/
 Backend/authentication/__pycache__
 Backend/Friendship/__pycache__
 Backend/main_backend/__pycache__
-Backend/media/
 /Backend/staticfiles/
 /Backend/static/
 
