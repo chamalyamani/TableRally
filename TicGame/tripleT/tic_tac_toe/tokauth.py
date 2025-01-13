@@ -9,11 +9,9 @@ from authentication.models import CustomUser as User
 
 class   TokenAuthMiddleware:
     def __init__(self, inner):
-        print("TokenAuthMiddleware: HELLLLLLLLLLLLO WOWOWOWOrd")
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-        print("TokenAuthMiddleware: __call__")
         query_string = scope['query_string'].decode('utf-8')
         query_dic = parse_qs(query_string)
         if 'Token' in query_dic:
