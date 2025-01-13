@@ -73,8 +73,8 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 
 1. Clone this repository:  
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/Mvrouvne/TableRally.git
+   cd TableRally
    ```
 2. Build and run:
    ```bash
