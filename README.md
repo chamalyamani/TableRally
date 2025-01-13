@@ -91,13 +91,6 @@ A huge thank you to all the team members for their dedication and contributions 
 
 ## Contributors ✨
 
-## Contributors
-
-We'd like to thank all our contributors:
-
-## Contributors
-
-We'd like to thank all our contributors:
 
 | [![Mvrouvne](https://github.com/mvrouvne.png?size=100)](https://github.com/mvrouvne) | [![Reda-adeR](https://github.com/Reda-adeR.png?size=100)](https://github.com/Reda-adeR) | [![ftHUNTER](https://github.com/ftHUNTER.png?size=100)](https://github.com/ftHUNTER) | [![0xspaanky](https://github.com/0xspaanky.png?size=100)](https://github.com/0xspaanky) | [![chamalyamani](https://github.com/chamalyamani.png?size=100)](https://github.com/chamalyamani) |
 | :----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: |
