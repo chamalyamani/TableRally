@@ -91,3 +91,8 @@ A huge thank you to all the team members for their dedication and contributions 
 
 ## Contributors ✨
 
+<a href="https://github.com/mvrouvne/pingpong/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mvrouvne/pingpong" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
