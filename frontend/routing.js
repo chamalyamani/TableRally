@@ -8,7 +8,7 @@ function globalNotifPopup(type = "Success", message = "Your changes have been sa
   
     const iconSuccess = toast.querySelector(".icon-circle-success");
     const iconError = toast.querySelector(".icon-circle-error");
-  
+   
     let timer1, timer2;
   
     // Réinitialisation du texte de la notification
