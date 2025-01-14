@@ -2,7 +2,7 @@ FROM python:bullseye
 
 COPY req.txt /
 
-
+ 
 RUN pip install -r req.txt
 
 WORKDIR /PongGame/django/
