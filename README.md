@@ -7,22 +7,27 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 ## Features
 
 ### Core Modules Implemented
-1. **Backend Framework (Django)**  
+1. **Frontend Development**
+   As the front-end developer I:
+   - Designed and developed the user interface using HTML, CSS, and JavaScript as a Single Page Application (SPA).
+   - Leveraged Web Components to create reusable and modular UI elements.
+   - Created the visual design and prototypes using Figma, ensuring an intuitive and aesthetically pleasing interface.
+2. **Backend Framework (Django)**  
    - Developed using Django to handle backend logic, routing, JWT, and data management.
-2. **Database Integration (PostgreSQL)**  
+3. **Database Integration (PostgreSQL)**  
    - Leveraged PostgreSQL for robust and scalable data storage.
-3. **Standard User Management**  
+4. **Standard User Management**  
    - Secure registration and authentication system.  
    - User profiles with game history and stats.
-4. **Remote Authentication**  
+5. **Remote Authentication**  
    - Implemented OAuth 2.0 for secure login and user authentication.
-5. **Real-Time Multiplayer (Remote Players)**  
+6. **Real-Time Multiplayer (Remote Players)**  
    - Enabled remote players to compete in Pong games with minimal latency.
-6. **Additional Game: Tic-Tac-Toe**  
+7. **Additional Game: Tic-Tac-Toe**  
    - Introduced a second game with matchmaking and gameplay history.
-7. **Live Chat**  
+8. **Live Chat**  
    - One of my primary contributions to this project was building the **Live Chat System** using WebSockets for real-time communication, send direct messages, block other users, delete messages, and invite players to games.
-8. **Two-Factor Authentication (2FA) with JWT**  
+9. **Two-Factor Authentication (2FA) with JWT**  
    - Added an extra layer of security with 2FA and JWT for token-based authentication.
 
 ---
