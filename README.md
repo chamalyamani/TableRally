@@ -8,7 +8,7 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 
 ### Core Modules Implemented
 1. **Frontend Development**
-   As the front-end developer I:
+As the front-end developer I:
    - Designed and developed the user interface using HTML, CSS, and JavaScript as a Single Page Application (SPA).
    - Leveraged Web Components to create reusable and modular UI elements.
    - Created the visual design and prototypes using Figma, ensuring an intuitive and aesthetically pleasing interface.
