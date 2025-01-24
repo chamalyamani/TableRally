@@ -46,7 +46,7 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 
 1. Authentication Page
    
-   ![Pong Interface](https://github.com/user-attachments/assets/4fde95c2-1ef0-4dbc-b7f1-c3fbb8e58aed)
+   ![Pong Interface](https://github.com/user-attachments/assets/login.png)
 
 2. Dashboard
    
