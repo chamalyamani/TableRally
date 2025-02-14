@@ -44,31 +44,35 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 
 ## Screenshots
 
-1. Authentication Page
+1. Login Page
    
    ![Pong Interface](https://github.com/chamalyamani/TableRally/blob/main/screens/login.png)
+   
+2. Sign Up Page
+   
+    ![Pong Interface](https://github.com/chamalyamani/TableRally/blob/main/screens/signup.png)
 
-2. Dashboard
+3. Dashboard
    
    ![Live Chat](https://github.com/user-attachments/assets/8c0c6825-180e-413f-ad1b-581e986d3fc6)
 
-3. Live Chat System
+4. Live Chat System
    
    ![Live Chat](https://github.com/user-attachments/assets/20dbc5e0-b448-4f12-ad5b-cabce1ea4c00)
 
-4. Tic-Tac-Toe Game Dashboard
+5. Tic-Tac-Toe Game Dashboard
    
    ![Tic-Tac-Toe Game Dashboard](https://github.com/user-attachments/assets/e86ff7c3-17e8-476d-8f28-7ff668326e0a)
 
-5. Pong Game Interface
+6. Pong Game Interface
    
    ![Live Chat](https://github.com/user-attachments/assets/999cb8d3-ec4f-4729-9c06-8037939f94c8)
 
-6. Pong Game Gameplay
+7. Pong Game Gameplay
    
    ![Live Chat](https://github.com/user-attachments/assets/9c5ae5d9-a6f4-465e-b182-f17b00e8b6f3)
 
-7. Settings/Profile page
+8. Settings/Profile page
     
    ![Live Chat](https://github.com/user-attachments/assets/2e92fa2b-9ee4-4998-a144-6d7efd7b3e6d)
 
