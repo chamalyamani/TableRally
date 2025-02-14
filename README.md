@@ -46,35 +46,63 @@ Welcome to **TableRally**, a real-time multiplayer gaming platform featuring a m
 
 1. Login Page
    
-   ![Pong Interface](https://github.com/chamalyamani/TableRally/blob/main/screens/login.png)
+   ![Login](https://github.com/chamalyamani/TableRally/blob/main/screens/login.png)
    
 2. Sign Up Page
    
-    ![Pong Interface](https://github.com/chamalyamani/TableRally/blob/main/screens/signup.png)
-
-3. Dashboard
+    ![Sign up](https://github.com/chamalyamani/TableRally/blob/main/screens/signup.png)
    
-   ![Live Chat](https://github.com/user-attachments/assets/8c0c6825-180e-413f-ad1b-581e986d3fc6)
+3. Reset Password Page
 
-4. Live Chat System
+   ![Resset-Passsword](https://github.com/chamalyamani/TableRally/blob/main/screens/resetpassword.png)
    
-   ![Live Chat](https://github.com/user-attachments/assets/20dbc5e0-b448-4f12-ad5b-cabce1ea4c00)
+
+4. Dashboard
+   
+   ![Dashboard](https://github.com/chamalyamani/TableRally/blob/main/screens/dashboard.png)
+   
 
 5. Tic-Tac-Toe Game Dashboard
    
-   ![Tic-Tac-Toe Game Dashboard](https://github.com/user-attachments/assets/e86ff7c3-17e8-476d-8f28-7ff668326e0a)
+   ![Tic-Tac-Toe Game](https://github.com/chamalyamani/TableRally/blob/main/screens/tic-tac-game.png)
 
 6. Pong Game Interface
    
-   ![Live Chat](https://github.com/user-attachments/assets/999cb8d3-ec4f-4729-9c06-8037939f94c8)
+   ![Game dashboard](https://github.com/chamalyamani/TableRally/blob/main/screens/pingpong.png)
 
 7. Pong Game Gameplay
    
-   ![Live Chat](https://github.com/user-attachments/assets/9c5ae5d9-a6f4-465e-b182-f17b00e8b6f3)
+   ![Gameplay](https://github.com/chamalyamani/TableRally/blob/main/screens/match.png)
 
-8. Settings/Profile page
+8. Remote Game Looby
+
+    ![Remote Game](https://github.com/chamalyamani/TableRally/blob/main/screens/loader.png)
+
+9. Tournament Registration
+
+   ![Registration Tournament](https://github.com/chamalyamani/TableRally/blob/main/screens/tournoi.png)
+
+10. Tournament Game Looby
+
+    ![Tournament Looby](https://github.com/chamalyamani/TableRally/blob/main/screens/matching.png)
+
+
+11. Live Chat Looby
+   
+   ![Live Chat Looby](https://github.com/chamalyamani/TableRally/blob/main/screens/looby-chat.png)
+
+12. Live Chat
+   
+   ![Live Chat](https://github.com/chamalyamani/TableRally/blob/main/screens/chating.png)
+
+13. Settings/Profile page
     
-   ![Live Chat](https://github.com/user-attachments/assets/2e92fa2b-9ee4-4998-a144-6d7efd7b3e6d)
+   ![Settings](https://github.com/chamalyamani/TableRally/blob/main/screens/settings1.png)
+
+14. Settings/QR Section
+    
+   ![Settings](https://github.com/chamalyamani/TableRally/blob/main/screens/settings2.png)
+
 
 ---
 
